@@ -59,6 +59,7 @@ const apiKey = process.env.GEMINI_API_KEY;
 Never commit your .env file – it should be listed in .gitignore.
 
 🚧 Roadmap
+
  Set up extension structure (manifest, permissions, popup UI)
 
  Integrate Gemini AI for text and image analysis
@@ -72,9 +73,11 @@ Never commit your .env file – it should be listed in .gitignore.
  Optimize AI detection with feedback loop
 
 🤝 Contributing
+
 Contributions are welcome! Please fork the repo and submit a pull request.
 
 👥 Team Members
+
 Cabandon, Jordan – Project Lead / Full-stack Development
 
 Claudio, Karl Jovanne – Backend & AI Integration
