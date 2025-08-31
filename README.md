@@ -36,7 +36,8 @@ Click Load unpacked and select the project folder.
 
 The extension should now be active in your browser.
 
-🔑 Setup Gemini API
+## 🔑 Setup Gemini API
+
 Sentry uses Google Gemini AI for content detection.
 
 Go to Google AI Studio.
@@ -58,7 +59,7 @@ import 'dotenv/config';
 const apiKey = process.env.GEMINI_API_KEY;
 Never commit your .env file – it should be listed in .gitignore.
 
-🚧 Roadmap
+## 🚧 Roadmap
 
  Set up extension structure (manifest, permissions, popup UI)
 
@@ -72,14 +73,14 @@ Never commit your .env file – it should be listed in .gitignore.
 
  Optimize AI detection with feedback loop
 
-🤝 Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please fork the repo and submit a pull request.
 
-👥 Team Members
+## 👥 Team Members
 
-Cabandon, Jordan – Project Lead / Full-stack Development
+- Cabandon, Jordan – Project Lead / Full-stack Development
 
-Claudio, Karl Jovanne – Backend & AI Integration
+- Claudio, Karl Jovanne – Backend & AI Integration
 
-Suan, Noah Gabriel – Frontend & UI/UX
+- Suan, Noah Gabriel – Frontend & UI/UX
