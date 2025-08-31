@@ -5,6 +5,7 @@
 ---
 
 ## 🌟 Features
+
 - 🛡️ **Blur Inappropriate Content** – Automatically detects and blurs unsafe/explicit images and text.  
 - 🚨 **Phishing & Scam Protection** – Warns users when visiting suspicious or malicious websites.  
 - 👨‍👩‍👧 **Family Manager** – Sends real-time notifications to parents if children encounter harmful content.  
@@ -13,6 +14,7 @@
 ---
 
 ## 🏗️ Tech Stack
+
 - **Frontend**: JavaScript (Browser Extension APIs)  
 - **AI/Detection**: Google Gemini AI (for text/image analysis)  
 - **Backend (optional)**: Node.js / Express (for parent notification service)  
@@ -20,9 +22,12 @@
 ---
 
 ## 📦 Installation
+
 1. Clone the repository:
-   ```bash
+
+    ```bash
    git clone https://github.com/your-username/sentry.git
+
 Open your browser’s Extension Manager.
 
 Enable Developer Mode.
