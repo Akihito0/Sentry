@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "SENTRY AI Extension",
+  "version": "1.0",
+  "description": "A React + Vite powered extension with AI integration for digital safety of users.",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": []
+}
