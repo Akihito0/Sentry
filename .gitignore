@@ -1,0 +1,9 @@
+# Ignore python virtual environments
+venv/
+__pycache__/
+
+# Ignore environment variables file
+.env
+
+# Ignore node modules for the extension
+extension/ai-extension/node_modules/
