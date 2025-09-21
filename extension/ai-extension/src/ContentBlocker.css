@@ -1,0 +1,92 @@
+.sentry-block-popup {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem 0.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sentry-block-logo-section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sentry-block-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #4cafef80;
+}
+
+.sentry-block-title {
+  color: #4cafef;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
+}
+
+.sentry-block-reason {
+  color: #cc4100;
+  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  text-align: center;
+  width: 100%;
+}
+
+.sentry-block-reason-text {
+  color: #c13f15;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.sentry-block-info {
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 1.0rem;
+  line-height: 1.4;
+  text-align: center;
+  width: 100%;
+}
+
+.sentry-block-actions {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.sentry-block-btn {
+  background: #4cafef;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 0.5rem 0.5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 0 4px #4cafef50;
+  transition: background 0.2s;
+  flex: 1 1 120px;
+  min-width: 90px;
+  max-width: 140px;
+}
+
+.sentry-block-btn:hover {
+  background: #1976d2;
+}
+
+.parent-btn {
+  background: #43a047;
+}
+
+.parent-btn:hover {
+  background: #2e7d32;
+}

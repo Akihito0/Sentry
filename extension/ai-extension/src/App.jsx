@@ -11,29 +11,20 @@ function App() {
           className="sentry-logo"
         />
       </div>
-
-      {/* Title */}
       <h2 className="sentry-title">Sentry</h2>
-
-      {/* Status Section */}
-      {/*The default value of the status is OFF*/}
       <div className="sentry-status">
         <p className="status-text">Protection is <span className="sentry-status-on">OFF</span></p>
       </div>
-
-      {/* Info Section */}
       <div className="sentry-info-section">
         <p className="info-text">Secure your family using SENTRY</p>
       </div>
-
-      {/* Connection Button */}
       <div className="sentry-connect-section">
-      <button
-        className="sentry-connect-button"
-        onClick={() => alert("Connection to website coming soon!")}
-      >
-        Connect to Website
-      </button>
+        <button
+          className="sentry-connect-button"
+          onClick={() => alert("Connection to website coming soon!")}
+        >
+          Connect to Website
+        </button>
       </div>
     </div>
   );
