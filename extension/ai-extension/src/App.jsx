@@ -1,60 +1,37 @@
-import { useState } from "react";
-import { askAI } from "./ai"; // Import the Gemini AI helper
+import React from 'react';
+import './App.css';
 
 function App() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-
-  async function handleAsk() {
-    if (input.trim() === "") return;
-    setOutput("Thinking... 🤖");
-
-    const res = await askAI(input);
-    setOutput(res);
-  }
-
   return (
-    <div style={{ padding: "1rem", width: "250px", fontFamily: "sans-serif" }}>
-      <h3 style={{ marginBottom: "0.5rem" }}>AI Extension</h3>
+    <div className="sentry-popup">
+      <div className="sentry-logo-section">
+        <img
+          src="/images/SENTRY_LOGO_TEMP.png"
+          alt="Sentry Logo"
+          className="sentry-logo"
+        />
+      </div>
 
-      <input
-        type="text"
-        placeholder="Ask me something..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        style={{
-          width: "100%",
-          marginBottom: "0.5rem",
-          padding: "0.3rem",
-          borderRadius: "5px",
-          border: "1px solid #ccc",
-        }}
-      />
+      {/* Title */}
+      <h2 className="sentry-title">Sentry</h2>
 
+      {/* Status Section */}
+      <div className="sentry-status">
+        <p className="status-text">Protection is <span className="sentry-status-on">ON</span></p>
+      </div>
+
+      {/* Info Section */}
+      <div className="sentry-info-section">
+        <p className="info-text">Secure your family using SENTRY</p>
+      </div>
+
+      {/* Connection Button */}
       <button
-        onClick={handleAsk}
-        style={{
-          width: "100%",
-          padding: "0.4rem",
-          borderRadius: "5px",
-          backgroundColor: "#4cafef",
-          border: "none",
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
+        className="sentry-connect-button"
+        onClick={() => alert("Connection to website coming soon!")}
       >
-        Ask AI
+        Connect to Website
       </button>
-
-      <p
-        style={{
-          marginTop: "0.8rem",
-          whiteSpace: "pre-wrap",
-          fontSize: "0.9rem",
-        }}
-      >
-        {output}
-      </p>
     </div>
   );
 }
