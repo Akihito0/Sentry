@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SENTRY AI",
   "version": "1.0",
-  "description": "A React + Vite powered extension with AI integration for digital safety of users.",
+  "description": "Sentry AI - Your Intelligent Web Companion",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -19,5 +19,24 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": []
+  "permissions": [],
+  "host_permissions": [
+    "http://localhost:8000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/SENTRY_LOGO_TEMP.png",
+        "images/sentry_robot.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
