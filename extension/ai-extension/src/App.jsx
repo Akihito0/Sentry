@@ -16,8 +16,9 @@ function App() {
       <h2 className="sentry-title">Sentry</h2>
 
       {/* Status Section */}
+      {/*The default value of the status is OFF*/}
       <div className="sentry-status">
-        <p className="status-text">Protection is <span className="sentry-status-on">ON</span></p>
+        <p className="status-text">Protection is <span className="sentry-status-on">OFF</span></p>
       </div>
 
       {/* Info Section */}
@@ -26,12 +27,14 @@ function App() {
       </div>
 
       {/* Connection Button */}
+      <div className="sentry-connect-section">
       <button
         className="sentry-connect-button"
         onClick={() => alert("Connection to website coming soon!")}
       >
         Connect to Website
       </button>
+      </div>
     </div>
   );
 }
