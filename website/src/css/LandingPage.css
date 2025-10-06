@@ -85,13 +85,14 @@ html, body {
     justify-content: flex-end;
 }
 
-.nav-link {
-    text-decoration: none;
+.nav-btn {
     font-weight: 600;
     border-radius: 30px;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     white-space: nowrap;
-    padding: 8px 20px; /* Applied to both links here for consistency */
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: var(--font-family-primary);
 }
 
 .login-button {

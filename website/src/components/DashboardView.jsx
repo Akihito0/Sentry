@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import '../css/Dashboard.css'
 import logo from '../image/logo.png'
 import profile from '../image/profile.png'
 
