@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import logo from '../image/logo.png'
 import profile from '../image/profile.png'
 
-const Sidebar: React.FC<{ active: number; setActive: (n: number) => void; isOpen: boolean; close: () => void; }> = ({ active, setActive, isOpen, close }) => {
+const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
     { icon: 'bx bx-home-alt-2', label: 'Overview' },
     { icon: 'bx bx-grid-alt', label: 'Account Manager' },
@@ -31,7 +31,7 @@ const Sidebar: React.FC<{ active: number; setActive: (n: number) => void; isOpen
   )
 }
 
-const RightSection: React.FC = () => {
+const RightSection = () => {
   return (
     <aside className="right-section">
       <div className="top">
@@ -86,7 +86,7 @@ const RightSection: React.FC = () => {
   )
 }
 
-const Main: React.FC<{ openMenu: () => void }> = ({ openMenu }) => {
+const Main = ({ openMenu }) => {
   return (
     <main>
       <header>
@@ -156,7 +156,7 @@ const Main: React.FC<{ openMenu: () => void }> = ({ openMenu }) => {
   )
 }
 
-const App: React.FC = () => {
+const DashboardView = () => {
   const [active, setActive] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -169,7 +169,6 @@ const App: React.FC = () => {
   )
 }
 
-export default App
-
+export default DashboardView
 
 

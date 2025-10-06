@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import './css/Dashboard.css'
+import App from './components/DashboardView.jsx'
 import LandingPage from './components/LandingPage.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <LandingPage />
+    {window.location.pathname === '/dashboard' ? <App /> : <LandingPage />}
   </StrictMode>,
 )
