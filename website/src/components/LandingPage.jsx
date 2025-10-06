@@ -11,7 +11,7 @@ const LandingPage = () => {
                     <span className="logo-text">Sentry</span>
                 </div>
                 <nav className="header-nav">
-                    <a href="/login" className="nav-link login-button">
+                    <a href="/dashboard" className="nav-link login-button">
                         Login
                     </a>
                     <a href="/signup" className="nav-link sign-up-button">
