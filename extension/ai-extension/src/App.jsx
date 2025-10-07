@@ -6,7 +6,7 @@ function App() {
     <div className="sentry-popup">
       <div className="sentry-logo-section">
         <img
-          src="/images/SENTRY_LOGO_TEMP.png"
+          src="/images/NOBG/Sentry_Logo-removebg-preview.png"
           alt="Sentry Logo"
           className="sentry-logo"
         />
