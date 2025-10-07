@@ -139,7 +139,15 @@ function createChatbot() {
   // --- NEW: Appends a message to the chat window ---
   function appendMessage(text, sender) {
     const messageElement = document.createElement('div');
-    messageElement.classList.add('sentry-message', sender);
+    
+    // Fix for the InvalidCharacterError by cleaning up the class name
+    let senderClass = sender;
+    if (sender === 'sentry typing') {
+      messageElement.classList.add('sentry-message', 'sentry', 'typing');
+    } else {
+      messageElement.classList.add('sentry-message', sender);
+    }
+    
     messageElement.textContent = text;
     messagesContainer.appendChild(messageElement);
     // Scroll to the bottom
@@ -162,8 +170,10 @@ function createChatbot() {
     // Show typing indicator
     const typingIndicator = appendMessage('Sentry is typing...', 'sentry typing');
     
+    console.log("Sending message to AI:", userInput); // Add logging
+    
     try {
-      const response = await fetch('http://localhost:8000/Chat', {
+      const response = await fetch('http://localhost:8000/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ message: userInput })
@@ -189,6 +199,7 @@ function createChatbot() {
 
     } catch (error) {
       console.error("Sentry: Error communicating with chat AI.", error);
+      console.log("Failed with endpoint: http://localhost:8000/chat");
       // If an error occurs, make sure the typing indicator is gone before showing the error message.
       if (typingIndicator) typingIndicator.remove();
       appendMessage("Sorry, I'm having trouble connecting to my brain right now. Please check the backend server and try again.", 'sentry');

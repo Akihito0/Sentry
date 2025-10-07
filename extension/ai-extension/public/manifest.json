@@ -30,7 +30,10 @@
         "contentscript.js",
         "chatbotUI.js"
         ],
-      "css": ["css/chatbotUI.css"],
+      "css": [
+        "css/chatbotUI.css", 
+        "css/notifications.css"
+      ],
       "run_at": "document_idle"
     }
   ],
@@ -39,7 +42,8 @@
       "resources": [
         "images/WithBG/Happy_Sentry.png",
         "images/NOBG/Sentry_Logo-removebg-preview.png",
-        "images/NOBG/Sentry_Chat.png"
+        "images/NOBG/Sentry_Chat.png",
+        "css/notifications.css"
       ],
       "matches": ["<all_urls>"]
     }
