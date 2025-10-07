@@ -141,7 +141,6 @@ function createChatbot() {
     const messageElement = document.createElement('div');
     
     // Fix for the InvalidCharacterError by cleaning up the class name
-    let senderClass = sender;
     if (sender === 'sentry typing') {
       messageElement.classList.add('sentry-message', 'sentry', 'typing');
     } else {
