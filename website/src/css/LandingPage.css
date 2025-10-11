@@ -71,6 +71,26 @@ html, body {
     white-space: nowrap;
 }
 
+/* --- LOGO IMAGE SHIELD STYLES (Properly Sized) --- */
+.logo-image-shield {
+    /* Set a specific size for the logo container */
+    width: 35px; /* Adjust as needed */
+    height: 35px; /* Adjust as needed */
+    margin-right: 8px; /* Space between logo and text */
+    display: flex; /* Helps center the image */
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-image-shield img {
+    /* Ensure the image scales correctly within its container */
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    display: block;
+}
+/* --- END LOGO IMAGE SHIELD STYLES --- */
+
 .logo-icon {
     font-size: 1.2em;
     margin-right: 5px;
@@ -378,8 +398,8 @@ html, body {
     font-weight: bold;
     letter-spacing: 1px;
 }
-.gemini-logo {
-    font-size: 1.5rem; /* Larger icon if you had one */
+.gemini-text {
+    color: var(--color-text-light); 
 }
 
 .ai-power-box p {
@@ -403,9 +423,9 @@ html, body {
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
-    width: 100%;  /* Ensure full width */
+    width: 100%; 
     box-sizing: border-box;
-    flex-wrap: wrap; /* Added for mobile */
+    flex-wrap: wrap; 
 }
 
 .sentry-footer p {

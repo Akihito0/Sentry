@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SentryRobot from '../image/Robot.png';
 import '../css/LandingPage.css';
+import Logo from '../image/logo.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -10,7 +11,9 @@ const LandingPage = () => {
     <div className="sentry-page">
       <header className="sentry-header">
         <div className="logo-container">
-          <span className="logo-icon">🛡️</span>
+          <div className="logo-image-shield">
+            <img src={Logo} alt="Sentry Logo" />
+          </div>
           <span className="logo-text">Sentry</span>
         </div>
         <nav className="header-nav">

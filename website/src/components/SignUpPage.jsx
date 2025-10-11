@@ -5,12 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 const SignupPage = ({ toggleMode }) => {
   const navigate = useNavigate();
+  // New state for the user's name
+  const [name, setName] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleGoogleSignIn = () => {
     console.log('Signup: Google Sign-Up initiated...');
+    // Note: When using Google Sign-Up, the name and email would typically be retrieved automatically.
   };
 
   const handleFormSubmit = (e) => {
@@ -19,7 +22,11 @@ const SignupPage = ({ toggleMode }) => {
       console.error('Error: Passwords do not match!');
       return;
     }
-    console.log('Signing up with:', { email, password });
+    // Updated console log to include the new name state
+    console.log('Signing up with:', { name, email, password }); 
+    
+    // Add logic here to send data to your backend API
+    // navigate('/setup-profile'); // Example: Navigate to the next setup step
   };
 
   const handleSwitchToLogin = () => {
@@ -69,6 +76,20 @@ const SignupPage = ({ toggleMode }) => {
           <div className="separator"><span>OR</span></div>
 
           <form className="auth-form" onSubmit={handleFormSubmit}>
+            {/* NEW: Name Input Group */}
+            <div className="input-group">
+              <label htmlFor="signup-name">Parent/Guardian Name</label>
+              <input
+                type="text"
+                id="signup-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                required
+              />
+            </div>
+            {/* End NEW Name Input Group */}
+
             <div className="input-group">
               <label htmlFor="signup-email">Email Address</label>
               <input
