@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SentryRobot from '../image/Robot.png';
 import '../css/LandingPage.css';
 import Logo from '../image/logo.png';
+import RobotSentry from '../image/SentryBot.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const LandingPage = () => {
           </div>
 
           <div className="hero-image-bot">
-            <img src={SentryRobot} alt="Sentry AI Robot Guardian" />
+            <img src={RobotSentry} alt="Sentry AI Robot Guardian" />
           </div>
         </div>
 
@@ -107,10 +108,8 @@ const LandingPage = () => {
         <p>Copyright 2025 Sentry. All Rights Reserved.</p>
         <div className="social-links">
           <a href="#facebook">f</a>
-          <a href="#twitter">t</a>
           <a href="#instagram">i</a>
           <a href="#youtube">y</a>
-          <a href="#linkedin">l</a>
         </div>
       </footer>
     </div>

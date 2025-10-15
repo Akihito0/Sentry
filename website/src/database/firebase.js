@@ -36,13 +36,13 @@ import {
 
 //not the official one - this is just a read-only config, shall change later
 const firebaseConfig = {
-  apiKey: "AIzaSyD_pC3jtVG3NS8w2ediJge36KvoUoXt2NU",
-  authDomain: "mort-2-database.firebaseapp.com",
-  projectId: "mort-2-database",
-  storageBucket: "mort-2-database.firebasestorage.app",
-  messagingSenderId: "274850816058",
-  appId: "1:274850816058:web:a77a8a4860d55894681503",
-  measurementId: "G-5WNEV79X79"
+  apiKey: "AIzaSyB1tR-ROctZg23DF0pssz8HJiv4gPRPxRg",
+  authDomain: "sentry-9d594.firebaseapp.com",
+  projectId: "sentry-9d594",
+  storageBucket: "sentry-9d594.firebasestorage.app",
+  messagingSenderId: "286452982653",
+  appId: "1:286452982653:web:93a86dcb623d534cc62214",
+  measurementId: "G-ESH4XLTXZH"
 };
 
 const app = initializeApp(firebaseConfig);

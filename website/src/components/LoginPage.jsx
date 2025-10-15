@@ -1,25 +1,86 @@
 import React, { useState } from 'react';
 import '../css/LoginPage.css'; // imported CSS file
-import RobotImage from '../image/Robot.png'; // your robot image
 import { useNavigate } from 'react-router-dom';
+import welcomeBot from '../image/welcome-robot.png';
+import {
+  auth,
+  db,
+  GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  setPersistence,
+  browserSessionPersistence,
+  doc,
+  setDoc
+} from '../database/firebase';
 
 const LoginPage = ({ toggleMode }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleGoogleSignIn = () => {
-        console.log('Login: Google Sign-In initiated...');
-    };
-
-    const handleFormSubmit = (e) => {
+    const handleGoogleLogin = async (e) => {
         e.preventDefault();
-        console.log('Logging in with:', { email, password });
-        // Placeholder for Login logic
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
 
-        // ✅ Added line: Go directly to Dashboard after form submission
-        navigate('/dashboard');
-    };
+        try {
+            await setPersistence(auth, browserSessionPersistence);
+
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            const existingMethods = await fetchSignInMethodsForEmail(auth, user.email);
+
+            if (
+            existingMethods.length > 0 &&
+            !existingMethods.includes('google.com')
+            ) {
+            alert(
+                `This email is already registered using another method (e.g., Email & Password). Please log in using that method.`
+            );
+            return;
+            }
+
+            await setDoc(
+            doc(db, 'Sentry-User', user.uid),
+            {
+                name: user.displayName?.split(' ')[0] || '',
+                surname: user.displayName?.split(' ')[1] || '',
+                email: user.email,
+                uid: user.uid,
+                provider: 'google',
+                createdAt: new Date().toISOString(),
+            },
+            { merge: true }
+            );
+
+            navigate('/dashboard');
+            } catch (error) {
+                if (error.code !== 'auth/popup-closed-by-user') {
+                alert('Google Login Failed: ' + error.message);
+                }
+            }
+        };
+
+    const handleFormSubmit = async(e) => {
+            e.preventDefault();
+                try {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    navigate('/dashboard');
+                } catch (error) {
+                    if (error.code === 'auth/invalid-credential') {
+                        alert('Incorrect email or password. Please try again.');
+                    } else if (error.code === 'auth/user-not-found') {
+                        alert('No account found with this email.');
+                    } else {
+                        alert('Login Failed: ' + error.message);
+                    }
+                }
+    };  
 
     const handleSwitchToSignup = () => {
         if (toggleMode) {
@@ -40,7 +101,7 @@ const LoginPage = ({ toggleMode }) => {
                         <p>Your AI Guardian is ready to secure your family's online world.</p>
                         <div className="robot-image-container">
                             <img
-                                src={RobotImage}
+                                src={welcomeBot}
                                 alt="Sentry AI Robot Guardian"
                                 className="robot-image"
                                 onError={(e) => {
@@ -57,7 +118,7 @@ const LoginPage = ({ toggleMode }) => {
                         <h2>Welcome Back!</h2>
                         <p>Sign in to manage your family's safety settings.</p>
 
-                        <button type="button" className="google-button" onClick={handleGoogleSignIn}>
+                        <button type="button" className="google-button" onClick={handleGoogleLogin}>
                             <img
                                 src="google_logo.png"
                                 alt="Google Logo"

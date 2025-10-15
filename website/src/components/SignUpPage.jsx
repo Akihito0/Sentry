@@ -1,32 +1,114 @@
 import React, { useState } from 'react';
 import '../css/SignUpPage.css';
-import RobotImage from '../image/Robot.png'; // your robot image
 import { useNavigate } from 'react-router-dom';
+import welcomeBot from '../image/welcome-robot.png';
+import {
+  auth,
+  db,
+  GoogleAuthProvider,
+  fetchSignInMethodsForEmail,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  setPersistence,
+  browserSessionPersistence,
+  doc,
+  getDoc,
+  setDoc
+} from '../database/firebase';
 
 const SignupPage = ({ toggleMode }) => {
   const navigate = useNavigate();
-  // New state for the user's name
   const [name, setName] = useState(''); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleGoogleSignIn = () => {
-    console.log('Signup: Google Sign-Up initiated...');
-    // Note: When using Google Sign-Up, the name and email would typically be retrieved automatically.
-  };
+   const handleGoogleLogin = async (e) => {
+      e.preventDefault();
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
 
-  const handleFormSubmit = (e) => {
+      try {
+        await setPersistence(auth, browserSessionPersistence);
+
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        const userRef = doc(db, 'Sentry-User', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        const existingMethods = await fetchSignInMethodsForEmail(auth, user.email);
+
+        if (existingMethods.length > 0 || userSnap.exists()) {
+          alert('This Google account is already registered. Please log in instead.');
+          await auth.signOut(); 
+          navigate('/login');
+          return;
+        }
+
+        await setDoc(
+          userRef,
+          {
+            name: user.displayName?.split(' ')[0] || '',
+            surname: user.displayName?.split(' ')[1] || '',
+            email: user.email,
+            uid: user.uid,
+            provider: 'google',
+            createdAt: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+
+        alert('Google Sign-Up successful! Redirecting to dashboard...');
+        navigate('/dashboard');
+      } catch (error) {
+        if (error.code !== 'auth/popup-closed-by-user') {
+          alert('Google Login Failed: ' + error.message);
+        }
+      }
+    };
+
+
+   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
-      console.error('Error: Passwords do not match!');
+      alert('Passwords do not match!');
       return;
     }
-    // Updated console log to include the new name state
-    console.log('Signing up with:', { name, email, password }); 
-    
-    // Add logic here to send data to your backend API
-    // navigate('/setup-profile'); // Example: Navigate to the next setup step
+
+    try {
+      const existingMethods = await fetchSignInMethodsForEmail(auth, email);
+
+      if (existingMethods.length > 0) {
+        const message =
+          existingMethods.includes('google.com')
+            ? `This email is already registered using Google Sign-In. Please log in using Google.`
+            : `This email is already registered. Please log in instead.`;
+
+        alert(message);
+        return;
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await updateProfile(user, { displayName: name });
+
+      await setDoc(doc(db, 'Sentry-User', user.uid), {
+        name,
+        email,
+        uid: user.uid,
+        provider: 'email',
+        createdAt: new Date().toISOString(),
+      });
+
+      alert('Account successfully created! Please log in.');
+      navigate('/login');
+    } catch (error) {
+      alert('Registration Failed: ' + error.message);
+    }
   };
 
   const handleSwitchToLogin = () => {
@@ -43,7 +125,7 @@ const SignupPage = ({ toggleMode }) => {
           <p>Your AI Guardian is ready to secure your family's online world.</p>
           <div className="robot-image-container">
             <img
-              src={RobotImage}
+              src={welcomeBot}
               alt="Sentry AI Robot Guardian"
               className="robot-image"
               onError={(e) => {
@@ -60,7 +142,7 @@ const SignupPage = ({ toggleMode }) => {
           <h2>Join Sentry Today!</h2>
           <p>Create your free account and start protecting your loved ones.</p>
 
-          <button type="button" className="google-button" onClick={handleGoogleSignIn}>
+          <button type="button" className="google-button" onClick={handleGoogleLogin}>
             <img
               src="google_logo.png"
               alt="Google Logo"
