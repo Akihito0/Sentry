@@ -3,6 +3,7 @@ import '../css/Dashboard.css';
 import logo from '../image/logo.png';
 import profile from '../image/profile.png';
 import { auth, db, doc, getDoc } from '../database/firebase';
+import SafeBrowsing from './SafeBrowsing.jsx';
 
 const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
@@ -199,7 +200,11 @@ const DashboardView = () => {
         isOpen={sidebarOpen}
         close={() => setSidebarOpen(false)}
       />
-      <Main openMenu={() => setSidebarOpen(true)} userName={userName} />
+
+      {/* ✅ Only Overview (index 0) and Safe Browsing (index 2) are clickable */}
+      {active === 0 && <Main openMenu={() => setSidebarOpen(true)} userName={userName} />}
+      {active === 2 && <SafeBrowsing />}
+      
       <RightSection userName={userName} />
     </div>
   );
