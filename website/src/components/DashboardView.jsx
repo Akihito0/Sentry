@@ -1,14 +1,16 @@
-import React, { useMemo, useState } from 'react'
-import '../css/Dashboard.css'
-import logo from '../image/logo.png'
-import profile from '../image/profile.png'
+import React, { useMemo, useState, useEffect } from 'react';
+import '../css/Dashboard.css';
+import logo from '../image/logo.png';
+import profile from '../image/profile.png';
+import { auth, db, doc, getDoc } from '../database/firebase';
 
 const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
     { icon: 'bx bx-home-alt-2', label: 'Overview' },
-    { icon: 'bx bx-grid-alt', label: 'Account Manager' },
+    { icon: 'bx bx-group', label: 'Family' },
+    { icon: 'bx bx-shield-quarter', label: 'Safe Browsing' },
     { icon: 'bx bx-cog', label: 'Setting' },
-  ], [])
+  ], []);
 
   return (
     <aside className="left-section" style={{ top: isOpen ? '0' : undefined }}>
@@ -16,31 +18,36 @@ const Sidebar = ({ active, setActive, isOpen, close }) => {
         <button className="menu-btn" id="menu-close" onClick={close}>
           <i className='bx bx-log-out-circle'></i>
         </button>
-        <img src={logo} />
+        <img src={logo} alt="Logo" />
         <a href="#">Sentry</a>
       </div>
 
       <div className="sidebar">
         {items.map((item, idx) => (
-          <div key={item.label} className="item" id={active === idx ? 'active' : undefined} onClick={() => setActive(idx)}>
+          <div
+            key={item.label}
+            className="item"
+            id={active === idx ? 'active' : undefined}
+            onClick={() => setActive(idx)}
+          >
             <i className={item.icon}></i>
             <a href="#">{item.label}</a>
           </div>
         ))}
       </div>
     </aside>
-  )
-}
+  );
+};
 
-const RightSection = () => {
+const RightSection = ({ userName }) => {
   return (
     <aside className="right-section">
       <div className="top">
         <div className="profile">
           <div className="left">
-            <img src={profile} />
+            <img src={profile} alt="Profile" />
             <div className="user">
-              <h2>UserName</h2>
+              <h2>{userName}</h2>
             </div>
           </div>
         </div>
@@ -80,21 +87,21 @@ const RightSection = () => {
       <div className="weekly">
         <div className="title">
           <div className="line"></div>
-          <h5>www.facebook.com</h5>
+          <h5>www.pornhub.com</h5>
         </div>
       </div>
     </aside>
-  )
-}
+  );
+};
 
-const Main = ({ openMenu }) => {
+const Main = ({ openMenu, userName }) => {
   return (
     <main>
       <header>
         <button className="menu-btn" id="menu-open" onClick={openMenu}>
           <i className='bx bx-menu'></i>
         </button>
-        <h5>Hello <b>UserName</b>, Welcome back!</h5>
+        <h5>Hello <b>{userName}</b>, Welcome back!</h5>
       </header>
 
       <div className="separator">
@@ -154,22 +161,48 @@ const Main = ({ openMenu }) => {
         ))}
       </div>
     </main>
-  )
-}
+  );
+};
 
 const DashboardView = () => {
-  const [active, setActive] = useState(0)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [active, setActive] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState('UserName');
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const docRef = doc(db, 'Sentry-User', user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserName(data.name || 'UserName');
+          } else {
+            console.warn('No user document found for:', user.uid);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserName();
+  }, []);
 
   return (
     <div className="container">
-      <Sidebar active={active} setActive={setActive} isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
-      <Main openMenu={() => setSidebarOpen(true)} />
-      <RightSection />
+      <Sidebar
+        active={active}
+        setActive={setActive}
+        isOpen={sidebarOpen}
+        close={() => setSidebarOpen(false)}
+      />
+      <Main openMenu={() => setSidebarOpen(true)} userName={userName} />
+      <RightSection userName={userName} />
     </div>
-  )
-}
+  );
+};
 
-export default DashboardView
-
-
+export default DashboardView;
