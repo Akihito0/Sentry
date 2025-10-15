@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../css/LoginPage.css'; // imported CSS file
 import { useNavigate } from 'react-router-dom';
 import welcomeBot from '../image/welcome-robot.png';
+import google from '../image/google.png';
 import {
   auth,
   db,
@@ -120,7 +121,7 @@ const LoginPage = ({ toggleMode }) => {
 
                         <button type="button" className="google-button" onClick={handleGoogleLogin}>
                             <img
-                                src="google_logo.png"
+                                src={google}
                                 alt="Google Logo"
                                 className="google-icon"
                                 onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
@@ -138,7 +139,7 @@ const LoginPage = ({ toggleMode }) => {
                                     id="login-email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="name@example.com"
+                                    placeholder="name@gmail.com"
                                     required
                                 />
                             </div>
