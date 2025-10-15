@@ -87,7 +87,7 @@ const RightSection = ({ userName }) => {
       <div className="weekly">
         <div className="title">
           <div className="line"></div>
-          <h5>www.pornhub.com</h5>
+          <h5>www.facebook.com</h5>
         </div>
       </div>
     </aside>
