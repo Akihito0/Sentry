@@ -3,6 +3,7 @@ import '../css/SignUpPage.css';
 import { useNavigate } from 'react-router-dom';
 import welcomeBot from '../image/welcome-robot.png';
 import googleLogo from '../image/google.png';
+import Logo from '../image/logo.png';
 import {
   auth,
   db,
@@ -135,7 +136,18 @@ const SignupPage = ({ toggleMode }) => {
               }}
             />
           </div>
-          <div className="sentry-logo-footer">🛡️ Sentry</div>
+            <div className="sentry-logo-footer">
+                            <img
+                                src={Logo}
+                                alt="Sentry Logo"
+                                className="sentry-footer-logo"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://placehold.co/100x100?text=Logo";
+                                }}
+                            />
+                            <span className="sentry-footer-text">Sentry</span>
+                        </div>
         </div>
 
         {/* Sign Up Form Area */}

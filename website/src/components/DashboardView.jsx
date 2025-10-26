@@ -4,6 +4,7 @@ import logo from '../image/logo.png';
 import profile from '../image/profile.png';
 import { auth, db, doc, getDoc } from '../database/firebase';
 import SafeBrowsing from './SafeBrowsing.jsx';
+import Settings from './Settings.jsx';
 
 const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
@@ -201,10 +202,13 @@ const DashboardView = () => {
         close={() => setSidebarOpen(false)}
       />
 
-      {/* ✅ Only Overview (index 0) and Safe Browsing (index 2) are clickable */}
-      {active === 0 && <Main openMenu={() => setSidebarOpen(true)} userName={userName} />}
-      {active === 2 && <SafeBrowsing />}
-      
+      {/* ✅ Render center content based on selected sidebar item */}
+      <div className="main-section">
+        {active === 0 && <Main openMenu={() => setSidebarOpen(true)} userName={userName} />}
+        {active === 2 && <SafeBrowsing />}
+        {active === 3 && <Settings />}
+      </div>
+
       <RightSection userName={userName} />
     </div>
   );

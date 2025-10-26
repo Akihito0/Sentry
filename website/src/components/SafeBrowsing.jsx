@@ -1,12 +1,21 @@
 import React from 'react';
 import '../css/SafeBrowsing.css';
+import Logo from '../image/logo.png';
 
 const SafeBrowsing = () => {
   return (
     <div className="safe-browsing-container">
       <div className="header-section">
         <div className="icon-wrapper">
-          <div className="wot-icon">🛡️</div>
+          <img 
+            src={Logo} 
+            alt="Sentry Logo" 
+            className="sentry-logo-icon"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://placehold.co/80x80?text=Logo";
+            }}
+          />
         </div>
         <div className="header-text">
           <h1>Safe Browsing</h1>
