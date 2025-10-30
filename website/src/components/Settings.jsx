@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/Settings.css';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../database/firebase';
+import { auth, db, doc, getDoc } from '../database/firebase';
 
 const ToggleSwitch = ({ checked, onChange, label, subLabel }) => {
   return (
@@ -23,6 +23,35 @@ const ToggleSwitch = ({ checked, onChange, label, subLabel }) => {
 const Settings = () => {
   // Mock user settings
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const fetchUserData = async () => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    try {
+      const docRef = doc(db, 'Sentry-User', currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      const isGoogle = currentUser.providerData.some(p => p.providerId === 'google.com');
+
+      const firestoreData = docSnap.exists() ? docSnap.data() : {};
+
+      setUser(prev => ({
+        ...prev,
+        name: `${firestoreData.name || ''} ${firestoreData.surname || ''}`.trim(),
+        email: firestoreData.email || currentUser.email,
+        provider: isGoogle ? 'google' : 'email',
+        canChangePassword: !isGoogle, // disable password change if Google Sign-In
+      }));
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  fetchUserData();
+}, []);
+
+
   const [user, setUser] = useState({
     name: 'Jordan Parent',
     email: 'jordan.p@example.com',
@@ -101,16 +130,27 @@ const Settings = () => {
             </div>
 
             {/* Password */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <span className="label">Password</span>
-                <span className="value">••••••••</span>
-              </div>
-              <button className="action-button" onClick={handleAccountUpdate}>
-                Change Password
-              </button>
-            </div>
-
+              {user.canChangePassword ? (
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <span className="label">Password</span>
+                    <span className="value">••••••••</span>
+                  </div>
+                  <button className="action-button" onClick={handleAccountUpdate}>
+                    Change Password
+                  </button>
+                </div>
+              ) : (
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <span className="label">Password</span>
+                    <span className="value text-gray">Managed by Google</span>
+                  </div>
+                  <button className="action-button disabled-button" disabled>
+                    Not Available
+                  </button>
+                </div>
+              )}
             {/* Logout */}
             <div className="setting-item">
               <div className="setting-info">
