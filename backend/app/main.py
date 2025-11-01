@@ -8,10 +8,6 @@ import json
 
 # --- Load custom prompts ---
 try:
-    # Path for the malicious detection prompt
-    MALICIOUS_PROMPT_PATH = os.path.join(os.path.dirname(__file__), "../prompts/sentry_malicious_detection.txt")
-    with open(MALICIOUS_PROMPT_PATH, "r") as f:
-        DETECTION_PROMPT = f.read()
 
     # Path for the content blocking prompt
     CONTENT_BLOCKING_PROMPT_PATH = os.path.join(os.path.dirname(__file__), "../prompts/sentry_content_blocking.txt")
@@ -31,7 +27,6 @@ try:
 
 except FileNotFoundError:
     # Fallback if the prompt files are missing
-    DETECTION_PROMPT = "You are a content safety AI. Analyze the following text for inappropriate content: {captured_text_here}"
     CONTENT_BLOCKING_PROMPT = "You are a content safety AI. Analyze the following content and determine if it should be blocked: {captured_text_here}"
     CHAT_PROMPT = "You are Sentry, a helpful AI assistant. Keep your responses concise and friendly."
 
@@ -71,84 +66,6 @@ app.add_middleware(
 @app.get("/")
 async def read_root():
     return {"message": "Sentry backend is running"}
-
-@app.post("/ask")
-async def ask_ai(request: Request):
-    data = await request.json()
-    # The extension will send 'content', not 'prompt'
-    screen_text = data.get("content")
-
-    if not screen_text:
-        raise HTTPException(status_code=400, detail="Content for analysis is required")
-
-    try:
-        current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
-        
-        # Construct the full prompt by filling in our template
-        full_prompt = DETECTION_PROMPT.replace("{current_date_time}", current_time).replace("{captured_text_here}", screen_text)
-        
-        try:
-            response = model.generate_content(full_prompt)
-            
-            # Check if response has text (not blocked)
-            if hasattr(response, 'text') and response.text:
-                # Clean up the response and parse it as JSON
-                # Gemini might wrap the response in ```json ... ```
-                cleaned_response_text = response.text.strip().replace("```json", "").replace("```", "").strip()
-                
-                # Return the raw JSON string in the response body
-                return json.loads(cleaned_response_text)
-            else:
-                # If response was blocked, provide a default response
-                print("AI response was blocked or empty, sending default response")
-                return {
-                    "detected": True,
-                    "bad_words": ["potential unsafe content"],
-                    "category": "potentially_unsafe",
-                    "confidence": 80,
-                    "suggested_action": "blur",
-                    "summary": "This content may contain inappropriate material that was automatically flagged."
-                }
-                
-        except Exception as api_error:
-            # Handle specific API errors - likely a blocked content error
-            print(f"API Error occurred: {str(api_error)}")
-            if "blocked prompt" in str(api_error).lower() or "prohibited_content" in str(api_error).lower():
-                # Content was too sensitive for the AI to process
-                return {
-                    "detected": True,
-                    "bad_words": ["prohibited content"],
-                    "category": "flagged_by_ai",
-                    "confidence": 95,
-                    "suggested_action": "blur",
-                    "summary": "This content was flagged by safety systems and may contain inappropriate material."
-                }
-            else:
-                raise  # Re-raise if it's a different type of API error
-
-    except json.JSONDecodeError:
-        # If Gemini doesn't return valid JSON, we log it and return an error
-        print(f"Error: AI did not return valid JSON. Response was:\n{response.text if hasattr(response, 'text') else 'No text available'}")
-        # Instead of error, return a default response
-        return {
-            "detected": True,
-            "bad_words": ["invalid response"],
-            "category": "processing_error",
-            "confidence": 70,
-            "suggested_action": "blur",
-            "summary": "This content couldn't be properly analyzed, but has been flagged as potentially inappropriate."
-        }
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        # Instead of error, return a default response
-        return {
-            "detected": True,
-            "bad_words": ["error processing"],
-            "category": "error",
-            "confidence": 60,
-            "suggested_action": "blur",
-            "summary": "We couldn't properly analyze this content, but it has been flagged as a precaution."
-        }
 
 @app.post("/analyze-content")
 async def analyze_content(request: Request):
