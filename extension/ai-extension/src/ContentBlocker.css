@@ -1,92 +1,89 @@
 .sentry-block-popup {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 1rem 0.5rem;
-  background: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px #0002;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 2147483647; /* Max z-index */
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 24px;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .sentry-block-logo-section {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+  margin-bottom: 16px;
 }
 
 .sentry-block-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #4cafef80;
+  width: 80px;
+  height: 80px;
 }
 
 .sentry-block-title {
-  color: #4cafef;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+  font-size: 24px;
   font-weight: 600;
-  text-align: center;
-  width: 100%;
+  color: #d9534f; /* Red color for alert */
+  margin: 0 0 12px 0;
 }
 
 .sentry-block-reason {
-  color: #cc4100;
-  font-size: 1rem;
-  margin-bottom: 0.6rem;
-  text-align: center;
-  width: 100%;
+  font-size: 16px;
+  color: #333;
+  margin: 0 0 8px 0;
 }
 
 .sentry-block-reason-text {
-  color: #c13f15;
   font-weight: 500;
-  word-break: break-word;
+  color: #555;
 }
 
 .sentry-block-info {
-  color: #333;
-  font-size: 0.95rem;
-  margin-bottom: 1.0rem;
-  line-height: 1.4;
-  text-align: center;
-  width: 100%;
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
 }
 
 .sentry-block-actions {
   display: flex;
-  gap: 0.5rem;
-  width: 100%;
   justify-content: center;
-  flex-wrap: wrap;
+  width: 100%;
 }
 
 .sentry-block-btn {
-  background: #4cafef;
-  color: #fff;
+  padding: 12px 24px;
   border: none;
-  border-radius: 7px;
-  padding: 0.5rem 0.5rem;
-  font-weight: bold;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 0 4px #4cafef50;
-  transition: background 0.2s;
-  flex: 1 1 120px;
-  min-width: 90px;
-  max-width: 140px;
+  transition: background-color 0.3s, transform 0.2s;
+  margin: 0 8px;
 }
 
 .sentry-block-btn:hover {
-  background: #1976d2;
+  transform: translateY(-2px);
+}
+
+.sentry-block-btn:first-child {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.sentry-block-btn:first-child:hover {
+  background-color: #0056b3;
 }
 
 .parent-btn {
-  background: #43a047;
+  background-color: #28a745;
+  color: #fff;
 }
 
 .parent-btn:hover {
-  background: #2e7d32;
+  background-color: #218838;
 }
