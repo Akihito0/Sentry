@@ -5,6 +5,7 @@ import profile from '../image/profile.png';
 import { auth, db, doc, getDoc } from '../database/firebase';
 import SafeBrowsing from './SafeBrowsing.jsx';
 import Settings from './Settings.jsx';
+import FamilyPage from './FamilyPage.jsx';
 
 const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
@@ -205,6 +206,7 @@ const DashboardView = () => {
       {/* ✅ Render center content based on selected sidebar item */}
       <div className="main-section">
         {active === 0 && <Main openMenu={() => setSidebarOpen(true)} userName={userName} />}
+        {active === 1 && <FamilyPage />}
         {active === 2 && <SafeBrowsing />}
         {active === 3 && <Settings />}
       </div>

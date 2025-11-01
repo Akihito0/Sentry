@@ -1,0 +1,427 @@
+
+.family-page {
+  width: 100%; /* Take full width of its parent (body padding applied) */
+  max-width: 1200px; /* Max width for the entire family content block */
+  padding: 0; /* No internal padding here, the grid will handle spacing */
+  box-sizing: border-box; /* Ensure padding/border are included in element's total width/height */
+}
+.family-page .card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  padding: 25px; /* Internal padding for card content */
+  box-sizing: border-box; /* Important for consistent sizing */
+}
+
+.family-page .card h3 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 0; /* Remove default top margin */
+  margin-bottom: 20px; /* Space below heading */
+  font-weight: 600; /* Slightly bolder heading */
+}
+
+.family-page .family-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+  gap: 25px;
+  grid-template-areas:
+    "notification-center family-members"
+    "critical-alerts activity-report"
+    "content-filtering content-filtering"; 
+}
+
+.family-page .family-section-grid .notification-center-card { grid-area: notification-center; }
+.family-page .family-section-grid .family-members-card    { grid-area: family-members; }
+.family-page .family-section-grid .critical-alerts-card   { grid-area: critical-alerts; }
+.family-page .family-section-grid .activity-report-card   { grid-area: activity-report; }
+.family-page .family-section-grid .content-filtering-card { grid-area: content-filtering; }
+
+@media (max-width: 1024px) {
+    .family-page .family-section-grid {
+        grid-template-columns: 1fr; 
+        grid-template-areas:
+            "notification-center"
+            "family-members"
+            "critical-alerts"
+            "activity-report"
+            "content-filtering";
+    }
+}
+
+.family-page .notification-center-card .setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  color: #555;
+  font-size: 15px;
+}
+
+.family-page .notification-center-card .setting-row .icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.family-page .notification-center-card .setting-row.sub-setting {
+  padding-left: 30px; 
+  font-size: 14px;
+}
+
+.family-page .notification-center-card .link-button {
+  background: none;
+  border: none;
+  color: #1890ff; 
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+.family-page .switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.family-page .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.family-page .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.family-page .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.family-page input:checked + .slider {
+  background-color: #1890ff;
+}
+
+.family-page input:focus + .slider {
+  box-shadow: 0 0 1px #1890ff; 
+}
+
+.family-page input:checked + .slider:before {
+  transform: translateX(16px); 
+}
+
+.family-page .family-members-card .member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; 
+}
+
+.family-page .family-members-card .member-item {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px 15px;
+  border: 1px solid #eee;
+}
+
+.family-page .family-members-card .member-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+.family-page .family-members-card .avatar-jordan { background-color: #6772e5; } 
+.family-page .family-members-card .avatar-sarah { background-color: #3ECF8E; } 
+
+.family-page .family-members-card .member-info h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.family-page .family-members-card .member-info span {
+  font-size: 12px;
+  color: #888;
+}
+
+.family-page .family-members-card .view-report-button {
+  margin-left: auto; 
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.family-page .family-members-card .view-report-button:hover {
+  background-color: #096dd9; 
+}
+
+.family-page .critical-alerts-card .alert-item {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fffbe6; 
+  border: 1px solid #ffe58f; 
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  position: relative;
+  font-size: 14px;
+}
+
+.family-page .critical-alerts-card .alert-item:last-child {
+    margin-bottom: 0;
+}
+
+.family-page .critical-alerts-card .alert-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #faad14; 
+}
+
+.family-page .critical-alerts-card .alert-item p {
+  flex-grow: 1;
+  margin: 0;
+  color: #333;
+  line-height: 1.4;
+}
+
+.family-page .critical-alerts-card .alert-item p b {
+    font-weight: 600; 
+}
+
+.family-page .critical-alerts-card .alert-item a {
+  color: #1890ff; 
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.family-page .critical-alerts-card .alert-item a:hover {
+  text-decoration: underline; 
+}
+
+.family-page .critical-alerts-card .alert-time {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.family-page .critical-alerts-card .help-icon {
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+  margin-left: 10px;
+  align-self: flex-start; 
+}
+
+.family-page .activity-report-card .report-charts {
+    display: flex;
+    gap: 20px; 
+    margin-bottom: 20px;
+}
+
+.family-page .activity-report-card .chart-container {
+    flex: 1;
+    text-align: center;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px 10px;
+    position: relative;
+}
+
+.family-page .activity-report-card .chart-container h4 {
+    font-size: 14px;
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+.family-page .activity-report-card .bar-chart {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.family-page .activity-report-card .bar {
+    width: 20px;
+    background-color: #1890ff;
+    border-radius: 3px 3px 0 0;
+    margin: 0 5px;
+}
+
+.family-page .activity-report-card .chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 12px;
+    color: #555;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.family-page .activity-report-card .legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.family-page .activity-report-card .legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.family-page .activity-report-card .legend-sexual { background-color: #ff4d4f; } /* Red */
+.family-page .activity-report-card .legend-hatespeech { background-color: #faad14; } /* Orange */
+.family-page .activity-report-card .legend-violence { background-color: #6772e5; } /* Purple */
+
+.family-page .activity-report-card .line-chart img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.family-page .activity-report-card .chart-labels {
+    display: flex;
+    justify-content: space-around;
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.family-page .activity-report-card .report-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0; /* Separator line */
+}
+
+.family-page .activity-report-card .report-details-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.family-page .activity-report-card .small-button {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.family-page .activity-report-card .small-button:hover {
+  background-color: #d0d0d0;
+}
+
+.family-page .content-filtering-card p {
+  font-weight: 500;
+  color: #555;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.family-page .content-filtering-card .keyword-tags,
+.family-page .content-filtering-card .whitelisted-sites {
+  display: flex;
+  flex-wrap: wrap; /* Allow tags to wrap to next line */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.family-page .content-filtering-card .tag {
+  background-color: #e6f7ff; /* Light blue tag background */
+  color: #1890ff; /* Blue tag text */
+  padding: 6px 10px;
+  border-radius: 20px; /* Pill shape */
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.family-page .content-filtering-card .tag-close {
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  opacity: 0.7;
+}
+
+.family-page .content-filtering-card .tag-close:hover {
+  opacity: 1; /* Darker on hover */
+}
+
+.family-page .content-filtering-card .add-keyword-input,
+.family-page .content-filtering-card .add-site-input {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.family-page .content-filtering-card .add-keyword-input input,
+.family-page .content-filtering-card .add-site-input input {
+  flex-grow: 1; /* Input takes most available space */
+  padding: 10px 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.family-page .content-filtering-card .add-keyword-input input:focus,
+.family-page .content-filtering-card .add-site-input input:focus {
+  outline: none;
+  border-color: #1890ff; /* Blue border on focus */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); /* Subtle blue glow on focus */
+}
+
+.family-page .content-filtering-card .add-button {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.family-page .content-filtering-card .add-button:hover {
+  background-color: #096dd9; /* Darker blue on hover */
+}
