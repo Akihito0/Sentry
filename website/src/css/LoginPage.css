@@ -44,7 +44,7 @@
     text-align: center;
     color: white;
     position: relative;
-    border-radius: 0 20px 20px 0;
+    border-radius: 20px 0 0 20px;
 }
 
 .auth-visual-side h3 {
@@ -75,13 +75,26 @@
 }
 
 .sentry-logo-footer {
-    position: absolute;
-    bottom: 20px;
-    color: var(--color-yellow-accent);
-    font-weight: bold;
-    font-size: 1.2rem;
-    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
 }
+
+.sentry-footer-logo {
+    width: 45px;
+    height: auto;
+}
+
+.sentry-footer-text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #ffffff; /* ← changed from dark blue to white */
+    letter-spacing: 0.5px;
+}
+
+
 
 /* Form Area Styles */
 .auth-form-area {

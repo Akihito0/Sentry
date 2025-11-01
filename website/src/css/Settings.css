@@ -1,0 +1,172 @@
+/* Wrap all settings page elements inside a parent container: 
+   <div className="settings-view"> ... </div> 
+*/
+
+.settings-view .view-content {
+  padding: 1rem 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.settings-view .section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.settings-view .section-description {
+  color: #6b7280;
+  margin-bottom: 2rem;
+}
+
+.settings-view .card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  margin-bottom: 2rem;
+}
+
+.settings-view .card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.settings-view .card-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.settings-view .setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-view .setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.settings-view .setting-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-view .setting-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-view .setting-info .label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-view .setting-info .value {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.settings-view .action-button {
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.settings-view .action-button:hover {
+  background-color: #4338ca;
+}
+
+.settings-view .danger-button {
+  background-color: #dc2626;
+}
+
+.settings-view .danger-button:hover {
+  background-color: #b91c1c;
+}
+
+.settings-view .text-red {
+  color: #dc2626;
+}
+
+/* ✅ Toggle Switch Section */
+.settings-view .toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.settings-view .toggle-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-view .toggle-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-view .toggle-info .label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.settings-view .toggle-info .sublabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* Actual Toggle Switch */
+.settings-view .relative-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.settings-view .toggle-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 34px;
+  transition: background-color 0.3s;
+}
+
+.settings-view .toggle-label::before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: transform 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.settings-view .toggle-label.checked::before {
+  transform: translateX(20px);
+}
