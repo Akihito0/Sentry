@@ -1,15 +1,34 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import '../css/FamilyPage.css';
+import useFlaggedReports, {
+  formatRelativeTime,
+  truncate,
+  severityCopy,
+  getSourceLabel
+} from '../hooks/useFlaggedReports';
 
 const FamilyPage = () => {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const {
+    flaggedReports,
+    loadingReports,
+    reportError,
+    lastSyncedAt,
+    severityStats,
+    categoryFilters,
+    refreshReports
+  } = useFlaggedReports();
+
+  const filteredReports = useMemo(() => {
+    if (selectedCategory === 'all') return flaggedReports;
+    return flaggedReports.filter((report) => (report.category || '').toLowerCase() === selectedCategory.toLowerCase());
+  }, [flaggedReports, selectedCategory]);
+
   return (
     <div className="family-page">
-      {/* Main container for family cards */}
       <div className="family-content-only-container">
-
         <div className="family-section-grid">
 
-          {/* Notification Center */}
           <div className="card notification-center-card">
             <h3>Notification Center</h3>
             <div className="setting-row">
@@ -36,7 +55,94 @@ const FamilyPage = () => {
             <button className="link-button">Customize Alert Settings</button>
           </div>
 
-          {/* Family Members */}
+          <div className="card flagged-report-card">
+            <div className="flagged-report-header">
+              <div>
+                <h3>Flagged Content Report</h3>
+                <p>Live summary of everything the browser extension has blurred.</p>
+              </div>
+              <div className="flagged-report-controls">
+                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+                  <option value="all">All categories</option>
+                  {categoryFilters.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="refresh-button"
+                  onClick={() => refreshReports(true)}
+                  disabled={loadingReports}
+                >
+                  {loadingReports ? 'Syncing…' : 'Refresh'}
+                </button>
+              </div>
+            </div>
+
+            <div className="flagged-report-meta">
+              <span>{filteredReports.length || 0} alert{filteredReports.length === 1 ? '' : 's'} shown</span>
+              {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
+            </div>
+
+            <div className="flagged-report-stats">
+              {['high', 'medium', 'low'].map((level) => (
+                <div key={level} className={`flagged-report-stat stat-${level}`}>
+                  <span>{severityCopy[level]}</span>
+                  <strong>{severityStats[level] || 0}</strong>
+                </div>
+              ))}
+              <div className="flagged-report-stat stat-total">
+                <span>Total</span>
+                <strong>{severityStats.total}</strong>
+              </div>
+            </div>
+
+            {reportError && (
+              <div className="flagged-report-error">
+                {reportError}. Showing the most recent cached data.
+              </div>
+            )}
+
+            <div className="flagged-report-list">
+              {loadingReports ? (
+                <div className="flagged-report-empty">Syncing flagged notifications…</div>
+              ) : filteredReports.length === 0 ? (
+                <div className="flagged-report-empty">No flagged notifications yet. Great job staying safe!</div>
+              ) : (
+                filteredReports.slice(0, 5).map((report, index) => {
+                  const key = report.id || `${report.detected_at || 'report'}-${index}`;
+                  const severity = (report.severity || 'medium').toLowerCase();
+                  return (
+                    <div className="flagged-report-item" key={key}>
+                      <div className="flagged-report-item-header">
+                        <span className={`severity-badge severity-${severity}`}>{severityCopy[severity] || severity}</span>
+                        <span className="flagged-report-category">{report.category || 'unsafe content'}</span>
+                        <span className="flagged-report-time">{formatRelativeTime(report.detected_at)}</span>
+                      </div>
+                      <p className="flagged-report-summary">
+                        {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected')}
+                      </p>
+                      <div className="flagged-report-footer">
+                        <a
+                          href={report.page_url || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flagged-report-source"
+                        >
+                          {getSourceLabel(report)}
+                        </a>
+                        <span className="flagged-report-guidance">
+                          {report.what_to_do || 'Review before sharing.'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
           <div className="card family-members-card">
             <h3>Family Members</h3>
             <div className="member-list">
@@ -60,7 +166,6 @@ const FamilyPage = () => {
             </div>
           </div>
 
-          {/* Critical Alerts */}
           <div className="card critical-alerts-card">
             <h3>Critical Alerts (Last 24h)</h3>
             <div className="alert-item">
@@ -83,7 +188,6 @@ const FamilyPage = () => {
             </div>
           </div>
 
-          {/* Activity Report */}
           <div className="card activity-report-card">
             <h3>Activity Report - Past 7 Days</h3>
             <div className="report-charts">
@@ -122,10 +226,8 @@ const FamilyPage = () => {
             </div>
           </div>
 
-          {/* Content Filtering */}
           <div className="card content-filtering-card">
             <h3>Content Filtering</h3>
-
             <p>Custom Keywords to Block</p>
             <div className="keyword-tags">
               <span className="tag">bomb <span className="tag-close">x</span></span>

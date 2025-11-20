@@ -6,6 +6,14 @@ import { auth, db, doc, getDoc } from '../database/firebase';
 import SafeBrowsing from './SafeBrowsing.jsx';
 import Settings from './Settings.jsx';
 import FamilyPage from './FamilyPage.jsx';
+import useFlaggedReports, {
+  formatRelativeTime,
+  truncate,
+  severityCopy,
+  getSourceLabel
+} from '../hooks/useFlaggedReports';
+
+const FAMILY_MEMBERS = ['Noah Gabby', 'Jordii Cabs', 'Karlo Gon'];
 
 const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
@@ -42,7 +50,36 @@ const Sidebar = ({ active, setActive, isOpen, close }) => {
   );
 };
 
-const RightSection = ({ userName }) => {
+const RightSection = ({ userName, openFamilyView, reportsData }) => {
+  const {
+    flaggedReports = [],
+    loadingReports = false,
+    reportError = null,
+    lastSyncedAt = null,
+    severityStats = {},
+    refreshReports = () => {}
+  } = reportsData || {};
+
+  const topReports = useMemo(() => flaggedReports.slice(0, 3), [flaggedReports]);
+  const totalAlerts = severityStats.total || flaggedReports.length;
+  const flaggedTextFields = useMemo(
+    () =>
+      flaggedReports.map((report) =>
+        `${report.category || ''} ${report.summary || ''} ${report.reason || ''}`.toLowerCase()
+      ),
+    [flaggedReports]
+  );
+
+  const explicitCount = useMemo(() => {
+    const keywords = ['explicit', 'adult', 'sexual', 'nsfw'];
+    return flaggedTextFields.filter((text) => keywords.some((keyword) => text.includes(keyword))).length;
+  }, [flaggedTextFields]);
+
+  const scamCount = useMemo(() => {
+    const keywords = ['scam', 'phish', 'fraud', 'suspicious', 'spam'];
+    return flaggedTextFields.filter((text) => keywords.some((keyword) => text.includes(keyword))).length;
+  }, [flaggedTextFields]);
+
   return (
     <aside className="right-section">
       <div className="top">
@@ -56,48 +93,98 @@ const RightSection = ({ userName }) => {
         </div>
       </div>
 
-      <div className="separator" id="first">
-        <h4>AI Report</h4>
-      </div>
-
-      <div className="stats">
-        <div className="item">
-          <div className="top">
-            <p>Explicit Words</p>
-            <p>Blocked:</p>
+      <div className="flagged-alert-card">
+        <div className="flagged-alert-card-header">
+          <div>
+            <h4>Flagged Notifications</h4>
+            <p>Live feed from the Sentry browser extension</p>
           </div>
-          <div className="bottom">
-            <div className="line"></div>
-            <h3>25</h3>
-          </div>
+          <button
+            className="flagged-alert-refresh"
+            onClick={() => refreshReports(true)}
+            disabled={loadingReports}
+          >
+            {loadingReports ? 'Syncing…' : 'Refresh'}
+          </button>
         </div>
-        <div className="item">
-          <div className="top">
-            <p>Potential Scams</p>
-            <p>Detected:</p>
-          </div>
-          <div className="bottom">
-            <div className="line"></div>
-            <h3>3</h3>
-          </div>
-        </div>
-      </div>
 
-      <div className="separator">
-        <h4>Harmful Websites Visited:</h4>
-      </div>
-
-      <div className="weekly">
-        <div className="title">
-          <div className="line"></div>
-          <h5>www.facebook.com</h5>
+        <div className="flagged-alert-card-meta">
+          <span>
+            {totalAlerts ? `${totalAlerts} alert${totalAlerts === 1 ? '' : 's'} tracked` : 'No alerts yet'}
+          </span>
+          {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
         </div>
+
+        <div className="flagged-alert-stats">
+          {['high', 'medium', 'low'].map((level) => (
+            <div key={level} className={`flagged-alert-stat stat-${level}`}>
+              <span>{severityCopy[level]}</span>
+              <strong>{severityStats[level] || 0}</strong>
+            </div>
+          ))}
+        </div>
+
+        {reportError && (
+          <div className="flagged-alert-error">
+            {reportError}. Showing the most recent cached data.
+          </div>
+        )}
+
+        <div className="flagged-alert-list">
+          {loadingReports ? (
+            <div className="flagged-alert-empty">Syncing flagged notifications…</div>
+          ) : !topReports.length ? (
+            <div className="flagged-alert-empty">No flagged notifications yet. Great job staying safe!</div>
+          ) : (
+            topReports.map((report, index) => {
+              const key = report.id || `${report.detected_at || 'report'}-${index}`;
+              const severity = (report.severity || 'medium').toLowerCase();
+              return (
+                <div className="flagged-alert-item" key={key}>
+                  <div className="flagged-alert-item-header">
+                    <span className={`flagged-alert-badge severity-${severity}`}>
+                      {severityCopy[severity] || severity}
+                    </span>
+                    <span className="flagged-alert-category">{report.category || 'unsafe content'}</span>
+                    <span className="flagged-alert-time">{formatRelativeTime(report.detected_at)}</span>
+                  </div>
+                  <p className="flagged-alert-summary">
+                    {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected', 140)}
+                  </p>
+                  <div className="flagged-alert-footer">
+                    <a
+                      href={report.page_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {getSourceLabel(report)}
+                    </a>
+                    <span>{report.what_to_do || 'Review before sharing.'}</span>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {typeof openFamilyView === 'function' && (
+          <button className="flagged-alert-link" onClick={openFamilyView}>
+            View full report
+          </button>
+        )}
       </div>
     </aside>
   );
 };
 
-const Main = ({ openMenu, userName }) => {
+const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_MEMBERS }) => {
+  const {
+    blockedWebsites = 0,
+    phishingAttempts = 0,
+    familyCount = familyMembers.length,
+    blockedScams = 0
+  } = analyticsData;
+
   return (
     <main>
       <header>
@@ -118,6 +205,7 @@ const Main = ({ openMenu, userName }) => {
           <div className="progress">
             <div className="info">
               <h5>Blocked Websites:</h5>
+              <strong>{blockedWebsites}</strong>
             </div>
           </div>
         </div>
@@ -125,6 +213,7 @@ const Main = ({ openMenu, userName }) => {
           <div className="progress">
             <div className="info">
               <h5>Phishing Attempts:</h5>
+              <strong>{phishingAttempts}</strong>
             </div>
           </div>
         </div>
@@ -132,6 +221,7 @@ const Main = ({ openMenu, userName }) => {
           <div className="progress">
             <div className="info">
               <h5>Family Count: </h5>
+              <strong>{familyCount}</strong>
             </div>
           </div>
         </div>
@@ -139,6 +229,7 @@ const Main = ({ openMenu, userName }) => {
           <div className="progress">
             <div className="info">
               <h5>Blocked Scams:</h5>
+              <strong>{blockedScams}</strong>
             </div>
           </div>
         </div>
@@ -148,11 +239,10 @@ const Main = ({ openMenu, userName }) => {
         <div className="info">
           <h3>Family Members:</h3>
         </div>
-        <input type="date" defaultValue="2025-10-15" />
       </div>
 
       <div className="planning">
-        {['Noah Gabby', 'Jordii Cabs', 'Karlo Gon'].map(name => (
+        {familyMembers.map(name => (
           <div className="item" key={name}>
             <div className="left">
               <div className="details">
@@ -171,6 +261,48 @@ const DashboardView = () => {
   const [active, setActive] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userName, setUserName] = useState('UserName');
+  const reportsData = useFlaggedReports({ limit: 12, autoRefreshMs: 60000 });
+
+  const analyticsData = useMemo(() => {
+    const flagged = reportsData.flaggedReports || [];
+    if (!flagged.length) {
+      return {
+        blockedWebsites: 0,
+        phishingAttempts: 0,
+        familyCount: FAMILY_MEMBERS.length,
+        blockedScams: 0
+      };
+    }
+
+    const flaggedTextFields = flagged.map(
+      (report) =>
+        `${report.category || ''} ${report.summary || ''} ${report.reason || ''} ${report.what_to_do || ''}`.toLowerCase()
+    );
+
+    const phishingKeywords = ['phish', 'credential', 'login', 'password', 'bank'];
+    const scamKeywords = ['scam', 'fraud', 'suspicious', 'spam', 'lottery', 'crypto'];
+
+    const phishingAttempts = flaggedTextFields.filter((text) =>
+      phishingKeywords.some((keyword) => text.includes(keyword))
+    ).length;
+
+    const blockedScams = flaggedTextFields.filter((text) =>
+      scamKeywords.some((keyword) => text.includes(keyword))
+    ).length;
+
+    const uniqueSources = flagged.reduce((acc, report) => {
+      const label = getSourceLabel(report);
+      if (label) acc.add(label.toLowerCase());
+      return acc;
+    }, new Set());
+
+    return {
+      blockedWebsites: uniqueSources.size || flagged.length,
+      phishingAttempts,
+      familyCount: FAMILY_MEMBERS.length,
+      blockedScams
+    };
+  }, [reportsData.flaggedReports]);
 
   useEffect(() => {
     const fetchUserName = async () => {
@@ -194,8 +326,10 @@ const DashboardView = () => {
     fetchUserName();
   }, []);
 
+  const showRightPanel = active === 0;
+
   return (
-    <div className="container">
+    <div className={`container ${showRightPanel ? 'has-right-panel' : 'no-right-panel'}`}>
       <Sidebar
         active={active}
         setActive={setActive}
@@ -205,13 +339,22 @@ const DashboardView = () => {
 
       {/* ✅ Render center content based on selected sidebar item */}
       <div className="main-section">
-        {active === 0 && <Main openMenu={() => setSidebarOpen(true)} userName={userName} />}
+        {active === 0 && (
+          <Main
+            openMenu={() => setSidebarOpen(true)}
+            userName={userName}
+            analyticsData={analyticsData}
+            familyMembers={FAMILY_MEMBERS}
+          />
+        )}
         {active === 1 && <FamilyPage />}
         {active === 2 && <SafeBrowsing />}
         {active === 3 && <Settings />}
       </div>
 
-      <RightSection userName={userName} />
+      {showRightPanel && (
+        <RightSection userName={userName} openFamilyView={() => setActive(1)} reportsData={reportsData} />
+      )}
     </div>
   );
 };

@@ -21,43 +21,84 @@
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Setup
 
-1. Clone the repository:
+### Prerequisites
 
-    ```bash
-   git clone https://github.com/your-username/sentry.git
+- **Node.js** (v16 or higher)
+- **Python** (v3.8 or higher)
+- **npm** (comes with Node.js)
 
-Open your browser’s Extension Manager.
+### Quick Start (One Command)
 
-Enable Developer Mode.
+1. **Install all dependencies:**
+   ```bash
+   npm run install-all
+   ```
 
-Click Load unpacked and select the project folder.
+2. **Set up Gemini API Key:**
+   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create an API key
+   - Create a file `backend/.env` and add:
+     ```
+     GEMINI_API_KEY=your_api_key_here
+     ```
 
-The extension should now be active in your browser.
+3. **Start both backend and frontend with one command:**
 
-## 🔑 Setup Gemini API
+   **Windows:**
+   ```bash
+   start.bat
+   ```
+   
+   **Mac/Linux:**
+   ```bash
+   npm start
+   ```
+   
+   Or use Node.js directly:
+   ```bash
+   node start.js
+   ```
 
-Sentry uses Google Gemini AI for content detection.
+   This will start:
+   - **Backend**: FastAPI server on `http://localhost:8000`
+   - **Frontend**: Vite dev server (check console for URL)
 
-Go to Google AI Studio.
+### Manual Setup (Alternative)
 
-Sign in with your Google account.
+If you prefer to run services separately:
 
-Create an API key.
+**Backend:**
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
-In your project folder, create a .env file and add your key:
+**Frontend:**
+```bash
+cd extension/ai-extension
+npm install
+npm run dev
+```
 
-bash
-Copy code
+### Load Extension in Browser
+
+1. Open your browser's Extension Manager (Chrome: `chrome://extensions/`)
+2. Enable **Developer Mode**
+3. Click **Load unpacked**
+4. Select the `extension/ai-extension` folder (or `extension/ai-extension/dist` if built)
+5. The extension should now be active in your browser
+
+## 🔑 Environment Variables
+
+Create `backend/.env` with:
+```
 GEMINI_API_KEY=your_api_key_here
-In the code, make sure to load the key (example in Node.js):
+```
 
-javascript
-Copy code
-import 'dotenv/config';
-const apiKey = process.env.GEMINI_API_KEY;
-Never commit your .env file – it should be listed in .gitignore.
+**Never commit your .env file** – it should be listed in `.gitignore`.
 
 ## 🚧 Roadmap
 

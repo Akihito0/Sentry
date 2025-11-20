@@ -4,7 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import google.generativeai as genai
 from datetime import datetime
+from pathlib import Path
+from threading import Lock
+from typing import Any, Dict, List, Optional
 import json
+
+from pydantic import BaseModel, Field
 
 # --- Load custom prompts ---
 try:
@@ -40,6 +45,65 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+BASE_DIR = Path(__file__).resolve().parent
+FLAGGED_EVENTS_FILE = BASE_DIR / "flagged_events.json"
+_flagged_events_lock = Lock()
+
+
+def _load_flagged_events() -> List[Dict[str, Any]]:
+    if not FLAGGED_EVENTS_FILE.exists():
+        return []
+    try:
+        with FLAGGED_EVENTS_FILE.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                return data
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Warning: could not load flagged events: {exc}")
+    return []
+
+
+def _persist_flagged_events(events: List[Dict[str, Any]]) -> None:
+    try:
+        FLAGGED_EVENTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with FLAGGED_EVENTS_FILE.open("w", encoding="utf-8") as f:
+            json.dump(events, f, indent=2)
+    except OSError as exc:
+        print(f"Warning: could not persist flagged events: {exc}")
+
+
+class FlaggedEvent(BaseModel):
+    category: str = Field(..., description="Content category that triggered the alert")
+    summary: str = Field(..., description="Short description for UI surfaces")
+    reason: Optional[str] = Field(None, description="Full reason returned by AI")
+    what_to_do: Optional[str] = Field(None, description="Guidance shown to the user")
+    page_url: Optional[str] = None
+    source: Optional[str] = None
+    content_excerpt: Optional[str] = None
+    severity: str = Field(default="medium", description="low/medium/high confidence")
+    detected_at: datetime = Field(default_factory=datetime.utcnow)
+    user_id: Optional[str] = Field(default=None, description="Optional owner id")
+    metadata: Optional[Dict[str, Any]] = None
+
+
+MAX_FLAGGED_EVENTS = 250
+flagged_events_cache: List[Dict[str, Any]] = _load_flagged_events()
+
+
+def _serialize_flagged_event(event: FlaggedEvent) -> Dict[str, Any]:
+    serialized = event.model_dump()
+    serialized["detected_at"] = event.detected_at.isoformat()
+    return serialized
+
+
+def _parse_event_datetime(value: Any) -> datetime:
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            pass
+    return datetime.min
+
 # Configuration for safety settings to allow analysis of potentially harmful content
 # Without this, Gemini might refuse to process the text at all.
 safety_settings = [
@@ -66,6 +130,49 @@ app.add_middleware(
 @app.get("/")
 async def read_root():
     return {"message": "Sentry backend is running"}
+
+
+@app.get("/flagged-events")
+async def get_flagged_events(
+    limit: int = 25,
+    category: Optional[str] = None,
+    user_id: Optional[str] = None
+):
+    limit = max(1, min(limit, MAX_FLAGGED_EVENTS))
+
+    with _flagged_events_lock:
+        events = list(flagged_events_cache)
+
+    if category:
+        category_lower = category.lower()
+        events = [
+            event for event in events
+            if category_lower in (event.get("category") or "").lower()
+        ]
+
+    if user_id:
+        events = [
+            event for event in events
+            if event.get("user_id") == user_id
+        ]
+
+    events.sort(key=lambda event: _parse_event_datetime(event.get("detected_at")), reverse=True)
+
+    return {"items": events[:limit]}
+
+
+@app.post("/flagged-events")
+async def create_flagged_event(event: FlaggedEvent):
+    serialized = _serialize_flagged_event(event)
+
+    with _flagged_events_lock:
+        flagged_events_cache.append(serialized)
+        if len(flagged_events_cache) > MAX_FLAGGED_EVENTS:
+            overflow = len(flagged_events_cache) - MAX_FLAGGED_EVENTS
+            del flagged_events_cache[0:overflow]
+        _persist_flagged_events(flagged_events_cache)
+
+    return {"status": "stored", "items": len(flagged_events_cache)}
 
 @app.post("/analyze-content")
 async def analyze_content(request: Request):

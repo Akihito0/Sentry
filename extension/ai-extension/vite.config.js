@@ -9,7 +9,9 @@ export default defineConfig({
     react(),
     copy({
       targets: [
-        { src: 'public/*', dest: 'dist' },
+        { src: 'public/contentscript_new.js', dest: 'dist', rename: 'contentscript_new.js' },
+        { src: 'public/*.js', dest: 'dist' },
+        { src: 'public/manifest.json', dest: 'dist' },
         { src: 'public/css/*', dest: 'dist/css' },
         { src: 'public/images', dest: 'dist' }
       ],

@@ -1,3 +1,20 @@
+# Sentry Website
+
+The web dashboard now consumes the `/flagged-events` endpoint so families can review everything the browser extension blurred. Make sure the FastAPI server is running locally before opening the dashboard.
+
+## Environment
+
+Create a `.env` file inside `Sentry/website` with the backend URL and your Firebase keys:
+
+```
+VITE_BACKEND_URL=http://localhost:8000
+VITE_FIREBASE_API_KEY=...
+```
+
+If the backend is unavailable the Flagged Content Report falls back to cached sample data so the UI still renders.
+
+## Legacy Vite README
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

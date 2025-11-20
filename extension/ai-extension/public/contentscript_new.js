@@ -1,6 +1,18 @@
 // Sentry Content Script: Scans page content and blocks inappropriate material
 // CSS files are loaded via the manifest.json content_scripts section
 
+// ⚠️ CRITICAL: DO NOT SCAN OUR OWN DASHBOARD OR LOCALHOST DEV SITES
+// This prevents the extension from flagging content on the Sentry dashboard itself
+if (window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' ||
+    window.location.port === '5173' || 
+    window.location.port === '5174' ||
+    window.location.port === '5175') {
+  console.log("Sentry: Content scanning disabled on localhost dashboard");
+  // Stop execution immediately - don't run any scanning code
+  throw new Error("Sentry content script intentionally disabled on localhost");
+}
+
 /**
  * Debounce function to prevent excessive function calls
  * @param {Function} func The function to debounce
@@ -32,6 +44,76 @@ let blockedElements = new Map(); // Store blocked elements with their AI respons
 let contentCache = new Map(); // Cache AI responses to avoid re-scanning
 let scannedElements = new WeakSet(); // Track which elements we've already scanned
 let intersectionObserver = null; // Observer to re-apply blur when scrolling back
+const SENTRY_SESSION_ID = `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+const FLAGGED_EVENTS_ENDPOINT = `${BACKEND_URL}/flagged-events`;
+
+function normalizeExcerpt(rawText = "") {
+  if (!rawText) return "";
+  return rawText.replace(/\s+/g, " ").trim().slice(0, 280);
+}
+
+function inferSeverityFromCategory(category = "", confidence = 50) {
+  const lowered = (category || "").toLowerCase();
+  if (lowered.includes("scam") || lowered.includes("phish")) return "high";
+  if (lowered.includes("explicit") || lowered.includes("violence")) {
+    return confidence >= 60 ? "high" : "medium";
+  }
+  if (confidence >= 85) return "high";
+  if (confidence <= 45) return "low";
+  return "medium";
+}
+
+async function reportFlaggedContentToBackend(aiResponse = {}, options = {}) {
+  if (!FLAGGED_EVENTS_ENDPOINT || typeof fetch !== "function") return;
+
+  const summary =
+    aiResponse.title ||
+    aiResponse.summary ||
+    aiResponse.reason ||
+    "Potentially unsafe content blocked";
+
+  const payload = {
+    category: aiResponse.category || options.category || "unsafe_content",
+    summary,
+    reason: aiResponse.reason || aiResponse.summary || summary,
+    what_to_do: aiResponse.what_to_do || "Proceed with caution.",
+    page_url: window.location.href,
+    source: window.location.hostname || options.source || null,
+    content_excerpt: normalizeExcerpt(options.contentExcerpt || summary),
+    severity: (options.severity ||
+      inferSeverityFromCategory(aiResponse.category, aiResponse.confidence || 50)
+    ).toLowerCase(),
+    detected_at: new Date().toISOString(),
+    user_id: options.userId || null,
+    metadata: {
+      sessionId: SENTRY_SESSION_ID,
+      elementTag: options.elementTag || null,
+      pageTitle: document.title || null,
+      confidence: aiResponse.confidence ?? null,
+    },
+  };
+
+  if (payload.metadata) {
+    Object.keys(payload.metadata).forEach((key) => {
+      if (payload.metadata[key] === null || payload.metadata[key] === undefined) {
+        delete payload.metadata[key];
+      }
+    });
+    if (Object.keys(payload.metadata).length === 0) {
+      delete payload.metadata;
+    }
+  }
+
+  try {
+    await fetch(FLAGGED_EVENTS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.warn("Sentry: Unable to sync flagged content report", error);
+  }
+}
 
 /**
  * Analyzes image content using Google Vision API (via backend)
@@ -961,6 +1043,80 @@ function hasScannedChildren(container, scannedList) {
 }
 
 /**
+ * Finds images associated with a text element (in the same container/parent)
+ * @param {Element} textElement The text element that was blocked
+ * @returns {Array<HTMLImageElement>} Array of associated images to block
+ */
+function findAssociatedImages(textElement) {
+  const associatedImages = [];
+  
+  // Find the common parent container (article, post, message, div, etc.)
+  let container = textElement;
+  const containerSelectors = [
+    'article', '[role="article"]', '.post', '.message', '.chat-message',
+    '[class*="post"]', '[class*="message"]', '[class*="Message"]',
+    'div[class*="content"]', 'section', 'li', 'td'
+  ];
+  
+  // Try to find a meaningful container
+  for (const selector of containerSelectors) {
+    const foundContainer = textElement.closest(selector);
+    if (foundContainer && foundContainer !== document.body) {
+      container = foundContainer;
+      break;
+    }
+  }
+  
+  // If no specific container found, use parent element (but limit depth)
+  if (container === textElement) {
+    let parent = textElement.parentElement;
+    let depth = 0;
+    while (parent && parent !== document.body && depth < 3) {
+      // Check if parent has multiple children (likely a container)
+      if (parent.children.length > 1) {
+        container = parent;
+        break;
+      }
+      parent = parent.parentElement;
+      depth++;
+    }
+    if (container === textElement && parent) {
+      container = parent;
+    }
+  }
+  
+  // Find all images within the container
+  const images = container.querySelectorAll('img');
+  
+  images.forEach(img => {
+    // Skip if already blocked
+    if (img.classList.contains('sentry-blocked-content') ||
+        img.hasAttribute('data-sentry-blocked')) {
+      return;
+    }
+    
+    // Skip if image is too small (likely an icon)
+    if (img.width < 100 || img.height < 100) {
+      return;
+    }
+    
+    // Skip if image is in Sentry UI
+    if (img.closest('.sentry-confirmation-overlay') ||
+        img.closest('.sentry-confirmation-popup') ||
+        img.id?.startsWith('sentry-')) {
+      return;
+    }
+    
+    // Only include images that are visible
+    if (img.offsetParent !== null) {
+      associatedImages.push(img);
+    }
+  });
+  
+  return associatedImages;
+}
+
+/**
  * Blocks a specific element with blur effect and persistent tracking
  * @param {Element} element The element to block
  * @param {Object} aiResponse The AI response containing blocking information
@@ -1002,6 +1158,24 @@ function blockSpecificElement(element, aiResponse) {
   targetElement.classList.add('sentry-blocked-content');
   targetElement.setAttribute('data-sentry-blocked', 'true');
   targetElement.setAttribute('data-sentry-category', aiResponse.category);
+  
+  if (!targetElement.hasAttribute('data-sentry-reported')) {
+    const elementPreviewSource =
+      targetElement.innerText ||
+      targetElement.textContent ||
+      targetElement.getAttribute?.('aria-label') ||
+      targetElement.alt ||
+      (targetElement.src ? `Media source: ${targetElement.src}` : '') ||
+      aiResponse.summary ||
+      aiResponse.reason ||
+      '';
+    const elementPreview = normalizeExcerpt(elementPreviewSource);
+    targetElement.setAttribute('data-sentry-reported', 'true');
+    reportFlaggedContentToBackend(aiResponse, {
+      elementTag: targetElement.tagName,
+      contentExcerpt: elementPreview || aiResponse.summary || aiResponse.reason || '',
+    });
+  }
   
   // Store the AI response for this element
   blockedElements.set(targetElement, aiResponse);
@@ -1045,6 +1219,40 @@ function blockSpecificElement(element, aiResponse) {
   setupPersistentBlur(targetElement);
   
   console.log(`Sentry: Blocked specific element (${targetElement.tagName}) for ${aiResponse.category}`);
+  
+  // 🖼️ NEW: If blocking text content, also block associated images
+  if (targetElement.tagName !== 'IMG') {
+    const associatedImages = findAssociatedImages(targetElement);
+    
+    if (associatedImages.length > 0) {
+      console.log(`🖼️ Sentry: Found ${associatedImages.length} associated image(s) with explicit text - blocking them too`);
+      
+      // Create image-specific blocking response (similar to text but for images)
+      const imageBlockResponse = {
+        safe: false,
+        title: aiResponse.title || "Associated Content Blocked",
+        reason: `This image is associated with content that contains ${aiResponse.category || 'inappropriate material'}.`,
+        what_to_do: aiResponse.what_to_do || "This content has been flagged as inappropriate.",
+        category: aiResponse.category || "explicit_content",
+        confidence: aiResponse.confidence || 85
+      };
+      
+      // Block each associated image
+      associatedImages.forEach(img => {
+        // Skip if already scanned or blocked
+        if (scannedElements.has(img) || 
+            img.classList.contains('sentry-blocked-content')) {
+          return;
+        }
+        
+        // Mark as scanned to avoid re-processing
+        scannedElements.add(img);
+        
+        // Block the image
+        blockSpecificElement(img, imageBlockResponse);
+      });
+    }
+  }
 }
 
 /**

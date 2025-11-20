@@ -187,12 +187,11 @@ async function scanPageWithSentryAI() {
     // For Messenger, prioritize speed by limiting content size further
     const contentLimit = isMessenger ? 5000 : 10000;
     
-    const response = await fetch('http://localhost:8000/ask', {
+    const response = await fetch(`${BACKEND_URL}/analyze-content`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        content: contentToScan.slice(0, contentLimit),
-        site_context: isMessenger ? 'messenger' : 'general'  // Provide context to backend
+        content: contentToScan.slice(0, contentLimit)
       })
     });
 
@@ -200,9 +199,17 @@ async function scanPageWithSentryAI() {
     const aiResponse = await response.json();
     console.log("Sentry AI Response:", aiResponse);
 
-    if (aiResponse.detected && aiResponse.suggested_action !== "allow") {
-      console.warn("Sentry: Inappropriate content detected!", aiResponse.summary);
-      applySentryAction(aiResponse);
+    // Convert backend response format to frontend expected format
+    if (aiResponse.safe === false) {
+      const frontendResponse = {
+        detected: true,
+        suggested_action: "block",
+        category: aiResponse.category || "unsafe content",
+        summary: aiResponse.reason || aiResponse.title || "Inappropriate content detected",
+        bad_words: [aiResponse.category || "unsafe"]
+      };
+      console.warn("Sentry: Inappropriate content detected!", frontendResponse.summary);
+      applySentryAction(frontendResponse);
       hasActiveNotification = true;
       significantChanges = false; // Reset flag as we've processed the changes
     } else {
@@ -536,6 +543,11 @@ function createNotificationBubble(ai, category) {
       console.log("Sentry: Auto-removed notification after timeout");
     }
   }, 30000);
+
+  reportFlaggedContent(ai || {}, category, {
+    notificationId: notificationCount,
+    explanation: explanation.textContent
+  });
   
   return notificationCount; // Return the ID for future reference
 }
@@ -747,6 +759,9 @@ let hasActiveNotification = false;
 let scanTimeout = null;
 let activeNotifications = []; // Track multiple notification instances
 let notificationCount = 0;    // Used for stacking notifications
+const BACKEND_URL = 'http://localhost:8000';
+const FLAGGED_EVENTS_ENDPOINT = `${BACKEND_URL}/flagged-events`;
+const SENTRY_SESSION_ID = `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
 
 // Site detection for optimized scanning
 const isMessenger = window.location.hostname.includes('messenger.com') || 
@@ -799,6 +814,70 @@ const MIN_TEXT_LENGTH = isSocialMedia ? 20 : (isSearchEngine ? 30 : 50);
 
 // Apply site-specific detection sensitivity
 const SCAM_DETECTION_THRESHOLD = currentSiteConfig.prioritizeScamDetection ? 4 : 5; // Lower threshold = more sensitive
+
+function normalizeExcerpt(rawText = '') {
+  if (!rawText) return '';
+  return rawText.replace(/\s+/g, ' ').trim().slice(0, 280);
+}
+
+function inferSeverityFromCategory(category = '', confidence = 50) {
+  const lowered = (category || '').toLowerCase();
+  if (lowered.includes('scam') || lowered.includes('phish')) return 'high';
+  if (lowered.includes('explicit') || lowered.includes('violence')) {
+    return confidence >= 60 ? 'high' : 'medium';
+  }
+  if (confidence >= 85) return 'high';
+  if (confidence <= 45) return 'low';
+  return 'medium';
+}
+
+async function reportFlaggedContent(ai = {}, category = 'unsafe_content', options = {}) {
+  if (!FLAGGED_EVENTS_ENDPOINT || typeof fetch !== 'function') return;
+  
+  const normalizedCategory = category || ai.category || 'unsafe_content';
+  const summary = ai.summary || ai.title || ai.reason || `Potential ${normalizedCategory} content detected`;
+  const severityLabel = (ai.severity || inferSeverityFromCategory(normalizedCategory, ai.confidence || 50)).toString().toLowerCase();
+  const contentExcerpt = normalizeExcerpt(options.explanation || ai.reason || ai.summary || summary);
+  
+  const payload = {
+    category: normalizedCategory,
+    summary,
+    reason: ai.reason || summary,
+    what_to_do: ai.what_to_do || 'Proceed with caution.',
+    page_url: window.location.href,
+    source: window.location.hostname,
+    content_excerpt: contentExcerpt,
+    severity: severityLabel,
+    detected_at: new Date().toISOString(),
+    user_id: options.userId || null,
+    metadata: {
+      sessionId: SENTRY_SESSION_ID,
+      notificationId: options.notificationId || null,
+      confidence: ai.confidence ?? null
+    }
+  };
+  
+  if (payload.metadata) {
+    Object.keys(payload.metadata).forEach((key) => {
+      if (payload.metadata[key] === null || payload.metadata[key] === undefined) {
+        delete payload.metadata[key];
+      }
+    });
+    if (Object.keys(payload.metadata).length === 0) {
+      delete payload.metadata;
+    }
+  }
+  
+  try {
+    await fetch(FLAGGED_EVENTS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    console.warn('Sentry: Unable to sync flagged notification', error);
+  }
+}
 
 // Track consecutive skipped scans to avoid log spam
 let consecutiveSkippedScans = 0;

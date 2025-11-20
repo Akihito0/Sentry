@@ -1,0 +1,17 @@
+{
+  "name": "sentry",
+  "version": "1.0.0",
+  "description": "Sentry - AI-powered content safety extension",
+  "scripts": {
+    "start": "node start.js",
+    "dev": "node start.js",
+    "backend": "cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload",
+    "frontend": "cd extension/ai-extension && npm run dev",
+    "build": "cd extension/ai-extension && npm run build",
+    "install-all": "npm install && cd extension/ai-extension && npm install && cd ../../backend && pip install -r requirements.txt"
+  },
+  "keywords": ["sentry", "content-safety", "ai", "extension"],
+  "author": "",
+  "license": "ISC"
+}
+

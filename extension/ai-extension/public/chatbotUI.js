@@ -1,6 +1,14 @@
 // This script is dedicated to creating and managing the floating chatbot UI.
 /*global chrome */
 
+// ⚠️ DO NOT RUN CHATBOT ON LOCALHOST DEV SITES
+if (window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.includes('localhost:')) {
+  console.log("Sentry Chatbot: Skipping on localhost/dashboard");
+  throw new Error("Sentry chatbot intentionally disabled on localhost");
+}
+
 function createChatbot() {
   // --- 1. Create UI Elements ---
   const chatButton = document.createElement('div');
