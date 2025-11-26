@@ -1,1985 +1,5 @@
 [
   {
-    "category": "scam",
-    "summary": "Potential Scam URL",
-    "reason": "The URL 'goo.gl.scam-site' explicitly contains 'scam-site' and attempts to impersonate a legitimate URL shortener ('goo.gl'). This strongly suggests a phishing or scam attempt.",
-    "what_to_do": "Do not click this link. Block access to this domain if possible. Report this URL as malicious.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "goo.gl.scam-site",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.775000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "A",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.776000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.776000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.777000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.778000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:23.779000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:29.088000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:29.089000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:29.089000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Block Adult Content",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:35.293000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "H3",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:36.243000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:36.244000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5173/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-19T16:35:36.244000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763569921113-5a8b2db8",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:09:17.592000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:09:17.595000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:09:17.594000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:10:17.357000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:10:17.359000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:10:17.361000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:11:17.363000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:11:17.364000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:11:17.365000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:12:17.358000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:12:17.359000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:12:17.361000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:13:17.362000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:13:17.364000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:13:17.365000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:14:17.370000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:14:17.373000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:14:17.375000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:15:17.362000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:15:17.363000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:15:17.365000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:13.668000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:13.669000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:13.670000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:33.546000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:33.549000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5175/dashboard",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:17:33.547000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763611696813-045d860d",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "CeeLo Green - FUCK YOU (Official Video) YouTube \u00b7 CeeLo Green 129.9M+ views \u00b7 15 years ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.551000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You YouTube \u00b7 Lily Allen 1.4M+ views \u00b7 8 years ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.548000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Lily Allen | Fuck You (Official Video - Explicit Version) YouTube \u00b7 Lily Allen 39.4M+ views \u00b7 11 years ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.552000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "FUCK YOU Definition & Meaning Dictionary.com https://www.dictionary.com \u203a browse \u203a fuck-you",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.558000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You songs YouTube \u00b7 What_If401 410+ followers",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.562000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "\ud83d\udcfa Lily Allen - Fuck You [2008] | Lily Allen Facebook \u00b7 Lily Allen 750+ reactions \u00b7 1 year ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.559000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You - song and lyrics by Lily Allen Spotify https://open.spotify.com \u203a track",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.554000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You (Lily Allen song) Wikipedia https://en.wikipedia.org \u203a wiki \u203a Fuck_You_(Lily_Alle...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.556000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Lily Allen \u2013 Fuck You Lyrics Genius https://genius.com \u203a Lily-allen-fuck-you-lyrics",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.564000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.565000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "The phrase \"fuck you\" is an English phrase considered highly",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.808000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "DIV",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "3:40 YouTube \u2022 Lily Allen - Topic Fuck You",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.567000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:37.923000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.277000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "FUCK definition and meaning | Collins English Dictionary",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.303000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "DIV",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.275000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.202000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Nov 16, 2025 \u2014 fuck * exclamation. Fuck is used to express anger or annoyance. [very rude, feelings] * exclamation. If someone uses a...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.304000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "FUCK YOU Definition & Meaning - Dictionary.com",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.306000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "DIV",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "\"Fuck You\" (stylized as \"Fuck You!\" or \"F**k You!\"), known as \"Forget You\" or \"FU\" for the clean versions, is a song by American s...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.312000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "fuck you. * Also get fucked; go fuck yourself. A curse meaning \u201cgo to hell.\u201d For example, Fuck you\u2014go get your own dinner! or Get ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.308000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Fuck You (CeeLo Green song) - Wikipedia",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:38.309000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "DIV",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Lily Allen | F You (Official Video - Clean Version)",
-    "reason": "The title includes the phrase 'F You', which is a widely recognized euphemism for strong profanity ('Fuck You'), despite being labeled as a 'Clean Version'. The use of this euphemism in the title itself can be considered profane.",
-    "what_to_do": "Content containing euphemisms for profanity, especially in titles, should be flagged for review. Consider implementing stricter filters for common profane abbreviations and euphemisms.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Lily Allen | F You (Official Video - Clean Version) YouTube \u00b7 Lily Allen 20.1M+ views \u00b7 16 years ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:18:55.065000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "A",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 90
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-    "what_to_do": "Consider the impact of such language. Click to view if you choose to proceed.",
-    "page_url": "https://www.google.com/search?q=fuck+you&oq=fuck+you&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDEzNzlqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Additionally, \"Fuck You\" is the title of several popular songs, including:",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:47.655000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612317533-ca832b7a",
-      "elementTag": "SPAN",
-      "pageTitle": "fuck you - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This content explicitly states that inappropriate language has been detected, indicating a violation of content safety policies.",
-    "what_to_do": "Review the context of the detected language and take appropriate action based on severity and policy.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Inappropriate Language Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.533000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 100
-    }
-  },
-  {
-    "category": "scam",
-    "summary": "Potential Scam Link Detected",
-    "reason": "The URL 'goo.gl.scam-site' explicitly contains 'scam-site,' indicating a very high likelihood of it being a malicious link intended for phishing or other fraudulent activities.",
-    "what_to_do": "Do not click on this link. Ensure it is blocked and report it if possible.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "goo.gl.scam-site",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.528000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "A",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "disturbing",
-    "summary": "Suspicious Text Detected",
-    "reason": "This content indicates that 'Suspicious text' was detected from an 'Unknown' user on Discord. 'Suspicious' implies potential harm, ranging from scams to harassment or other policy violations, requiring investigation.",
-    "what_to_do": "Review the suspicious text and its context immediately to determine the nature of the threat (e.g., scam, harassment, inappropriate content) and take action.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Sarah: Suspicious text detected in \"Discord\" from user `Unknown#9876` 13h 1min ago",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.543000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 85
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Profanity Euphemism in Title",
-    "reason": "The title 'Lily Allen | F You' uses 'F You' which is a widely recognized euphemism for strong profanity. Even with 'Clean Version' specified, the euphemism itself is problematic and implies explicit themes.",
-    "what_to_do": "Review the content to ensure it aligns with content safety guidelines. Consider stricter filtering for euphemisms of profanity.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Lily Allen | F You (Official Video - Clean Version)",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.531000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 90
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This content explicitly states that inappropriate language has been detected, indicating a violation of content safety policies.",
-    "what_to_do": "Review the context of the detected language and take appropriate action based on severity and policy.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Inappropriate Language Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.538000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 100
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This content explicitly states that inappropriate language has been detected, indicating a violation of content safety policies.",
-    "what_to_do": "Review the context of the detected language and take appropriate action based on severity and policy.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Inappropriate Language Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.537000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 100
-    }
-  },
-  {
-    "category": "profanity",
-    "summary": "Inappropriate Language Detected",
-    "reason": "This content explicitly states that inappropriate language has been detected, indicating a violation of content safety policies.",
-    "what_to_do": "Review the context of the detected language and take appropriate action based on severity and policy.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Inappropriate Language Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:19:56.535000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 100
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub: Free Porn Videos & Sex Movies - Porno, XXX, Porn Tube Pornhub https://www.pornhub.com",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.591000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "18-25 Porn Videos",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.594000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Hottest Porn Videos in the USA",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.595000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Most Popular Porn Categories",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.597000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Reality Porn Videos",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.598000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "More results from pornhub.com \u00bb",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.600000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Videos tagged \u00ab pornhub \u00bb (32 results) Report XVideos https://www.xvideos.com \u203a tags \u203a pornhub",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.602000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub Business & Human Rights Resource Centre https://www.business-humanrights.org \u203a companies \u203a por...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.604000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub Porn Videos | YouPorn.com Youporn https://www.youporn.com \u203a porntags \u203a pornhub",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.605000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub says UK visitors down 77% since age checks ... BBC https://www.bbc.com \u203a news \u203a articles",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.606000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub - Free Porn Videos & XXX Movies pornhub.xxx https://www.pornhub.xxx",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.609000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
-    "source": "www.google.com",
-    "content_excerpt": "Having someone recommend you free porn is like having ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:12.613000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612412567-65a40319",
-      "elementTag": "DIV",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Reality Porn Videos",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.821000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Most Popular Porn Categories",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.820000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub: Free Porn Videos & Sex Movies - Porno, XXX, Porn Tube Pornhub https://www.pornhub.com",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.814000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Hottest Porn Videos in the USA",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.818000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "18-25 Porn Videos",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.817000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "H3",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "More results from pornhub.com \u00bb",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.823000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Videos tagged \u00ab pornhub \u00bb (32 results) Report XVideos https://www.xvideos.com \u203a tags \u203a pornhub",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.825000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub Business & Human Rights Resource Centre https://www.business-humanrights.org \u203a companies \u203a por...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.826000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub Porn Videos | YouPorn.com Youporn https://www.youporn.com \u203a porntags \u203a pornhub",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.828000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub says UK visitors down 77% since age checks ... BBC https://www.bbc.com \u203a news \u203a articles",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.830000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub - Free Porn Videos & XXX Movies pornhub.xxx https://www.pornhub.xxx",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.832000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "A",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "https://www.google.com/search?q=pornhub&oq=pornhub&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDzSAQgxNzgzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8&no_sw_cr=1&zx=1763612415118&sssc=1&vet=12ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE..i&ved=2ahUKEwiC3YCb8P-QAxX-oK8BHUg6A9gQm-ELegQICBAE",
-    "source": "www.google.com",
-    "content_excerpt": "Having someone recommend you free porn is like having ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:15.835000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612415798-b4c7f00a",
-      "elementTag": "DIV",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:24.677000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Potentially Inappropriate Image",
-    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
-    "what_to_do": "Click to view if you trust the source.",
-    "page_url": "https://www.google.com/search?sca_esv=ce0ce1db3a943257&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZud1z6kQpMfoEdCJxnpm_3WBcADgXS0kQ7L92bqYkFCGs4piG0mmPDgZFV1TtUMvZylWLac4HWHOf637Sr7sPA6gkkAJ1CcG0nt1IV71otXM-z01qTlqY-gmA0H2y7yxveMJKsDXQaj2rPTz9QuDamknLk7AQEg51wyYDwJmmlCm9kO9XZPUOb2Euv-ckNC2MJsInbQ&q=pornhub&sa=X&ved=2ahUKEwie3L-c8P-QAxU2iq8BHYVHEZEQtKgLegQIHhAB&biw=1920&bih=945&dpr=1",
-    "source": "www.google.com",
-    "content_excerpt": "most searched categories ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:19.797000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612419763-9daa684d",
-      "elementTag": "IMG",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 75
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Potentially Inappropriate Image",
-    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
-    "what_to_do": "Click to view if you trust the source.",
-    "page_url": "https://www.google.com/search?sca_esv=ce0ce1db3a943257&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZud1z6kQpMfoEdCJxnpm_3WBcADgXS0kQ7L92bqYkFCGs4piG0mmPDgZFV1TtUMvZylWLac4HWHOf637Sr7sPA6gkkAJ1CcG0nt1IV71otXM-z01qTlqY-gmA0H2y7yxveMJKsDXQaj2rPTz9QuDamknLk7AQEg51wyYDwJmmlCm9kO9XZPUOb2Euv-ckNC2MJsInbQ&q=pornhub&sa=X&ved=2ahUKEwie3L-c8P-QAxU2iq8BHYVHEZEQtKgLegQIHhAB&biw=1920&bih=945&dpr=1",
-    "source": "www.google.com",
-    "content_excerpt": "internet habits of 2024",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:19.799000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612419763-9daa684d",
-      "elementTag": "IMG",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 75
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Potentially Inappropriate Image",
-    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
-    "what_to_do": "Click to view if you trust the source.",
-    "page_url": "https://www.google.com/search?sca_esv=ce0ce1db3a943257&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZud1z6kQpMfoEdCJxnpm_3WBcADgXS0kQ7L92bqYkFCGs4piG0mmPDgZFV1TtUMvZylWLac4HWHOf637Sr7sPA6gkkAJ1CcG0nt1IV71otXM-z01qTlqY-gmA0H2y7yxveMJKsDXQaj2rPTz9QuDamknLk7AQEg51wyYDwJmmlCm9kO9XZPUOb2Euv-ckNC2MJsInbQ&q=pornhub&sa=X&ved=2ahUKEwie3L-c8P-QAxU2iq8BHYVHEZEQtKgLegQIHhAB&biw=1920&bih=945&dpr=1",
-    "source": "www.google.com",
-    "content_excerpt": "Make porn boring and normal, says ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:19.801000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612419763-9daa684d",
-      "elementTag": "IMG",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 75
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:24.683000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Potentially Inappropriate Image",
-    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
-    "what_to_do": "Click to view if you trust the source.",
-    "page_url": "https://www.google.com/search?sca_esv=ce0ce1db3a943257&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZud1z6kQpMfoEdCJxnpm_3WBcADgXS0kQ7L92bqYkFCGs4piG0mmPDgZFV1TtUMvZylWLac4HWHOf637Sr7sPA6gkkAJ1CcG0nt1IV71otXM-z01qTlqY-gmA0H2y7yxveMJKsDXQaj2rPTz9QuDamknLk7AQEg51wyYDwJmmlCm9kO9XZPUOb2Euv-ckNC2MJsInbQ&q=pornhub&sa=X&ved=2ahUKEwie3L-c8P-QAxU2iq8BHYVHEZEQtKgLegQIHhAB&biw=1920&bih=945&dpr=1",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub - NamuWiki",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:19.804000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612419763-9daa684d",
-      "elementTag": "IMG",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 75
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:24.686000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Potentially Inappropriate Image",
-    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
-    "what_to_do": "Click to view if you trust the source.",
-    "page_url": "https://www.google.com/search?sca_esv=ce0ce1db3a943257&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZud1z6kQpMfoEdCJxnpm_3WBcADgXS0kQ7L92bqYkFCGs4piG0mmPDgZFV1TtUMvZylWLac4HWHOf637Sr7sPA6gkkAJ1CcG0nt1IV71otXM-z01qTlqY-gmA0H2y7yxveMJKsDXQaj2rPTz9QuDamknLk7AQEg51wyYDwJmmlCm9kO9XZPUOb2Euv-ckNC2MJsInbQ&q=pornhub&sa=X&ved=2ahUKEwie3L-c8P-QAxU2iq8BHYVHEZEQtKgLegQIHhAB&biw=1920&bih=945&dpr=1",
-    "source": "www.google.com",
-    "content_excerpt": "Pornhub Shorties, a scrollable vertical ...",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:19.802000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612419763-9daa684d",
-      "elementTag": "IMG",
-      "pageTitle": "pornhub - Google Search",
-      "confidence": 75
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:24.690000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:24.688000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Block Adult Content",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:41.657000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "H3",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:46.129000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "H2",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Prevent access to websites with explicit content.",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:47.340000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:20:48.105000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763612324927-04ab6c83",
-      "elementTag": "H2",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
-    "category": "explicit_content",
-    "summary": "Adult Content Detected",
-    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
-    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-    "page_url": "http://localhost:5176/dashboard#",
-    "source": "localhost",
-    "content_excerpt": "Adult Content Detected",
-    "severity": "high",
-    "detected_at": "2025-11-20T04:37:47.244000+00:00",
-    "user_id": null,
-    "metadata": {
-      "sessionId": "1763613441276-1110bdc6",
-      "elementTag": "P",
-      "pageTitle": "Sentry | Dashboard",
-      "confidence": 95
-    }
-  },
-  {
     "category": "explicit_content",
     "summary": "Adult Content Detected",
     "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
@@ -4497,6 +2517,1986 @@
       "elementTag": "P",
       "pageTitle": "Sentry | Dashboard",
       "confidence": 100
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:05.539000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:05.541000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam Link",
+    "reason": "The URL contains 'scam-site' in its domain, strongly indicating a deceptive or malicious link. 'goo.gl' is also a known URL shortener often used for scams.",
+    "what_to_do": "Do not click this link. Block it immediately and warn others. This link is highly suspicious and could lead to phishing or malware.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:26.378000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:49.402000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:49.403000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Scam Reference",
+    "reason": "The content explicitly contains the phrase 'Potential Scam Link', directly referring to scam activity. This indicates content related to scams.",
+    "what_to_do": "Flag this content for review. Determine the context to see if it's a warning against a scam or an attempt to describe/promote scam-related information.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam Link",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:19:59.577000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:20:34.704000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:20:34.704000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:20:34.705000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Scam Reference",
+    "reason": "The content explicitly contains the phrase 'Potential Scam Link', directly referring to scam activity. This indicates content related to scams.",
+    "what_to_do": "Flag this content for review. Determine the context to see if it's a warning against a scam or an attempt to describe/promote scam-related information.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam Link",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:20:36.404000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Direct Scam Reference",
+    "reason": "The content explicitly states 'Scam Reference,' indicating a direct mention or association with fraudulent activities. This phrase itself flags the content as highly suspicious and potentially harmful.",
+    "what_to_do": "Exercise extreme caution. Do not interact with or follow any instructions from this content. If this came from an unknown source, block and report it immediately. Investigate any related context to ensure safety.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Scam Reference",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:20:40.954000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 100
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam Link",
+    "reason": "The URL contains 'scam-site' in its domain, strongly indicating a deceptive or malicious link. 'goo.gl' is also a known URL shortener often used for scams.",
+    "what_to_do": "Do not click this link. Block it immediately and warn others. This link is highly suspicious and could lead to phishing or malware.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:18.391000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Direct Scam Reference",
+    "reason": "The content explicitly states 'Scam Reference,' indicating a direct mention or association with fraudulent activities. This phrase itself flags the content as highly suspicious and potentially harmful.",
+    "what_to_do": "Exercise extreme caution. Do not interact with or follow any instructions from this content. If this came from an unknown source, block and report it immediately. Investigate any related context to ensure safety.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Scam Reference",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:18.392000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 100
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:18.393000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:18.393000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:18.394000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Direct Scam Reference Detected",
+    "reason": "The content explicitly mentions or refers to a 'scam', indicating a high likelihood of fraudulent or deceptive activity.",
+    "what_to_do": "Exercise extreme caution. Do not interact with the source of this content, click any links, or provide personal information. Report this content if it appeared in a larger context or if it's an attempt to defraud.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Direct Scam Reference",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:21:21.543000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166723281-77cd9f81",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 99
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:26:14.721000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166902686-0b5dee2e",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:26:14.725000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166902686-0b5dee2e",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:26:14.805000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166902686-0b5dee2e",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam Link",
+    "reason": "The content includes a domain name explicitly labeled 'scam-site' and uses a URL shortener prefix commonly abused for phishing, indicating a high likelihood of a scam or malicious link.",
+    "what_to_do": "Do not click this link. Block access to this domain if possible. Investigate the source.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:26:32.477000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764166902686-0b5dee2e",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 100
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:50:17.123000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168579571-999b5942",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:50:17.127000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168579571-999b5942",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:50:17.125000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168579571-999b5942",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:50:40.794000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168579571-999b5942",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?q=facebook&oq=facebook&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQABiPAjIHCAIQABiPAtIBCDEyOTVqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Image of Meta",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:55:22.619000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168922567-d0865659",
+      "elementTag": "IMG",
+      "pageTitle": "facebook - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?q=facebook&oq=facebook&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQABiPAjIHCAIQABiPAtIBCDEyOTVqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Image of Meta",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:55:22.621000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168922567-d0865659",
+      "elementTag": "IMG",
+      "pageTitle": "facebook - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?q=facebook&oq=facebook&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQABiPAjIHCAIQABiPAtIBCDEyOTVqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Media source: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAKgAqAMBIgACEQEDEQH/xAAcAAABBAM",
+    "severity": "high",
+    "detected_at": "2025-11-26T14:55:22.623000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764168922567-d0865659",
+      "elementTag": "IMG",
+      "pageTitle": "facebook - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:01:06.831000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169241457-4b465f57",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:01:06.832000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169241457-4b465f57",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Malicious URL detected",
+    "reason": "This URL contains 'scam-site' directly in its domain, clearly indicating it is a malicious or phishing website designed to deceive users.",
+    "what_to_do": "Do not click this link or visit this site. If you encountered this link, report it to the platform it was found on.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:01:35.747000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169241457-4b465f57",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 100
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:38.780000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:38.781000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:40.831000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:47.790000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:57.056000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:57.055000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:47.791000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:09:49.409000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:25.608000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:25.612000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:25.615000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:25.618000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:25.622000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The URL contains 'scam-site' which is a strong indicator of a malicious, phishing, or scam website. Shortened URLs can also be used to obscure the true destination.",
+    "what_to_do": "Do NOT click on this link. If it was received from an unknown sender, block them and report the content as phishing. Scan your device for malware if you accidentally clicked it.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:10:36.145000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?gs_ssp=eJzj4tVP1zc0LEsxiy-xrKg0YPTizMhMLUosSs6oBABsBwiP&q=hierarchy&oq=hie&gs_lcrp=EgZjaHJvbWUqDQgBEC4Y1AIYsQMYgAQyBggAEEUYOTINCAEQLhjUAhixAxiABDIKCAIQABixAxiABDIKCAMQABixAxiABDIKCAQQABixAxiABDIKCAUQABixAxiABDIKCAYQABixAxiABDIKCAcQABixAxiABDIHCAgQABiPAjIHCAkQABiPAtIBCTE2MTE2ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Game poster image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:11:35.609000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169895554-25b0e258",
+      "elementTag": "IMG",
+      "pageTitle": "hierarchy - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?gs_ssp=eJzj4tVP1zc0LEsxiy-xrKg0YPTizMhMLUosSs6oBABsBwiP&q=hierarchy&oq=hie&gs_lcrp=EgZjaHJvbWUqDQgBEC4Y1AIYsQMYgAQyBggAEEUYOTINCAEQLhjUAhixAxiABDIKCAIQABixAxiABDIKCAMQABixAxiABDIKCAQQABixAxiABDIKCAUQABixAxiABDIKCAYQABixAxiABDIKCAcQABixAxiABDIHCAgQABiPAjIHCAkQABiPAtIBCTE2MTE2ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Meet the Cast of 'Hierarchy' | Netflix [ENG SUB] - YouTube",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:11:35.612000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169895554-25b0e258",
+      "elementTag": "IMG",
+      "pageTitle": "hierarchy - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "This image has been flagged based on its description or source. It may contain inappropriate content.",
+    "what_to_do": "Click to view if you trust the source.",
+    "page_url": "https://www.google.com/search?gs_ssp=eJzj4tVP1zc0LEsxiy-xrKg0YPTizMhMLUosSs6oBABsBwiP&q=hierarchy&oq=hie&gs_lcrp=EgZjaHJvbWUqDQgBEC4Y1AIYsQMYgAQyBggAEEUYOTINCAEQLhjUAhixAxiABDIKCAIQABixAxiABDIKCAMQABixAxiABDIKCAQQABixAxiABDIKCAUQABixAxiABDIKCAYQABixAxiABDIKCAcQABixAxiABDIHCAgQABiPAjIHCAkQABiPAtIBCTE2MTE2ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8",
+    "source": "www.google.com",
+    "content_excerpt": "Lend me your shirt\" | Hierarchy Ep 1 | Netflix [ENG SUB ...",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:11:35.614000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169895554-25b0e258",
+      "elementTag": "IMG",
+      "pageTitle": "hierarchy - Google Search",
+      "confidence": 75
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The URL contains 'scam-site' which is a strong indicator of a malicious, phishing, or scam website. Shortened URLs can also be used to obscure the true destination.",
+    "what_to_do": "Do NOT click on this link. If it was received from an unknown sender, block them and report the content as phishing. Scan your device for malware if you accidentally clicked it.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:51.391000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:51.393000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:59.334000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:59.338000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The content explicitly states it is a \"Potential Scam/Phishing URL,\" indicating a malicious link designed to trick users into revealing sensitive information or installing malware.",
+    "what_to_do": "Do not click on this URL. Report it to platform administrators if possible.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam/Phishing URL",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:59.341000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 98
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:13:59.335000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The URL contains 'scam-site' which is a strong indicator of a malicious, phishing, or scam website. Shortened URLs can also be used to obscure the true destination.",
+    "what_to_do": "Do NOT click on this link. If it was received from an unknown sender, block them and report the content as phishing. Scan your device for malware if you accidentally clicked it.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.420000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The content explicitly states it is a \"Potential Scam/Phishing URL,\" indicating a malicious link designed to trick users into revealing sensitive information or installing malware.",
+    "what_to_do": "Do not click on this URL. Report it to platform administrators if possible.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam/Phishing URL",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.437000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 98
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.443000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.446000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.451000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:12.458000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:30.496000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:30.664000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:30.834000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The content explicitly states it is a \"Potential Scam/Phishing URL,\" indicating a malicious link designed to trick users into revealing sensitive information or installing malware.",
+    "what_to_do": "Do not click on this URL. Report it to platform administrators if possible.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam/Phishing URL",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:30.862000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 98
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:14:30.853000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:15:14.433000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam/Phishing URL",
+    "reason": "The content explicitly states it is a \"Potential Scam/Phishing URL,\" indicating a malicious link designed to trick users into revealing sensitive information or installing malware.",
+    "what_to_do": "Do not click on this URL. Report it to platform administrators if possible.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potential Scam/Phishing URL",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:15:16.402000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 98
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:15:16.404000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:15:16.406000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Potentially Inappropriate Image",
+    "reason": "The content describes an image as \"Potentially Inappropriate,\" indicating it may contain explicit, violent, or otherwise unsuitable material.",
+    "what_to_do": "Do not view or share this content. Consider blocking the source if it was unsolicited.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Potentially Inappropriate Image",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:15:16.409000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764169752670-1ea957a0",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:19:55.441000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:20:06.631000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:20:16.437000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:20:16.442000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:13.716000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:13.719000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:13.724000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Potential Scam URL",
+    "reason": "The URL explicitly contains 'scam-site' and uses a URL shortener prefix, both strong indicators of a scam or phishing attempt.",
+    "what_to_do": "Do not click this link. It is highly likely to be a scam or phishing attempt.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "goo.gl.scam-site",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.629000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "A",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "scam",
+    "summary": "Suspicious Text Detection Alert",
+    "reason": "This content describes the detection of 'Suspicious text' from an unknown user on Discord, indicating a potential security or scam risk.",
+    "what_to_do": "Review the context of the detected text. Consider blocking or reporting the user if the content poses a threat.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Sarah: Suspicious text detected in \"Discord\" from user `Unknown#9876` 13h 1min ago",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.633000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 90
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.636000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.640000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.643000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.646000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:32.649000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:33.958000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:35.763000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:35.766000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:21:35.764000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:22:12.153000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:23:27.615000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H2",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:23:29.463000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H2",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:21.301000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:21.302000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:21.300000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Block Adult Content",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:30.256000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "H3",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:32.412000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:32.414000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:25:32.415000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:26:13.413000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:26:13.416000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:26:13.419000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:27:46.712000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:27:46.715000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:27:46.717000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:28:46.397000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:28:46.398000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:28:46.400000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:29:25.711000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:29:25.712000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
+    }
+  },
+  {
+    "category": "explicit_content",
+    "summary": "Adult Content Detected",
+    "reason": "This content contains or references explicit adult material that is not appropriate for general viewing.",
+    "what_to_do": "Please navigate away from this content. Click to view if you're certain you want to proceed.",
+    "page_url": "http://localhost:5173/dashboard#",
+    "source": "localhost",
+    "content_excerpt": "Adult Content Detected",
+    "severity": "high",
+    "detected_at": "2025-11-26T15:29:25.713000+00:00",
+    "user_id": null,
+    "metadata": {
+      "sessionId": "1764170292982-75a724c1",
+      "elementTag": "P",
+      "pageTitle": "Sentry | Dashboard",
+      "confidence": 95
     }
   }
 ]

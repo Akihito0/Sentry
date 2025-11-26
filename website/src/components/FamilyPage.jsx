@@ -9,6 +9,13 @@ import useFlaggedReports, {
 
 const FamilyPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [familyMembers, setFamilyMembers] = useState([
+    { id: 1, name: 'Jordan', role: 'child', parentId: null, status: 'Offline', lastSeen: '1 hour ago' },
+    { id: 2, name: 'Sarah', role: 'child', parentId: null, status: 'Offline', lastSeen: '1 hour ago' }
+  ]);
+  const [editingMemberId, setEditingMemberId] = useState(null);
+  const [selectedRole, setSelectedRole] = useState('all');
+  
   const {
     flaggedReports,
     loadingReports,
@@ -24,145 +31,143 @@ const FamilyPage = () => {
     return flaggedReports.filter((report) => (report.category || '').toLowerCase() === selectedCategory.toLowerCase());
   }, [flaggedReports, selectedCategory]);
 
+  const handleRoleChange = (memberId, newRole) => {
+    setFamilyMembers(members =>
+      members.map(member =>
+        member.id === memberId
+          ? { ...member, role: newRole, parentId: newRole === 'parent' ? null : member.parentId }
+          : member
+      )
+    );
+    setEditingMemberId(null);
+  };
+
+  const handleParentAssignment = (childId, parentId) => {
+    setFamilyMembers(members =>
+      members.map(member =>
+        member.id === childId ? { ...member, parentId: parentId || null } : member
+      )
+    );
+  };
+
+  const filteredMembers = useMemo(() => {
+    if (selectedRole === 'all') return familyMembers;
+    return familyMembers.filter(member => member.role === selectedRole);
+  }, [familyMembers, selectedRole]);
+
+  const parents = useMemo(() => 
+    familyMembers.filter(member => member.role === 'parent'),
+    [familyMembers]
+  );
+
+  const getParentName = (parentId) => {
+    const parent = familyMembers.find(m => m.id === parentId);
+    return parent ? parent.name : 'None';
+  };
+
+  const categoryStats = useMemo(() => {
+    const flaggedTextFields = flaggedReports.map((report) =>
+      `${report.category || ''} ${report.summary || ''} ${report.reason || ''}`.toLowerCase()
+    );
+
+    const scamCount = flaggedTextFields.filter((text) =>
+      ['scam', 'fraud', 'suspicious', 'spam', 'lottery', 'crypto'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    const explicitCount = flaggedTextFields.filter((text) =>
+      ['explicit', 'adult', 'sexual', 'nsfw', 'inappropriate'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    const phishingCount = flaggedTextFields.filter((text) =>
+      ['phish', 'credential', 'login', 'password', 'bank', 'fake'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    return {
+      scam: scamCount,
+      explicit: explicitCount,
+      phishing: phishingCount
+    };
+  }, [flaggedReports]);
+
   return (
     <div className="family-page">
       <div className="family-content-only-container">
         <div className="family-section-grid">
 
-          <div className="card notification-center-card">
-            <h3>Notification Center</h3>
-            <div className="setting-row">
-              <span className="icon">🚨</span> Receive Real-time alerts
-              <label className="switch">
-                <input type="checkbox" defaultChecked />
-                <span className="slider round"></span>
-              </label>
+          <div className="card family-members-card">
+            <div className="family-members-header">
+              <h3>Family Members</h3>
+              <select 
+                value={selectedRole} 
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="role-filter"
+              >
+                <option value="all">All Roles</option>
+                <option value="parent">Parents</option>
+                <option value="child">Children</option>
+              </select>
             </div>
-            <div className="setting-row sub-setting">
-              Explicit Content Blurs
-              <label className="switch">
-                <input type="checkbox" defaultChecked />
-                <span className="slider round"></span>
-              </label>
-            </div>
-            <div className="setting-row sub-setting">
-              Scam Link Blocks
-              <label className="switch">
-                <input type="checkbox" />
-                <span className="slider round"></span>
-              </label>
-            </div>
-            <button className="link-button">Customize Alert Settings</button>
-          </div>
-
-          <div className="card flagged-report-card">
-            <div className="flagged-report-header">
-              <div>
-                <h3>Flagged Content Report</h3>
-                <p>Live summary of everything the browser extension has blurred.</p>
-              </div>
-              <div className="flagged-report-controls">
-                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
-                  <option value="all">All categories</option>
-                  {categoryFilters.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  className="refresh-button"
-                  onClick={() => refreshReports(true)}
-                  disabled={loadingReports}
-                >
-                  {loadingReports ? 'Syncing…' : 'Refresh'}
-                </button>
-              </div>
-            </div>
-
-            <div className="flagged-report-meta">
-              <span>{filteredReports.length || 0} alert{filteredReports.length === 1 ? '' : 's'} shown</span>
-              {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
-            </div>
-
-            <div className="flagged-report-stats">
-              {['high', 'medium', 'low'].map((level) => (
-                <div key={level} className={`flagged-report-stat stat-${level}`}>
-                  <span>{severityCopy[level]}</span>
-                  <strong>{severityStats[level] || 0}</strong>
+            <div className="member-list">
+              {filteredMembers.map((member) => (
+                <div key={member.id} className="member-item">
+                  <div className={`member-avatar avatar-${member.name.toLowerCase()}`}>
+                    {member.name.charAt(0)}
+                  </div>
+                  <div className="member-info">
+                    <div className="member-name-row">
+                      <h4>{member.name}</h4>
+                      <span className={`role-badge role-${member.role}`}>
+                        {member.role === 'parent' ? 'Parent' : 'Child'}
+                      </span>
+                    </div>
+                    <span>{member.status} - Last seen {member.lastSeen}</span>
+                    {member.role === 'child' && member.parentId && (
+                      <span className="parent-info"> Parent: {getParentName(member.parentId)}</span>
+                    )}
+                  </div>
+                  <div className="member-actions">
+                    <button 
+                      className="edit-role-button"
+                      onClick={() => setEditingMemberId(editingMemberId === member.id ? null : member.id)}
+                    >
+                      {editingMemberId === member.id ? '✕' : 'Edit Role'}
+                    </button>
+                    <button className="view-report-button">View Report</button>
+                  </div>
+                  
+                  {editingMemberId === member.id && (
+                    <div className="role-editor">
+                      <div className="role-selector">
+                        <label>Role:</label>
+                        <select 
+                          value={member.role}
+                          onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                        >
+                          <option value="parent">Parent</option>
+                          <option value="child">Child</option>
+                        </select>
+                      </div>
+                      
+                      {member.role === 'child' && (
+                        <div className="parent-selector">
+                          <label>Assign to Parent:</label>
+                          <select
+                            value={member.parentId || ''}
+                            onChange={(e) => handleParentAssignment(member.id, e.target.value ? parseInt(e.target.value) : null)}
+                          >
+                            <option value="">No parent assigned</option>
+                            {parents.map(parent => (
+                              <option key={parent.id} value={parent.id}>
+                                {parent.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
-              <div className="flagged-report-stat stat-total">
-                <span>Total</span>
-                <strong>{severityStats.total}</strong>
-              </div>
-            </div>
-
-            {reportError && (
-              <div className="flagged-report-error">
-                {reportError}. Showing the most recent cached data.
-              </div>
-            )}
-
-            <div className="flagged-report-list">
-              {loadingReports ? (
-                <div className="flagged-report-empty">Syncing flagged notifications…</div>
-              ) : filteredReports.length === 0 ? (
-                <div className="flagged-report-empty">No flagged notifications yet. Great job staying safe!</div>
-              ) : (
-                filteredReports.slice(0, 5).map((report, index) => {
-                  const key = report.id || `${report.detected_at || 'report'}-${index}`;
-                  const severity = (report.severity || 'medium').toLowerCase();
-                  return (
-                    <div className="flagged-report-item" key={key}>
-                      <div className="flagged-report-item-header">
-                        <span className={`severity-badge severity-${severity}`}>{severityCopy[severity] || severity}</span>
-                        <span className="flagged-report-category">{report.category || 'unsafe content'}</span>
-                        <span className="flagged-report-time">{formatRelativeTime(report.detected_at)}</span>
-                      </div>
-                      <p className="flagged-report-summary">
-                        {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected')}
-                      </p>
-                      <div className="flagged-report-footer">
-                        <a
-                          href={report.page_url || '#'}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flagged-report-source"
-                        >
-                          {getSourceLabel(report)}
-                        </a>
-                        <span className="flagged-report-guidance">
-                          {report.what_to_do || 'Review before sharing.'}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          <div className="card family-members-card">
-            <h3>Family Members</h3>
-            <div className="member-list">
-              <div className="member-item">
-                <div className="member-avatar avatar-jordan">J</div>
-                <div className="member-info">
-                  <h4>Jordan</h4>
-                  <span>Offline - Last seen 1 hour ago</span>
-                </div>
-                <button className="view-report-button">View Report</button>
-              </div>
-
-              <div className="member-item">
-                <div className="member-avatar avatar-sarah">S</div>
-                <div className="member-info">
-                  <h4>Sarah</h4>
-                  <span>Offline - Last seen 1 hour ago</span>
-                </div>
-                <button className="view-report-button">View Report</button>
-              </div>
             </div>
           </div>
 
@@ -185,6 +190,98 @@ const FamilyPage = () => {
                 <span className="alert-time">13h 1min ago</span>
               </p>
               <span className="help-icon">❓</span>
+            </div>
+          </div>
+
+          <div className="card flagged-report-card">
+            <div className="flagged-report-header">
+              <div>
+                <h3>Flagged Content Report</h3>
+                <p>Live summary of everything the browser extension has blurred.</p>
+              </div>
+              <div className="flagged-report-controls">
+                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+                  <option value="all">All Categories</option>
+                  {categoryFilters.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="refresh-button"
+                  onClick={() => refreshReports(true)}
+                  disabled={loadingReports}
+                >
+                  {loadingReports ? 'Syncing…' : 'Refresh'}
+                </button>
+              </div>
+            </div>
+
+            <div className="flagged-report-meta">
+              <span>{filteredReports.length || 0} alert{filteredReports.length === 1 ? '' : 's'} shown</span>
+              {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
+            </div>
+
+            <div className="flagged-report-stats">
+              <div className="flagged-report-stat stat-medium">
+                <span>Scam</span>
+                <strong>{categoryStats.scam}</strong>
+              </div>
+              <div className="flagged-report-stat stat-high">
+                <span>Explicit</span>
+                <strong>{categoryStats.explicit}</strong>
+              </div>
+              <div className="flagged-report-stat stat-low">
+                <span>Phishing</span>
+                <strong>{categoryStats.phishing}</strong>
+              </div>
+              <div className="flagged-report-stat stat-total">
+                <span>Total</span>
+                <strong>{categoryStats.scam + categoryStats.explicit + categoryStats.phishing}</strong>
+              </div>
+            </div>
+
+            {reportError && (
+              <div className="flagged-report-error">
+                {reportError}. Showing the most recent cached data.
+              </div>
+            )}
+
+            <div className="flagged-report-list">
+              {loadingReports ? (
+                <div className="flagged-report-empty">Syncing flagged notifications…</div>
+              ) : filteredReports.length === 0 ? (
+                <div className="flagged-report-empty">No flagged notifications yet. Great job staying safe!</div>
+              ) : (
+                filteredReports.slice(0, 5).map((report, index) => {
+                  const key = report.id || `${report.detected_at || 'report'}-${index}`;
+                  return (
+                    <div className="flagged-report-item" key={key}>
+                      <div className="flagged-report-item-header">
+                        <span className="flagged-report-category">{(report.category || 'unsafe content').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+                        <span className="flagged-report-time">{formatRelativeTime(report.detected_at)}</span>
+                      </div>
+                      <p className="flagged-report-summary">
+                        {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected')}
+                      </p>
+                      <div className="flagged-report-footer">
+                        <a
+                          href={report.page_url || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flagged-report-source"
+                        >
+                          {getSourceLabel(report)}
+                        </a>
+                        <span className="flagged-report-guidance">
+                          {report.what_to_do || 'Review before sharing.'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -226,30 +323,6 @@ const FamilyPage = () => {
             </div>
           </div>
 
-          <div className="card content-filtering-card">
-            <h3>Content Filtering</h3>
-            <p>Custom Keywords to Block</p>
-            <div className="keyword-tags">
-              <span className="tag">bomb <span className="tag-close">x</span></span>
-              <span className="tag">drugs <span className="tag-close">x</span></span>
-              <span className="tag">gore <span className="tag-close">x</span></span>
-            </div>
-
-            <div className="add-keyword-input">
-              <input type="text" placeholder="Add custom keyword..." />
-              <button className="add-button">Add</button>
-            </div>
-
-            <p>Whitelisted Websites</p>
-            <div className="whitelisted-sites">
-              <span className="tag">google.com <span className="tag-close">x</span></span>
-            </div>
-
-            <div className="add-site-input">
-              <input type="text" placeholder="Add website to whitelist..." />
-              <button className="add-button">Add Website</button>
-            </div>
-          </div>
 
         </div>
       </div>

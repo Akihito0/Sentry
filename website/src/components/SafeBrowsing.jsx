@@ -31,10 +31,6 @@ const SafeBrowsing = () => {
               <h3>Block Harmful Websites</h3>
               <p>Advanced protection that keeps you safe from cyber threats and attacks that aim to steal your personal information. <a href="#">Learn more</a></p>
             </div>
-            <label className="toggle-switch">
-              <input type="checkbox" defaultChecked aria-label="Block Harmful Websites" />
-              <span className="slider"></span> {/* Removed 'round' if not needed */}
-            </label>
           </div>
 
           <div className="card security-card">
@@ -42,10 +38,6 @@ const SafeBrowsing = () => {
               <h3>Safe Search</h3>
               <p>Icons will be displayed next to your search results to let you know if a website is safe or not before you click on it. <a href="#">Edit Safe Search</a></p>
             </div>
-            <label className="toggle-switch">
-              <input type="checkbox" defaultChecked aria-label="Safe Search" />
-              <span className="slider"></span>
-            </label>
           </div>
 
           <div className="card security-card">
@@ -53,10 +45,6 @@ const SafeBrowsing = () => {
               <h3>Warning alerts</h3>
               <p>Show warnings when visiting suspicious websites.</p>
             </div>
-            <label className="toggle-switch">
-              <input type="checkbox" defaultChecked aria-label="Warning Alerts" />
-              <span className="slider"></span>
-            </label>
           </div>
 
           <div className="card security-card">
@@ -64,10 +52,6 @@ const SafeBrowsing = () => {
               <h3>Chatbots</h3>
               <p>Icons will be displayed next to links inside chatbots to let you know if a website is safe or not before you click on it. <a href="#">Edit Chatbots</a></p>
             </div>
-            <label className="toggle-switch">
-              <input type="checkbox" defaultChecked aria-label="Chatbots Safety" />
-              <span className="slider"></span>
-            </label>
           </div>
         </div>
       </div>
@@ -80,10 +64,6 @@ const SafeBrowsing = () => {
               <h3>Block Adult Content</h3>
               <p>Prevent access to websites with explicit content.</p>
             </div>
-            <label className="toggle-switch disabled-toggle">
-              <input type="checkbox" disabled aria-label="Block Adult Content (Disabled)" />
-              <span className="slider"></span>
-            </label>
           </div>
 
           <div className="card content-card">

@@ -82,16 +82,6 @@ const RightSection = ({ userName, openFamilyView, reportsData }) => {
 
   return (
     <aside className="right-section">
-      <div className="top">
-        <div className="profile">
-          <div className="left">
-            <img src={profile} alt="Profile" />
-            <div className="user">
-              <h2>{userName}</h2>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="flagged-alert-card">
         <div className="flagged-alert-card-header">
@@ -138,14 +128,11 @@ const RightSection = ({ userName, openFamilyView, reportsData }) => {
           ) : (
             topReports.map((report, index) => {
               const key = report.id || `${report.detected_at || 'report'}-${index}`;
-              const severity = (report.severity || 'medium').toLowerCase();
+              const formattedCategory = (report.category || 'unsafe content').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
               return (
                 <div className="flagged-alert-item" key={key}>
                   <div className="flagged-alert-item-header">
-                    <span className={`flagged-alert-badge severity-${severity}`}>
-                      {severityCopy[severity] || severity}
-                    </span>
-                    <span className="flagged-alert-category">{report.category || 'unsafe content'}</span>
+                    <span className="flagged-alert-category">{formattedCategory}</span>
                     <span className="flagged-alert-time">{formatRelativeTime(report.detected_at)}</span>
                   </div>
                   <p className="flagged-alert-summary">
@@ -177,7 +164,7 @@ const RightSection = ({ userName, openFamilyView, reportsData }) => {
   );
 };
 
-const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_MEMBERS }) => {
+const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_MEMBERS, reportsData }) => {
   const {
     blockedWebsites = 0,
     phishingAttempts = 0,
@@ -185,74 +172,129 @@ const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_M
     blockedScams = 0
   } = analyticsData;
 
+  const {
+    flaggedReports = [],
+    loadingReports = false,
+    reportError = null,
+    lastSyncedAt = null,
+    severityStats = {},
+    refreshReports = () => {}
+  } = reportsData || {};
+
+  const topReports = useMemo(() => flaggedReports.slice(0, 3), [flaggedReports]);
+  const totalAlerts = severityStats.total || flaggedReports.length;
+
+  const categoryStats = useMemo(() => {
+    const flaggedTextFields = flaggedReports.map((report) =>
+      `${report.category || ''} ${report.summary || ''} ${report.reason || ''}`.toLowerCase()
+    );
+
+    const explicitCount = flaggedTextFields.filter((text) =>
+      ['explicit', 'adult', 'sexual', 'nsfw', 'inappropriate'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    const scamCount = flaggedTextFields.filter((text) =>
+      ['scam', 'fraud', 'suspicious', 'spam', 'lottery', 'crypto'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    const phishingCount = flaggedTextFields.filter((text) =>
+      ['phish', 'credential', 'login', 'password', 'bank', 'fake'].some((keyword) => text.includes(keyword))
+    ).length;
+
+    return {
+      explicit: explicitCount,
+      scam: scamCount,
+      phishing: phishingCount
+    };
+  }, [flaggedReports]);
+
   return (
     <main>
       <header>
         <button className="menu-btn" id="menu-open" onClick={openMenu}>
           <i className='bx bx-menu'></i>
         </button>
-        <h5>Hello <b>{userName}</b>, Welcome back!</h5>
+        <h5>Hello <b>{userName}</b>, Welcome Back!</h5>
       </header>
 
-      <div className="separator">
-        <div className="info">
-          <h3>Overview</h3>
+      <div className="flagged-alert-card">
+        <div className="flagged-alert-card-header">
+          <div>
+            <h4>Flagged Notifications</h4>
+            <p>Live feed from the Sentry browser extension</p>
+          </div>
+          <button
+            className="flagged-alert-refresh"
+            onClick={() => refreshReports(true)}
+            disabled={loadingReports}
+          >
+            {loadingReports ? 'Syncing…' : 'Refresh'}
+          </button>
+        </div>
+
+        <div className="flagged-alert-card-meta">
+          <span>
+            {totalAlerts ? `${totalAlerts} alert${totalAlerts === 1 ? '' : 's'} tracked` : 'No alerts yet'}
+          </span>
+          {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
+        </div>
+
+        <div className="flagged-alert-stats">
+          <div className="flagged-alert-stat stat-high">
+            <span>Explicit</span>
+            <strong>{categoryStats.explicit}</strong>
+          </div>
+          <div className="flagged-alert-stat stat-medium">
+            <span>Scam</span>
+            <strong>{categoryStats.scam}</strong>
+          </div>
+          <div className="flagged-alert-stat stat-low">
+            <span>Phishing</span>
+            <strong>{categoryStats.phishing}</strong>
+          </div>
+        </div>
+
+        {reportError && (
+          <div className="flagged-alert-error">
+            {reportError}. Showing the most recent cached data.
+          </div>
+        )}
+
+        <div className="flagged-alert-list">
+          {loadingReports ? (
+            <div className="flagged-alert-empty">Syncing flagged notifications…</div>
+          ) : !topReports.length ? (
+            <div className="flagged-alert-empty">No flagged notifications yet. Great job staying safe!</div>
+          ) : (
+            topReports.map((report, index) => {
+              const key = report.id || `${report.detected_at || 'report'}-${index}`;
+              const formattedCategory = (report.category || 'unsafe content').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+              return (
+                <div className="flagged-alert-item" key={key}>
+                  <div className="flagged-alert-item-header">
+                    <span className="flagged-alert-category">{formattedCategory}</span>
+                    <span className="flagged-alert-time">{formatRelativeTime(report.detected_at)}</span>
+                  </div>
+                  <p className="flagged-alert-summary">
+                    {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected', 140)}
+                  </p>
+                  <div className="flagged-alert-footer">
+                    <a
+                      href={report.page_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {getSourceLabel(report)}
+                    </a>
+                    <span>{report.what_to_do || 'Review before sharing.'}</span>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
-      <div className="analytics">
-        <div className="item">
-          <div className="progress">
-            <div className="info">
-              <h5>Blocked Websites:</h5>
-              <strong>{blockedWebsites}</strong>
-            </div>
-          </div>
-        </div>
-        <div className="item">
-          <div className="progress">
-            <div className="info">
-              <h5>Phishing Attempts:</h5>
-              <strong>{phishingAttempts}</strong>
-            </div>
-          </div>
-        </div>
-        <div className="item">
-          <div className="progress">
-            <div className="info">
-              <h5>Family Count: </h5>
-              <strong>{familyCount}</strong>
-            </div>
-          </div>
-        </div>
-        <div className="item">
-          <div className="progress">
-            <div className="info">
-              <h5>Blocked Scams:</h5>
-              <strong>{blockedScams}</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="separator">
-        <div className="info">
-          <h3>Family Members:</h3>
-        </div>
-      </div>
-
-      <div className="planning">
-        {familyMembers.map(name => (
-          <div className="item" key={name}>
-            <div className="left">
-              <div className="details">
-                <h5>{name}</h5>
-              </div>
-            </div>
-            <i className='bx bx-dots-vertical-rounded'></i>
-          </div>
-        ))}
-      </div>
     </main>
   );
 };
@@ -326,10 +368,8 @@ const DashboardView = () => {
     fetchUserName();
   }, []);
 
-  const showRightPanel = active === 0;
-
   return (
-    <div className={`container ${showRightPanel ? 'has-right-panel' : 'no-right-panel'}`}>
+    <div className="container no-right-panel">
       <Sidebar
         active={active}
         setActive={setActive}
@@ -345,16 +385,13 @@ const DashboardView = () => {
             userName={userName}
             analyticsData={analyticsData}
             familyMembers={FAMILY_MEMBERS}
+            reportsData={reportsData}
           />
         )}
         {active === 1 && <FamilyPage />}
         {active === 2 && <SafeBrowsing />}
         {active === 3 && <Settings />}
       </div>
-
-      {showRightPanel && (
-        <RightSection userName={userName} openFamilyView={() => setActive(1)} reportsData={reportsData} />
-      )}
     </div>
   );
 };

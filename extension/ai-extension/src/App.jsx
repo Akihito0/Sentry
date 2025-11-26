@@ -21,9 +21,11 @@ function App() {
       <div className="sentry-connect-section">
         <button
           className="sentry-connect-button"
-          onClick={() => alert("Connection to website coming soon!")}
+          onClick={() => {
+            chrome.tabs.create({ url: 'http://localhost:5173/dashboard' });
+          }}
         >
-          Connect to Website
+          To Dashboard
         </button>
       </div>
     </div>

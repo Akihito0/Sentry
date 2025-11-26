@@ -114,7 +114,14 @@ const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000 } = {}) => {
   const categoryFilters = useMemo(() => {
     const unique = new Set();
     flaggedReports.forEach((report) => {
-      if (report.category) unique.add(report.category);
+      if (report.category) {
+        // Capitalize category names for display
+        const formatted = report.category
+          .split('_')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        unique.add(formatted);
+      }
     });
     return Array.from(unique);
   }, [flaggedReports]);

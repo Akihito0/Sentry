@@ -1,18 +1,6 @@
 // Sentry Content Script: Scans page content and blocks inappropriate material
 // CSS files are loaded via the manifest.json content_scripts section
 
-// ⚠️ CRITICAL: DO NOT SCAN OUR OWN DASHBOARD OR LOCALHOST DEV SITES
-// This prevents the extension from flagging content on the Sentry dashboard itself
-if (window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1' ||
-    window.location.port === '5173' || 
-    window.location.port === '5174' ||
-    window.location.port === '5175') {
-  console.log("Sentry: Content scanning disabled on localhost dashboard");
-  // Stop execution immediately - don't run any scanning code
-  throw new Error("Sentry content script intentionally disabled on localhost");
-}
-
 /**
  * Debounce function to prevent excessive function calls
  * @param {Function} func The function to debounce

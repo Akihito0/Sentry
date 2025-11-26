@@ -23,13 +23,12 @@
 
 .family-page .family-section-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+  grid-template-columns: 1fr 1fr; 
   gap: 25px;
   grid-template-areas:
-    "notification-center flagged-report"
     "family-members flagged-report"
-    "critical-alerts activity-report"
-    "content-filtering content-filtering"; 
+    "critical-alerts flagged-report"
+    "activity-report flagged-report"; 
 }
 
 .family-page .family-section-grid .notification-center-card { grid-area: notification-center; }
@@ -623,4 +622,147 @@
 
 .family-page .content-filtering-card .add-button:hover {
   background-color: #096dd9; /* Darker blue on hover */
+}
+
+/* Family Hierarchy Styles */
+.family-page .family-members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.family-page .family-members-header h3 {
+  margin: 0;
+}
+
+.family-page .role-filter {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.family-page .family-members-card .member-item {
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+.family-page .member-item-main {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.family-page .member-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.family-page .role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.family-page .role-parent {
+  background-color: #e6f4ff;
+  color: #1890ff;
+  border: 1px solid #91caff;
+}
+
+.family-page .role-child {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.family-page .member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.family-page .parent-info {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.family-page .member-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.family-page .edit-role-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.family-page .edit-role-button:hover {
+  background-color: #e0e0e0;
+}
+
+.family-page .role-editor {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.family-page .role-selector,
+.family-page .parent-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.family-page .role-selector label,
+.family-page .parent-selector label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.family-page .role-selector select,
+.family-page .parent-selector select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.family-page .role-selector select:focus,
+.family-page .parent-selector select:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
