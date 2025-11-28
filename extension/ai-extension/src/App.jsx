@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-
+/*global chrome*/
 function App() {
   return (
     <div className="sentry-popup">
