@@ -97,6 +97,22 @@ async function analyzeImageWithBackendNSFW(imgElement, imageUrl, context) {
     console.log(`⚡ Sentry: Backend NSFW analysis completed in ${analysisTime}ms`);
     console.log(`   Result: ${result.safe ? '✅ Safe' : '🔞 Unsafe'} (${result.confidence}% confidence)`);
     
+    // If unsafe, add lazy loading context for on-demand educational explanation
+    if (!result.safe) {
+      result.originalContent = `NSFW image detected with ${result.confidence}% confidence`;
+      result.imageContext = { 
+        source: 'nsfw_model', 
+        confidence: result.confidence,
+        url: imageUrl.substring(0, 100),
+        surroundingText: context.substring(0, 150)
+      };
+      // Override generic messages with lazy loading prompts
+      result.title = result.title || "Inappropriate Image Blocked";
+      result.reason = "Click to learn why this image was blocked.";
+      result.what_to_do = "Tap to see details.";
+      result.category = "explicit_image";
+    }
+    
     return result;
     
   } catch (error) {
@@ -270,10 +286,12 @@ function instantImageBlock(imgElement, imgSrc, context) {
       return {
         safe: false,
         title: "Explicit Content Blocked",
-        reason: "This image is from an adult content website and has been automatically blocked.",
-        what_to_do: "Please navigate away from this content.",
-        category: "explicit_content",
-        confidence: 99
+        reason: "Click to learn why this image was blocked.",
+        what_to_do: "Tap to see details.",
+        category: "explicit_image",
+        confidence: 99,
+        originalContent: `Image from: ${domain}`,
+        imageContext: { source: 'porn_domain', domain: domain, url: imgSrc.substring(0, 100) }
       };
     }
   }
@@ -285,10 +303,12 @@ function instantImageBlock(imgElement, imgSrc, context) {
     return {
       safe: false,
       title: "Inappropriate Image Blocked",
-      reason: "The image URL contains explicit keywords and has been blocked.",
-      what_to_do: "This content is not appropriate for viewing.",
-      category: "explicit_content",
-      confidence: 95
+      reason: "Click to learn why this image was blocked.",
+      what_to_do: "Tap to see details.",
+      category: "explicit_image",
+      confidence: 95,
+      originalContent: `Image URL contains explicit keywords`,
+      imageContext: { source: 'explicit_url', url: imgSrc.substring(0, 100) }
     };
   }
   
@@ -299,10 +319,12 @@ function instantImageBlock(imgElement, imgSrc, context) {
     return {
       safe: false,
       title: "Suspicious Image Blocked",
-      reason: "The image filename suggests explicit content.",
-      what_to_do: "Use caution when viewing this content.",
-      category: "explicit_content",
-      confidence: 85
+      reason: "Click to learn why this image was blocked.",
+      what_to_do: "Tap to see details.",
+      category: "explicit_image",
+      confidence: 85,
+      originalContent: `Image filename suggests explicit content`,
+      imageContext: { source: 'suspicious_filename', url: imgSrc.substring(0, 100) }
     };
   }
   
@@ -314,10 +336,12 @@ function instantImageBlock(imgElement, imgSrc, context) {
     return {
       safe: false,
       title: "Inappropriate Image Blocked",
-      reason: "The image description contains explicit keywords.",
-      what_to_do: "This content has been flagged as inappropriate.",
-      category: "explicit_content",
-      confidence: 90
+      reason: "Click to learn why this image was blocked.",
+      what_to_do: "Tap to see details.",
+      category: "explicit_image",
+      confidence: 90,
+      originalContent: `Image description contains explicit keywords`,
+      imageContext: { source: 'explicit_alt', altText: altText.substring(0, 100) }
     };
   }
   
@@ -329,10 +353,12 @@ function instantImageBlock(imgElement, imgSrc, context) {
     return {
       safe: false,
       title: "Suspicious Content Blocked",
-      reason: "The image context strongly suggests explicit content.",
-      what_to_do: "Please be cautious with this content.",
-      category: "explicit_content",
-      confidence: 85
+      reason: "Click to learn why this image was blocked.",
+      what_to_do: "Tap to see details.",
+      category: "explicit_image",
+      confidence: 85,
+      originalContent: `Image context suggests explicit content`,
+      imageContext: { source: 'explicit_context', context: combinedText.substring(0, 150) }
     };
   }
   
@@ -345,8 +371,317 @@ function instantImageBlock(imgElement, imgSrc, context) {
 }
 
 /**
+ * Fetches an educational explanation for blocked content
+ * Uses the dedicated /educational-reason endpoint with the ACTUAL blocked content
+ * Gemini AI analyzes the real content to provide insightful, context-aware reasons
+ * @param {string} contentText - The ACTUAL blocked content text
+ * @param {string} category - The category of the block (profanity, scam, etc.)
+ * @returns {Promise<Object>} The educational response from Gemini AI
+ */
+async function fetchEducationalReason(contentText, category) {
+  console.log(`📚 Sentry: Fetching educational reason from Gemini AI for ${category}...`);
+  console.log(`📝 Content being analyzed: "${contentText?.substring(0, 100)}..."`);
+  
+  try {
+    // Send the ACTUAL blocked content to Gemini for insightful analysis
+    const response = await fetch(`${BACKEND_URL}/educational-reason`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category: category,
+        blocked_content: contentText || "",  // Send the FULL content (backend will truncate if needed)
+        is_image: false
+      })
+    });
+    
+    if (response.ok) {
+      const aiResponse = await response.json();
+      console.log(`✅ Sentry: Educational reason fetched from Gemini AI`);
+      return aiResponse;
+    } else {
+      throw new Error(`API returned status ${response.status}`);
+    }
+  } catch (error) {
+    console.log(`⚠️ Sentry: Could not fetch educational reason: ${error.message}, using fallback`);
+    // Fallback to pre-defined responses if API fails
+    return getFallbackEducationalResponse(category);
+  }
+}
+
+/**
+ * Returns a fallback educational response when API fails
+ * @param {string} category - The content category
+ * @returns {Object} Fallback educational response
+ */
+function getFallbackEducationalResponse(category) {
+  const fallbackResponses = {
+    'profanity': {
+      title: "Inappropriate Language Detected",
+      reason: "This content contains words that are considered offensive or vulgar. Such language can be hurtful to others and creates a negative online environment.",
+      what_to_do: "Consider how words affect others. Respectful communication builds better relationships."
+    },
+    'hate_speech': {
+      title: "Hate Speech Detected",
+      reason: "This content contains discriminatory language that targets people based on their identity. Everyone deserves to be treated with dignity and respect.",
+      what_to_do: "Report hateful content when you see it. Stand up against discrimination when it's safe to do so."
+    },
+    'explicit_content': {
+      title: "Adult Content Detected",
+      reason: "This content is intended for adult audiences only. Exposure to such content can impact mental wellbeing, especially for younger viewers.",
+      what_to_do: "Navigate away from this content. If you're underage, this content is not appropriate for you."
+    },
+    'explicit_image': {
+      title: "Inappropriate Image Blocked",
+      reason: "This image may contain content unsuitable for all audiences. Exposure to explicit imagery can negatively impact mental wellbeing.",
+      what_to_do: "Practice safe browsing. If you encounter inappropriate images unexpectedly, close the page."
+    },
+    'sexual_conversation': {
+      title: "Inappropriate Message Detected",
+      reason: "This message contains inappropriate content that may make you uncomfortable. Such messages can be a form of harassment.",
+      what_to_do: "Don't respond to unwanted messages. Block the sender and talk to a trusted adult if you feel unsafe."
+    },
+    'predatory': {
+      title: "Warning: Unsafe Interaction",
+      reason: "This content shows warning signs of manipulative behavior. Predators use flattery and secrecy to build trust.",
+      what_to_do: "Never share personal information with strangers online. Tell a trusted adult if someone makes you uncomfortable."
+    },
+    'violent': {
+      title: "Violent Content Detected",
+      reason: "This content contains violence that can be disturbing and affect your mental wellbeing.",
+      what_to_do: "Skip this content to protect your peace of mind. Report violent threats to authorities if needed."
+    },
+    'harassment': {
+      title: "Harassment Detected",
+      reason: "This content is designed to hurt or intimidate someone. Cyberbullying can have serious effects on mental health.",
+      what_to_do: "Save evidence, report the content, and block the person. Talk to someone you trust."
+    },
+    'self_harm': {
+      title: "Sensitive Content Warning",
+      reason: "This content discusses topics that may be triggering. If you're struggling, help is available.",
+      what_to_do: "HOPELINE Philippines: 0917-558-4673 | US: 988 | Crisis Text Line: Text HOME to 741741"
+    },
+    'alcohol_drugs': {
+      title: "Substance-Related Content",
+      reason: "This content involves alcohol or drugs. Substance use can have serious health consequences.",
+      what_to_do: "Be aware of the risks. If you need help, reach out to a counselor or trusted adult."
+    },
+    'scam': {
+      title: "Potential Scam Detected",
+      reason: "This message shows signs of a scam. Scammers use promises of easy money to trick people.",
+      what_to_do: "Do not click links or share personal information. Report and block the sender."
+    },
+    'fraud': {
+      title: "Fraud Attempt Detected",
+      reason: "This appears to be an attempt to steal your information. Scammers often pretend to be from trusted companies.",
+      what_to_do: "Never share passwords or financial details via message. Contact companies through official channels."
+    }
+  };
+  
+  const response = fallbackResponses[category] || {
+    title: getGenericTitle(category),
+    reason: getGenericReason(category),
+    what_to_do: getGenericGuidance(category)
+  };
+  
+  return {
+    safe: false,
+    title: response.title,
+    reason: response.reason,
+    what_to_do: response.what_to_do,
+    category: category,
+    confidence: 90
+  };
+}
+
+/**
+ * Fetches an educational explanation for BLOCKED IMAGES
+ * Uses the dedicated /educational-reason endpoint with Gemini AI
+ * Sends actual image context (URL, alt text, surrounding text) for insightful analysis
+ * @param {Object} imageContext - Context about why the image was blocked (contains actual data)
+ * @param {string} category - The category (explicit_image, nsfw, etc.)
+ * @returns {Promise<Object>} The educational response from Gemini AI
+ */
+async function fetchImageEducationalReason(imageContext, category) {
+  console.log(`🖼️ Sentry: Fetching educational reason from Gemini AI for blocked image...`);
+  
+  // Build a detailed content description from the ACTUAL image context
+  const source = imageContext?.source || 'unknown';
+  let blockedContent = "";
+  
+  // Include actual data from the image context for Gemini to analyze
+  switch (source) {
+    case 'porn_domain':
+      blockedContent = `Image from adult website. URL pattern: ${imageContext.url || 'adult content domain'}`;
+      break;
+    case 'explicit_url':
+      blockedContent = `Image URL contains explicit keywords: ${imageContext.url || 'explicit URL pattern detected'}`;
+      break;
+    case 'suspicious_filename':
+      blockedContent = `Image filename: ${imageContext.filename || 'suspicious filename pattern'}`;
+      break;
+    case 'explicit_alt':
+      blockedContent = `Image description/alt text: "${imageContext.altText || 'explicit description'}"`;
+      break;
+    case 'explicit_context':
+      blockedContent = `Image with surrounding text context: "${imageContext.context || 'explicit surrounding text'}"`;
+      break;
+    case 'nsfw_model':
+      blockedContent = `AI NSFW model detected inappropriate content with ${imageContext.confidence || 'high'}% confidence. Image classification: potentially explicit visual content.`;
+      break;
+    default:
+      blockedContent = `Image flagged as potentially inappropriate. Context: ${JSON.stringify(imageContext) || 'no additional context'}`;
+  }
+  
+  console.log(`📝 Image context being analyzed: "${blockedContent.substring(0, 100)}..."`);
+  
+  try {
+    // Send the ACTUAL image context to Gemini for insightful analysis
+    const response = await fetch(`${BACKEND_URL}/educational-reason`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category: category || 'explicit_image',
+        blocked_content: blockedContent,  // Send the ACTUAL context data
+        context: `Blocking source: ${source}`,
+        is_image: true
+      })
+    });
+    
+    if (response.ok) {
+      const aiResponse = await response.json();
+      console.log(`✅ Sentry: Image educational reason fetched from Gemini AI`);
+      return aiResponse;
+    } else {
+      throw new Error(`API returned status ${response.status}`);
+    }
+  } catch (error) {
+    console.log(`⚠️ Sentry: Could not fetch image educational reason: ${error.message}, using fallback`);
+    // Fallback to pre-defined response if API fails
+    return getImageFallbackResponse(source);
+  }
+}
+
+/**
+ * Returns a fallback educational response for images when API fails
+ * @param {string} source - The source that triggered the block
+ * @returns {Object} Fallback educational response
+ */
+function getImageFallbackResponse(source) {
+  const fallbackResponses = {
+    'porn_domain': {
+      reason: "This image was blocked because it comes from a website known for hosting adult content. Such websites contain material that is inappropriate for most audiences.",
+      what_to_do: "Avoid visiting adult content websites. Consider enabling parental controls on your devices."
+    },
+    'explicit_url': {
+      reason: "This image was blocked because its web address contains keywords associated with explicit content.",
+      what_to_do: "Be cautious of links containing explicit terms. Report suspicious content to the platform."
+    },
+    'suspicious_filename': {
+      reason: "This image was blocked because its filename suggests it may contain inappropriate content.",
+      what_to_do: "Be careful when viewing images with suspicious filenames. When in doubt, don't click."
+    },
+    'explicit_alt': {
+      reason: "This image was blocked because its description indicates it contains adult or explicit content.",
+      what_to_do: "Pay attention to image descriptions. They can help you avoid inappropriate content."
+    },
+    'explicit_context': {
+      reason: "This image was blocked because the surrounding text suggests it contains inappropriate content.",
+      what_to_do: "Be aware of the context around images. If nearby text seems inappropriate, the images likely are too."
+    },
+    'nsfw_model': {
+      reason: "This image was blocked because our AI safety system detected it likely contains inappropriate visual content.",
+      what_to_do: "Trust the safety system - it's designed to protect your wellbeing."
+    }
+  };
+  
+  const response = fallbackResponses[source] || {
+    reason: "This image was blocked because it may contain content that is not suitable for all audiences.",
+    what_to_do: "Practice safe browsing by being cautious about the images you view online."
+  };
+  
+  return {
+    safe: false,
+    title: "Inappropriate Image Blocked",
+    reason: response.reason,
+    what_to_do: response.what_to_do,
+    category: "explicit_image",
+    confidence: 90
+  };
+}
+
+/**
+ * Gets a generic title for a category (fallback when API fails)
+ * @param {string} category The content category
+ * @returns {string} Generic title
+ */
+function getGenericTitle(category) {
+  const titles = {
+    'profanity': 'Inappropriate Language Detected',
+    'hate_speech': 'Hate Speech Detected',
+    'explicit_content': 'Adult Content Detected',
+    'explicit_image': 'Inappropriate Image Blocked',
+    'sexual_conversation': 'Inappropriate Message Detected',
+    'predatory': 'Warning: Potentially Unsafe Interaction',
+    'violent': 'Violent Content Detected',
+    'harassment': 'Harmful Content Detected',
+    'self_harm': 'Sensitive Content Warning',
+    'alcohol_drugs': 'Substance-Related Content Detected',
+    'scam': 'Potential Scam Detected',
+    'fraud': 'Fraud Attempt Detected'
+  };
+  return titles[category] || 'Content Warning';
+}
+
+/**
+ * Gets a generic reason for a category (fallback when API fails)
+ * @param {string} category The content category
+ * @returns {string} Generic reason
+ */
+function getGenericReason(category) {
+  const reasons = {
+    'profanity': 'This content contains language that may be offensive or hurtful to others. Using respectful communication helps create a positive online environment.',
+    'hate_speech': 'This content contains discriminatory language that targets individuals based on their identity. Such language contributes to harm and exclusion.',
+    'explicit_content': 'This content appears to contain adult material that is not appropriate for all audiences and may be restricted.',
+    'explicit_image': 'This image was blocked because it may contain content that is not suitable for all audiences. Exposure to explicit imagery can negatively impact mental wellbeing and is often age-restricted for good reason.',
+    'sexual_conversation': 'This message contains inappropriate content. If you receive unwanted messages like this, you can report and block the sender.',
+    'predatory': 'This content shows warning signs of potentially manipulative behavior. Be cautious of anyone trying to establish secret or inappropriate relationships.',
+    'violent': 'This content contains threats or violent language. Such content can cause harm and is often against platform policies.',
+    'harassment': 'This content contains language designed to hurt, intimidate, or belittle someone. Everyone deserves to be treated with respect.',
+    'self_harm': 'This content discusses self-harm or suicide. If you or someone you know is struggling, please reach out for help.',
+    'alcohol_drugs': 'This content promotes or discusses substance use. Be aware of the risks associated with alcohol and drug consumption.',
+    'scam': 'This message shows common signs of a scam, such as promises of easy money or prizes. Legitimate opportunities rarely come unsolicited.',
+    'fraud': 'This appears to be an attempt to steal personal information. Never share passwords, OTPs, or financial details with strangers.'
+  };
+  return reasons[category] || 'This content has been flagged as potentially harmful or inappropriate.';
+}
+
+/**
+ * Gets generic guidance for a category (fallback when API fails)
+ * @param {string} category The content category
+ * @returns {string} Generic guidance
+ */
+function getGenericGuidance(category) {
+  const guidance = {
+    'profanity': 'Consider how your words affect others. Click Cancel to continue without viewing, or Continue if you understand the content.',
+    'hate_speech': 'Report this content if it violates platform policies. Do not engage with or share hateful content.',
+    'explicit_content': 'This content is age-restricted. Navigate away if you are not of legal age.',
+    'explicit_image': 'Practice safe browsing by avoiding websites known for adult content. If you encounter inappropriate images unexpectedly, close the page and consider reporting the content.',
+    'sexual_conversation': 'If this is unwanted, block the sender and report the message. Talk to a trusted adult if you feel uncomfortable.',
+    'predatory': 'Never share personal information or meet strangers alone. Tell a trusted adult if someone makes you uncomfortable.',
+    'violent': 'Report violent threats to the platform and authorities if necessary. Your safety is important.',
+    'harassment': "You don't deserve to be treated this way. Report, block, and talk to someone you trust.",
+    'self_harm': 'HOPELINE Philippines: 0917-558-4673 | US: 988 | You are not alone. Please talk to someone who cares about you.',
+    'alcohol_drugs': 'If you or someone you know needs help with substance use, reach out to a counselor or helpline.',
+    'scam': 'Do not click any links or share personal information. Report and block the sender.',
+    'fraud': 'Never share sensitive information. Legitimate companies will never ask for passwords or OTPs via message.'
+  };
+  return guidance[category] || 'Consider whether you need to view this content. Your wellbeing matters.';
+}
+
+/**
  * PHASE 1: Instant local blocking - blocks obvious content without API
  * This runs BEFORE any API calls for maximum speed
+ * Now triggers background fetch for educational Gemini response
  * @param {HTMLElement} element - Element to check
  * @param {string} contentText - Text content to analyze
  * @returns {Object|null} - Block response if should be blocked, null if unclear
@@ -357,82 +692,192 @@ function instantLocalBlock(element, contentText) {
   // Skip if too short
   if (content.length < 5) return null;
   
-  // 1. PROFANITY CHECK (most common)
-  const profanityPattern = /\b(fuck|fucking|fucker|fucked|motherfucker|mother fucker|shit|bitch|ass|asshole|bastard|damn|hell|cunt|whore|slut|dick|pussy|cock|cum|orgasm|putang ina|putangina|gago|bobo|tanga|ulol|tarantado|leche|puta|tangina|pokpok|pakshet|pakyu|hayop|siraulo|shunga|buwisit)\b/i;
+  // 1. PROFANITY CHECK - English, Filipino, and Cebuano
+  // English profanity
+  const englishProfanity = /\b(fuck|fucking|fucker|fucked|motherfucker|mother fucker|shit|bitch|ass|asshole|bastard|damn|hell|cunt|whore|slut|dick|pussy|cock|cum|orgasm)\b/i;
   
-  if (profanityPattern.test(content)) {
+  // Filipino/Tagalog profanity
+  const filipinoProfanity = /\b(putang\s*ina|putangina|tangina|puta|gago|bobo|tanga|ulol|tarantado|leche|pokpok|pakshet|pakyu|hayop|siraulo|shunga|buwisit|punyeta|hinayupak|peste|kupal|gunggong|engot|inutil|burat|titi|puke|kantot|jakol|malibog|kalibugan|chupa|bolitas|libog|lintik|pesteng yawa|tang\s*ina|pota|potah|gagu|bwisit|kinangina|kingina|ampota|amputa|tangena|tanginamo|putanginamo|g@go|t@nga|put@ngina)\b/i;
+  
+  // Cebuano/Bisaya profanity  
+  const cebuanoProfanity = /\b(yawa|buang|animal|bogo|bugo|pisti|piste|giatay|bilat|oten|bayot|unggoy|tanga|atay|tae|pisting\s*yawa|yawa\s*ka|buang\s*ka|animal\s*ka|iyot|hubog|libog|laway|hilabtan|hubo|way\s*buot|burot|ulaga|gagu|pisteng yawa|yawaon|yaw\s*a|bu@ng|ist@|g@go)\b/i;
+  
+  if (englishProfanity.test(content) || filipinoProfanity.test(content) || cebuanoProfanity.test(content)) {
     console.log("⚡ Sentry: INSTANT BLOCK - Profanity detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
     return {
       safe: false,
       title: "Inappropriate Language Detected",
-      reason: "This message contains offensive language or profanity that may be hurtful or inappropriate.",
-      what_to_do: "Consider the impact of such language. Click to view if you choose to proceed.",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
       category: "profanity",
-      confidence: 95
+      confidence: 95,
+      originalContent: contentText.substring(0, 500) // Store for on-demand fetch
     };
   }
   
-  // 2. RACIAL SLURS (highest priority)
-  const racialSlurPattern = /\b(nigger|nigga|chink|spic|wetback|kike|raghead|gook|beaner)\b/i;
+  // 2. RACIAL SLURS / HATE SPEECH - English and Filipino context
+  const racialSlurPattern = /\b(nigger|nigga|chink|spic|wetback|kike|raghead|gook|beaner|intsik\s*beho|negrito|baluga|ita)\b/i;
   
   if (racialSlurPattern.test(content)) {
     console.log("⚡ Sentry: INSTANT BLOCK - Racial slur detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
     return {
       safe: false,
       title: "Hate Speech Detected",
-      reason: "This content contains racial slurs or hate speech that is deeply offensive and harmful.",
-      what_to_do: "This type of content violates community standards. Consider reporting it.",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
       category: "hate_speech",
-      confidence: 99
+      confidence: 99,
+      originalContent: contentText.substring(0, 500)
     };
   }
   
-  // 3. EXPLICIT SEXUAL CONTENT
-  const explicitSexPattern = /\b(porn|pornhub|xvideos|xnxx|xxx|nude|naked|sex video|adult content|hardcore|masturbat|blowjob|handjob|anal sex|erotic|nsfw|18\+)\b/i;
+  // 3. EXPLICIT SEXUAL CONTENT / SEXUAL CONVERSATION - All languages
+  const explicitSexPattern = /\b(porn|pornhub|xvideos|xnxx|xxx|nude|naked|sex video|adult content|hardcore|masturbat|blowjob|handjob|anal sex|erotic|nsfw|18\+|kantot|jakol|chupa|iyot|malibog|kalibugan|libog|hubog|hubo|hilabtan|bolitas|manyak|bastos|send nudes|want to see you naked|show me your body|let's have sex|tara sex|g2sta kita|gusto kita kantutin)\b/i;
   
   if (explicitSexPattern.test(content)) {
-    console.log("⚡ Sentry: INSTANT BLOCK - Explicit sexual content (0ms)");
+    console.log("⚡ Sentry: INSTANT BLOCK - Explicit/sexual content (0ms)");
+    const category = content.match(/send nudes|want to see|show me|let's have sex|tara sex|gusto kita/i) 
+      ? 'sexual_conversation' 
+      : 'explicit_content';
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
     return {
       safe: false,
-      title: "Adult Content Detected",
-      reason: "This content contains or references explicit adult material that is not appropriate for general viewing.",
-      what_to_do: "Please navigate away from this content. Click to view if you're certain you want to proceed.",
-      category: "explicit_content",
-      confidence: 95
+      title: category === 'sexual_conversation' ? "Inappropriate Message Detected" : "Adult Content Detected",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: category,
+      confidence: 95,
+      originalContent: contentText.substring(0, 500)
     };
   }
   
-  // 4. SUICIDE/SELF-HARM (critical priority)
-  const suicidePattern = /\b(suicide|kill myself|kill yourself|self harm|self-harm|cut myself|end my life|want to die|better off dead|hang myself|overdose|slit wrist|jump off|commit suicide|suicidal thought)\b/i;
+  // 4. PREDATORY / GROOMING BEHAVIOR - All languages
+  const predatoryPattern = /\b(you're mature for your age|our little secret|don't tell your parents|don't tell anyone|meet me alone|send me pictures|alam mo ba ikaw lang|huwag mong sabihin|secret lang natin|ayaw isulti sa imong mama|sekreto ra nato|tara private|private tayo|dm me baby|age is just a number|edad lang yan)\b/i;
+  
+  if (predatoryPattern.test(content)) {
+    console.log("⚡ Sentry: INSTANT BLOCK - Predatory behavior detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+    return {
+      safe: false,
+      title: "Warning: Potentially Unsafe Interaction",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: "predatory",
+      confidence: 97,
+      originalContent: contentText.substring(0, 500)
+    };
+  }
+  
+  // 5. VIOLENT THREATS / VIOLENCE - All languages
+  const violentPattern = /\b(i will kill you|i'll kill you|gonna kill you|want to kill|going to hurt you|beat you up|break your bones|you will die|you're dead|papatayin kita|patayin kita|sasaktan kita|babugbugin kita|patyon tika|samaran tika|bunalon tika|mamatay ka|dapat mamatay)\b/i;
+  
+  if (violentPattern.test(content)) {
+    console.log("⚡ Sentry: INSTANT BLOCK - Violence/threats detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+    return {
+      safe: false,
+      title: "Violent Content Detected",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: "violent",
+      confidence: 98,
+      originalContent: contentText.substring(0, 500)
+    };
+  }
+  
+  // 6. HARASSMENT / BULLYING - All languages
+  const harassmentPattern = /\b(you're worthless|nobody likes you|everyone hates you|kill yourself|go die|you're ugly|you're fat|you're stupid|loser|pathetic|wala kang kwenta|pangit mo|walang nagmamahal sayo|mamatay ka na|dapat wala ka na|way pulos ka|pangit ka|walay nagmahal nimo|mamatay na lang ka)\b/i;
+  
+  if (harassmentPattern.test(content)) {
+    console.log("⚡ Sentry: INSTANT BLOCK - Harassment detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+    return {
+      safe: false,
+      title: "Harmful Content Detected",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: "harassment",
+      confidence: 96,
+      originalContent: contentText.substring(0, 500)
+    };
+  }
+  
+  // 7. SUICIDE/SELF-HARM - English and Filipino (critical priority)
+  const suicidePattern = /\b(suicide|kill myself|kill yourself|self harm|self-harm|cut myself|end my life|want to die|better off dead|hang myself|overdose|slit wrist|jump off|commit suicide|suicidal thought|magpakamatay|papatayin ko sarili|gusto kong mamatay|ayoko na mabuhay|patyon nako akong kaugalingon|gusto ko mamatay|dili na ko ganahan mbuhi)\b/i;
   
   if (suicidePattern.test(content)) {
     console.log("⚡ Sentry: INSTANT BLOCK - Suicide/self-harm content (0ms)");
+    // For self-harm, we show crisis resources IMMEDIATELY - no need to fetch
     return {
       safe: false,
       title: "Sensitive Content Warning",
-      reason: "This content discusses self-harm or suicide. If you or someone you know is struggling, please reach out for help.",
-      what_to_do: "National Suicide Prevention Lifeline: 988 (US) or find local resources. Click only if you feel emotionally prepared.",
+      reason: "This content discusses sensitive topics related to mental health and wellbeing. Help is available.",
+      what_to_do: "HOPELINE Philippines: 0917-558-4673 | US: 988 | You are not alone. Please talk to someone who cares about you.",
       category: "self_harm",
-      confidence: 99
+      confidence: 99,
+      originalContent: contentText.substring(0, 500),
+      skipEducationalFetch: true // Already has crisis resources
     };
   }
   
-  // 5. SCAM/PHISHING PATTERNS
-  const scamPattern = /\b(congratulations.*won|claim your prize|urgent.*act now|click here.*whatsapp|wa\.me|telegram.*money|earn \$\d+|get rich quick|investment opportunity.*guaranteed|free money|work from home.*\$\d+)\b/i;
+  // 8. ALCOHOL & DRUGS - All languages
+  const alcoholDrugsPattern = /\b(let's get drunk|get wasted|buy drugs|selling drugs|marijuana for sale|shabu|cocaine|heroin|meth|ecstasy|molly|weed for sale|inom tayo|tara inom|lasing na|mag-droga|bili ng droga|hubog na|tara shot|tagay tayo|walwal tayo|legit seller|dm for drugs)\b/i;
   
-  if (scamPattern.test(content)) {
+  if (alcoholDrugsPattern.test(content)) {
+    console.log("⚡ Sentry: INSTANT BLOCK - Alcohol/drugs content (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+    return {
+      safe: false,
+      title: "Substance-Related Content Detected",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: "alcohol_drugs",
+      confidence: 90,
+      originalContent: contentText.substring(0, 500)
+    };
+  }
+  
+  // 9. SCAM/PHISHING PATTERNS - English, Filipino, and Cebuano
+  const scamPatternEnglish = /\b(congratulations.*won|claim your prize|urgent.*act now|click here.*whatsapp|wa\.me|telegram.*money|earn \$\d+|get rich quick|investment opportunity.*guaranteed|free money|work from home.*\$\d+|you have been selected|lottery winner|inheritance from|nigerian prince)\b/i;
+  
+  const scamPatternFilipino = /\b(nanalo ka|panalo ka|kunin ang premyo|trabaho sa bahay|malaking sweldo|kumita agad|i-click dito|dali lang|libre.*premyo|congratulations.*nanalo|selected ka|claim.*prize|swerte mo)\b/i;
+  
+  const scamPatternCebuano = /\b(daog ka|kuhaa ang premyo|trabaho sa balay|dako nga suweldo|kita dayon|i-click diri|pinduta|sayon ra|libre.*premyo|daog.*prize|swerte nimo)\b/i;
+  
+  if (scamPatternEnglish.test(content) || scamPatternFilipino.test(content) || scamPatternCebuano.test(content)) {
     console.log("⚡ Sentry: INSTANT BLOCK - Scam/phishing detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
     return {
       safe: false,
       title: "Potential Scam Detected",
-      reason: "This content matches patterns commonly used in scams or phishing attempts.",
-      what_to_do: "Do not share personal information or send money. Report this content if it's suspicious.",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
       category: "scam",
-      confidence: 85
+      confidence: 85,
+      originalContent: contentText.substring(0, 500)
     };
   }
   
-  // 6. KNOWN EXPLICIT DOMAINS (for images)
+  // 10. FRAUD / IDENTITY THEFT - All languages
+  const fraudPattern = /\b(send your password|give me your otp|verify your account urgently|i'm from microsoft|irs calling|send money now|western union|money gram|bank transfer urgently|your account will be closed|ipadala ang password|ibigay ang otp|i-verify agad|ipadala ug kwarta|magpadala ug)\b/i;
+  
+  if (fraudPattern.test(content)) {
+    console.log("⚡ Sentry: INSTANT BLOCK - Fraud detected (0ms)");
+    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+    return {
+      safe: false,
+      title: "Fraud Attempt Detected",
+      reason: "Click to learn why this content was blocked and get helpful information.",
+      what_to_do: "Tap to see details about this content.",
+      category: "fraud",
+      confidence: 92,
+      originalContent: contentText.substring(0, 500)
+    };
+  }
+  
+  // 11. KNOWN EXPLICIT DOMAINS (for images)
   if (element.tagName === 'IMG') {
     const imgSrc = element.src || '';
     const explicitDomainPattern = /(pornhub|xvideos|xnxx|redtube|youporn|porn|xxx|nude|naked|sex|nsfw|explicit|adult|erotic)/i;
@@ -1083,7 +1528,10 @@ function addElementIfValid(el, elements) {
   if (scannedElements.has(el)) return;
   
   // Skip our own elements - CRITICAL: Must check this thoroughly
-  if (el.classList.contains('sentry-blocked-content') ||
+  // Check for data-sentry-ui attribute FIRST (fastest check)
+  if (el.hasAttribute('data-sentry-ui') ||
+      el.closest('[data-sentry-ui="true"]') ||
+      el.classList.contains('sentry-blocked-content') ||
       el.classList.contains('sentry-confirmation-overlay') ||
       el.classList.contains('sentry-confirmation-popup') ||
       el.classList.contains('sentry-popup-header') ||
@@ -1091,6 +1539,9 @@ function addElementIfValid(el, elements) {
       el.classList.contains('sentry-popup-reason') ||
       el.classList.contains('sentry-popup-guidance') ||
       el.classList.contains('sentry-popup-actions') ||
+      el.classList.contains('sentry-popup-title') ||
+      el.classList.contains('sentry-popup-reason-text') ||
+      el.classList.contains('sentry-popup-guidance-text') ||
       el.classList.contains('sentry-text-wrapper') ||
       el.hasAttribute('data-sentry-wrapped') ||
       el.id?.startsWith('sentry-') ||
@@ -1569,14 +2020,22 @@ function setupPersistentBlur(element) {
 
 /**
  * Shows a confirmation popup when user clicks on blocked content
+ * LAZY LOADING: Fetches educational reason ON-DEMAND (only when user clicks)
+ * This dramatically reduces API calls - no API call happens unless user clicks
  * @param {Element} element The blocked element
  * @param {Object} aiResponse The AI response with blocking details
  */
 function showConfirmationPopup(element, aiResponse) {
-  console.log("🚨 Sentry: POPUP TRIGGERED!", {
+  // Get the stored response for this element
+  const storedResponse = blockedElements.get(element) || aiResponse;
+  
+  console.log("🚨 Sentry: POPUP TRIGGERED (lazy loading)!", {
     element: element.tagName,
-    category: aiResponse.category,
-    title: aiResponse.title
+    category: storedResponse.category,
+    title: storedResponse.title,
+    hasOriginalContent: !!storedResponse.originalContent,
+    educationalFetched: storedResponse.educationalFetched || false,
+    skipEducationalFetch: storedResponse.skipEducationalFetch || false
   });
   
   // Remove any existing popups
@@ -1585,59 +2044,154 @@ function showConfirmationPopup(element, aiResponse) {
     existingPopup.remove();
   }
   
-  // Create overlay
+  // Create overlay - mark as Sentry UI to prevent scanning
   const overlay = document.createElement('div');
   overlay.className = 'sentry-confirmation-overlay';
+  overlay.setAttribute('data-sentry-ui', 'true');
   
-  // Create popup
+  // Create popup - mark as Sentry UI to prevent scanning
   const popup = document.createElement('div');
-  popup.className = `sentry-confirmation-popup sentry-popup-category-${aiResponse.category}`;
+  popup.className = `sentry-confirmation-popup sentry-popup-category-${storedResponse.category}`;
+  popup.setAttribute('data-sentry-ui', 'true');
   
-  // Create header
+  // Create header - mark as Sentry UI
   const header = document.createElement('div');
   header.className = 'sentry-popup-header';
+  header.setAttribute('data-sentry-ui', 'true');
   
   const icon = document.createElement('div');
   icon.className = 'sentry-popup-icon';
-  icon.textContent = getIconForCategory(aiResponse.category);
+  icon.setAttribute('data-sentry-ui', 'true');
+  icon.textContent = getIconForCategory(storedResponse.category);
   
   const title = document.createElement('h2');
   title.className = 'sentry-popup-title';
-  title.textContent = aiResponse.title || 'Content Warning';
+  title.setAttribute('data-sentry-ui', 'true');
+  title.textContent = storedResponse.title || 'Content Warning';
   
   header.appendChild(icon);
   header.appendChild(title);
   
-  // Create content area
+  // Create content area - mark as Sentry UI
   const content = document.createElement('div');
   content.className = 'sentry-popup-content';
+  content.setAttribute('data-sentry-ui', 'true');
   
-  // Reason section
+  // Reason section - mark as Sentry UI
   const reasonSection = document.createElement('div');
   reasonSection.className = 'sentry-popup-reason';
+  reasonSection.setAttribute('data-sentry-ui', 'true');
   
   const reasonTitle = document.createElement('div');
   reasonTitle.className = 'sentry-popup-reason-title';
-  reasonTitle.textContent = 'Why is this blocked?';
+  reasonTitle.setAttribute('data-sentry-ui', 'true');
+  reasonTitle.textContent = '📚 Why is this blocked?';
   
   const reasonText = document.createElement('p');
   reasonText.className = 'sentry-popup-reason-text';
-  reasonText.textContent = aiResponse.reason || 'This content may not be appropriate.';
+  reasonText.setAttribute('data-sentry-ui', 'true');
   
-  reasonSection.appendChild(reasonTitle);
-  reasonSection.appendChild(reasonText);
-  
-  // Guidance section
+  // Guidance section - mark as Sentry UI
   const guidanceSection = document.createElement('div');
   guidanceSection.className = 'sentry-popup-guidance';
+  guidanceSection.setAttribute('data-sentry-ui', 'true');
   
   const guidanceTitle = document.createElement('div');
   guidanceTitle.className = 'sentry-popup-guidance-title';
-  guidanceTitle.textContent = 'What should you do?';
+  guidanceTitle.setAttribute('data-sentry-ui', 'true');
+  guidanceTitle.textContent = '💡 What should you do?';
   
   const guidanceText = document.createElement('p');
   guidanceText.className = 'sentry-popup-guidance-text';
-  guidanceText.textContent = aiResponse.what_to_do || 'Consider whether you really need to view this content.';
+  guidanceText.setAttribute('data-sentry-ui', 'true');
+  
+  // 🚀 LAZY LOADING: Fetch educational content ON-DEMAND
+  // Check if we already have the educational content fetched
+  if (storedResponse.educationalFetched || storedResponse.skipEducationalFetch) {
+    // Already have the full content (from previous fetch or self-harm which has immediate resources)
+    reasonText.textContent = storedResponse.reason;
+    guidanceText.textContent = storedResponse.what_to_do;
+  } else if (storedResponse.originalContent || storedResponse.imageContext) {
+    // Need to fetch educational content NOW (on-demand)
+    reasonText.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="sentry-loading-spinner"></div>
+        <em style="color: #666;">Preparing explanation...</em>
+      </div>
+    `;
+    guidanceText.innerHTML = '<em style="color: #888;">Please wait...</em>';
+    
+    // Add loading spinner CSS if not already present
+    if (!document.querySelector('#sentry-loading-styles')) {
+      const style = document.createElement('style');
+      style.id = 'sentry-loading-styles';
+      style.textContent = `
+        .sentry-loading-spinner {
+          width: 20px;
+          height: 20px;
+          border: 3px solid #e0e0e0;
+          border-top: 3px solid #4a90d9;
+          border-radius: 50%;
+          animation: sentry-spin 1s linear infinite;
+        }
+        @keyframes sentry-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // 🎯 FETCH EDUCATIONAL REASON ON-DEMAND
+    // Use image-specific fetch if this is an image, otherwise use text fetch
+    const isImageContent = storedResponse.imageContext || storedResponse.category === 'explicit_image';
+    
+    console.log(`📚 Sentry: Fetching educational reason ON-DEMAND for ${storedResponse.category} (${isImageContent ? 'IMAGE' : 'TEXT'})...`);
+    
+    const fetchPromise = isImageContent 
+      ? fetchImageEducationalReason(storedResponse.imageContext || {}, storedResponse.category)
+      : fetchEducationalReason(storedResponse.originalContent, storedResponse.category);
+    
+    fetchPromise
+      .then(educationalResponse => {
+        // Update the popup with the fetched content
+        reasonText.textContent = educationalResponse.reason;
+        guidanceText.textContent = educationalResponse.what_to_do;
+        
+        // Update the stored response so we don't fetch again
+        const updatedResponse = {
+          ...storedResponse,
+          reason: educationalResponse.reason,
+          what_to_do: educationalResponse.what_to_do,
+          title: educationalResponse.title || storedResponse.title,
+          educationalFetched: true
+        };
+        blockedElements.set(element, updatedResponse);
+        
+        // Update title if provided
+        if (educationalResponse.title) {
+          const titleEl = popup.querySelector('.sentry-popup-title');
+          if (titleEl) {
+            titleEl.textContent = educationalResponse.title;
+          }
+        }
+        
+        console.log(`✅ Sentry: Educational content loaded for ${storedResponse.category}`);
+      })
+      .catch(error => {
+        console.error('Sentry: Error fetching educational reason:', error);
+        // Use fallback generic content
+        reasonText.textContent = getGenericReason(storedResponse.category);
+        guidanceText.textContent = getGenericGuidance(storedResponse.category);
+      });
+  } else {
+    // No original content stored (shouldn't happen, but fallback to generic)
+    reasonText.textContent = getGenericReason(storedResponse.category);
+    guidanceText.textContent = getGenericGuidance(storedResponse.category);
+  }
+  
+  reasonSection.appendChild(reasonTitle);
+  reasonSection.appendChild(reasonText);
   
   guidanceSection.appendChild(guidanceTitle);
   guidanceSection.appendChild(guidanceText);
@@ -1658,66 +2212,14 @@ function showConfirmationPopup(element, aiResponse) {
   
   const continueButton = document.createElement('button');
   continueButton.className = 'sentry-popup-button sentry-popup-button-continue';
-  continueButton.textContent = 'Continue';
+  continueButton.textContent = 'I Understand';
   continueButton.addEventListener('click', () => {
-    console.log("✅ Sentry: User clicked Continue - unblocking element");
+    console.log("✅ Sentry: User acknowledged warning - keeping content blocked for safety");
     
-    // Remove blur class
-    element.classList.remove('sentry-blocked-content');
-    
-    // Remove Sentry attributes
-    element.removeAttribute('data-sentry-blocked');
-    element.removeAttribute('data-sentry-category');
-    element.removeAttribute('data-sentry-scanned');
-    
-    // Reset inline styles with !important override
-    element.style.setProperty('filter', 'none', 'important');
-    element.style.removeProperty('filter');
-    element.style.cursor = '';
-    element.style.pointerEvents = '';
-    element.style.userSelect = '';
-    element.style.zIndex = '';
-    element.style.transition = '';
-    
-    // For images, also unblur parent wrapper (Twitter/X)
-    if (element.tagName === 'IMG') {
-      element.removeAttribute('draggable');
-      
-      // Find and unblur wrapper
-      const imgWrapper = element.closest('.sentry-image-wrapper-blocked, div[style*="blur"], a[href*="/photo/"]');
-      if (imgWrapper) {
-        imgWrapper.style.setProperty('filter', 'none', 'important');
-        imgWrapper.style.removeProperty('filter');
-        imgWrapper.classList.remove('sentry-image-wrapper-blocked');
-      }
-    }
-    
-    // Remove event listeners
-    if (element._sentryClickHandler) {
-      element.removeEventListener('click', element._sentryClickHandler, { capture: true });
-      element.removeEventListener('click', element._sentryClickHandler, { capture: false });
-      element.removeEventListener('mousedown', element._sentryClickHandler, { capture: true });
-      element.removeEventListener('mouseup', element._sentryClickHandler, { capture: true });
-      delete element._sentryClickHandler;
-    }
-    
-    // Remove parent link blocker if exists
-    if (element._sentryLinkBlocker && element.closest('a')) {
-      const parentLink = element.closest('a');
-      parentLink.removeEventListener('click', element._sentryLinkBlocker, { capture: true });
-      delete element._sentryLinkBlocker;
-    }
-    
-    // Remove from blocked elements map
-    blockedElements.delete(element);
-    
-    // Remove from scanned elements so it won't be re-checked
-    // Note: WeakSet doesn't have delete method, but we can just leave it
-    
-    // Close popup
+    // Just close the popup - content stays blurred for protection
+    // This aligns with the purpose of a content blocker:
+    // educate the user, but still protect them from the content
     overlay.remove();
-    
-    console.log("✅ Sentry: Element fully unblocked and accessible");
   });
   
   actions.appendChild(cancelButton);
@@ -2136,6 +2638,14 @@ const observer = new MutationObserver((mutations) => {
       if (mutation.addedNodes) {
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
+            // ⚡ SKIP SENTRY UI ELEMENTS COMPLETELY
+            if (node.hasAttribute?.('data-sentry-ui') ||
+                node.closest?.('[data-sentry-ui="true"]') ||
+                node.classList?.contains('sentry-confirmation-overlay') ||
+                node.classList?.contains('sentry-confirmation-popup')) {
+              return;
+            }
+            
             // ⚡ NEW APPROACH: Find the INNERMOST element with profanity
             // Instead of blocking parent + all children, find the smallest precise element
             
@@ -2146,10 +2656,16 @@ const observer = new MutationObserver((mutations) => {
                 // Skip if already processed
                 if (scannedElements.has(profanityEl)) return;
                 
-                // Skip Sentry UI
-                if (profanityEl.id?.startsWith('sentry-') || 
+                // Skip Sentry UI - comprehensive check
+                if (profanityEl.hasAttribute?.('data-sentry-ui') ||
+                    profanityEl.closest?.('[data-sentry-ui="true"]') ||
+                    profanityEl.id?.startsWith('sentry-') || 
                     profanityEl.classList?.contains('sentry-blocked-content') ||
-                    profanityEl.classList?.contains('sentry-confirmation-overlay')) {
+                    profanityEl.classList?.contains('sentry-confirmation-overlay') ||
+                    profanityEl.classList?.contains('sentry-confirmation-popup') ||
+                    profanityEl.classList?.contains('sentry-popup-title') ||
+                    profanityEl.classList?.contains('sentry-popup-reason-text') ||
+                    profanityEl.classList?.contains('sentry-popup-guidance-text')) {
                   return;
                 }
                 
@@ -2173,9 +2689,16 @@ const observer = new MutationObserver((mutations) => {
               
               if (scannedElements.has(parent)) return;
               
-              if (parent.id?.startsWith('sentry-') || 
+              // Skip Sentry UI - comprehensive check
+              if (parent.hasAttribute?.('data-sentry-ui') ||
+                  parent.closest?.('[data-sentry-ui="true"]') ||
+                  parent.id?.startsWith('sentry-') || 
                   parent.classList?.contains('sentry-blocked-content') ||
-                  parent.classList?.contains('sentry-confirmation-overlay')) {
+                  parent.classList?.contains('sentry-confirmation-overlay') ||
+                  parent.classList?.contains('sentry-confirmation-popup') ||
+                  parent.classList?.contains('sentry-popup-title') ||
+                  parent.classList?.contains('sentry-popup-reason-text') ||
+                  parent.classList?.contains('sentry-popup-guidance-text')) {
                 return;
               }
               
@@ -2233,18 +2756,28 @@ function findAndWrapTextNodes(keywords) {
         if (!node.textContent.trim() ||
             node.parentNode.nodeName.toLowerCase() === 'script' ||
             node.parentNode.nodeName.toLowerCase() === 'style' ||
+            node.parentNode.hasAttribute?.('data-sentry-ui') ||
+            node.parentNode.closest?.('[data-sentry-ui="true"]') ||
             node.parentNode.classList?.contains('sentry-blocked-content') ||
             node.parentNode.classList?.contains('sentry-text-wrapper') ||
+            node.parentNode.classList?.contains('sentry-confirmation-overlay') ||
+            node.parentNode.classList?.contains('sentry-confirmation-popup') ||
+            node.parentNode.classList?.contains('sentry-popup-title') ||
+            node.parentNode.classList?.contains('sentry-popup-reason-text') ||
+            node.parentNode.classList?.contains('sentry-popup-guidance-text') ||
             node.parentNode.hasAttribute?.('data-sentry-wrapped') ||
             node.parentNode.id?.startsWith('sentry-')) {
           return NodeFilter.FILTER_REJECT;
         }
         
-        // Skip if any ancestor is already wrapped/blocked
+        // Skip if any ancestor is already wrapped/blocked or is Sentry UI
         let ancestor = node.parentNode;
         while (ancestor && ancestor !== document.body) {
-          if (ancestor.classList?.contains('sentry-blocked-content') ||
+          if (ancestor.hasAttribute?.('data-sentry-ui') ||
+              ancestor.classList?.contains('sentry-blocked-content') ||
               ancestor.classList?.contains('sentry-text-wrapper') ||
+              ancestor.classList?.contains('sentry-confirmation-overlay') ||
+              ancestor.classList?.contains('sentry-confirmation-popup') ||
               ancestor.hasAttribute?.('data-sentry-wrapped') ||
               ancestor.id?.startsWith('sentry-')) {
             return NodeFilter.FILTER_REJECT;

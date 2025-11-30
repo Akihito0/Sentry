@@ -601,26 +601,47 @@ function repositionNotifications() {
 
 /**
  * Finds text nodes in the document containing any of the specified keywords.
+ * Supports English, Filipino/Tagalog, and Cebuano/Bisaya
  * @param {Array} keywords - Keywords to search for in text nodes.
  * @returns {Array} - Array of objects with node and parent properties.
  */
 function findTextNodesToBlur(keywords) {
   if (!keywords || keywords.length === 0) {
-    // If no keywords, use more comprehensive defaults based on common problematic content
+    // Comprehensive defaults - English, Filipino, and Cebuano
     keywords = [
-      // Explicit content keywords
+      // English - Explicit content
       'fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'cock', 
       'rape', 'kill', 'die', 'porn', 'sex', 'xxx', 'nude', 'naked',
       'password', 'credit card', 'social security', 'explicit', 'nsfw',
-      'whore', 'slut', 'bastard', 'damn', 'hell',
+      'whore', 'slut', 'bastard', 'damn', 'hell', 'nigger', 'nigga',
       
-      // Scam and phishing related keywords
+      // Filipino/Tagalog profanity
+      'putangina', 'putang ina', 'tangina', 'gago', 'bobo', 'tanga', 'ulol',
+      'tarantado', 'leche', 'puta', 'pokpok', 'pakshet', 'pakyu',
+      'hayop', 'siraulo', 'shunga', 'buwisit', 'punyeta', 'hinayupak',
+      'peste', 'kupal', 'gunggong', 'engot', 'inutil', 'lintik',
+      'kantot', 'jakol', 'malibog', 'libog', 'bastos', 'manyak',
+      
+      // Cebuano/Bisaya profanity
+      'yawa', 'buang', 'bugo', 'bogo', 'pisti', 'piste', 'giatay',
+      'bilat', 'oten', 'bayot', 'unggoy', 'animal', 'atay', 'tae',
+      'pisting yawa', 'iyot', 'hubog', 'hilabtan',
+      
+      // English - Scam keywords
       'job opportunity', 'congratulations', 'received an', 'HR representative',
       'salary ranges', 'daily salary', 'contact us', 'WhatsApp Contact',
       'opportunity', 'performance', 'recruiter', 'guide you', 'step by step',
       'get started', 'wa.me', 't.me', 'click here', 'urgent', 'limited time',
       'won a prize', 'lottery', 'inheritance', 'investment opportunity',
-      'make money', 'work from home', 'earn extra', 'passive income', 'easy money'
+      'make money', 'work from home', 'earn extra', 'passive income', 'easy money',
+      
+      // Filipino - Scam keywords
+      'nanalo ka', 'panalo ka', 'trabaho sa bahay', 'malaking sweldo',
+      'i-click dito', 'dali lang', 'libre', 'kunin ang premyo',
+      
+      // Cebuano - Scam keywords
+      'daog ka', 'trabaho sa balay', 'dako nga suweldo', 'i-click diri',
+      'pinduta', 'sayon ra', 'kuhaa ang premyo'
     ];
   }
   

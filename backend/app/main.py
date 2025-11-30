@@ -614,6 +614,166 @@ async def chat_with_ai(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/educational-reason")
+async def get_educational_reason(request: Request):
+    """
+    Generates an educational explanation for why certain content was blocked.
+    Uses the ACTUAL blocked content to provide context-aware educational reasons.
+    
+    Expects: { "category": "profanity", "blocked_content": "the actual text", "context": "optional", "is_image": false }
+    Returns: { "title": "...", "reason": "...", "what_to_do": "...", "category": "...", "confidence": 95 }
+    """
+    data = await request.json()
+    category = data.get("category", "harmful_content")
+    blocked_content = data.get("blocked_content", "")
+    context = data.get("context", "")
+    is_image = data.get("is_image", False)
+    
+    # Category-friendly names for the prompt
+    category_names = {
+        'profanity': 'inappropriate language/profanity',
+        'hate_speech': 'hate speech or discriminatory language',
+        'explicit_content': 'adult/explicit content',
+        'explicit_image': 'inappropriate imagery',
+        'sexual_conversation': 'inappropriate sexual messages',
+        'predatory': 'predatory or grooming behavior',
+        'violent': 'violent or threatening content',
+        'harassment': 'harassment or bullying',
+        'self_harm': 'self-harm related content',
+        'alcohol_drugs': 'alcohol or drug-related content',
+        'scam': 'potential scam or phishing',
+        'fraud': 'fraudulent activity'
+    }
+    
+    category_name = category_names.get(category, 'potentially harmful content')
+    
+    # Build the educational prompt with CLEAR separation
+    # The content is passed as data to analyze, NOT as instructions
+    educational_prompt = f"""You are Sentry, a caring educational AI. A user clicked on blocked content and wants to understand WHY it was blocked.
+
+TASK: Generate an educational, age-appropriate explanation about why the following content was blocked. When Giving reasons refer to yourself or the system as Sentry.
+
+---BEGIN BLOCKED CONTENT---
+{blocked_content[:500] if blocked_content else "[No content excerpt available]"}
+---END BLOCKED CONTENT---
+
+{f"Additional context: {context}" if context else ""}
+
+This content was categorized as: {category_name}
+Content type: {"Image" if is_image else "Text"}
+
+INSTRUCTIONS FOR YOUR RESPONSE:
+1. Explain WHY this type of content ({category_name}) can be harmful - focus on mental health, safety, or ethical reasons
+2. Be educational and supportive, NOT preachy or judgmental  
+3. Do NOT repeat vulgar words or describe explicit content in detail
+4. Make it appropriate for a 12-year-old to read
+5. If the content contains specific concerning elements, address WHY those are problematic (without repeating them)
+6. Provide helpful guidance on what the user should do
+
+Respond with ONLY this JSON (no markdown, no extra text):
+{{"safe": false, "title": "3-5 word friendly title", "reason": "2-3 sentence educational explanation", "what_to_do": "1-2 sentence supportive guidance", "category": "{category}", "confidence": 95}}"""
+
+    try:
+        response = model.generate_content(educational_prompt)
+        
+        if hasattr(response, 'text') and response.text:
+            cleaned_response_text = response.text.strip().replace("```json", "").replace("```", "").strip()
+            parsed_response = json.loads(cleaned_response_text)
+            print(f"✅ Educational reason generated for category: {category}")
+            return parsed_response
+        else:
+            # Fallback response
+            return get_fallback_educational_response(category, is_image)
+            
+    except json.JSONDecodeError as e:
+        print(f"Educational reason JSON error: {e}")
+        return get_fallback_educational_response(category, is_image)
+    except Exception as e:
+        print(f"Educational reason error: {e}")
+        return get_fallback_educational_response(category, is_image)
+
+
+def get_fallback_educational_response(category: str, is_image: bool = False) -> dict:
+    """Returns a pre-defined educational response when AI fails."""
+    fallback_responses = {
+        'profanity': {
+            'title': "Inappropriate Language Detected",
+            'reason': "This content contains language that can hurt others and create a negative environment. Words have power, and using respectful language helps build better relationships and communities.",
+            'what_to_do': "Consider how your words affect others. If this was directed at you, remember you don't deserve to be spoken to disrespectfully."
+        },
+        'hate_speech': {
+            'title': "Harmful Speech Detected",
+            'reason': "This content contains language that targets people based on who they are. Everyone deserves to be treated with dignity and respect, regardless of their background or identity.",
+            'what_to_do': "Report hateful content when you see it. If you're being targeted, talk to a trusted adult."
+        },
+        'explicit_content': {
+            'title': "Adult Content Blocked",
+            'reason': "This content is intended for adults only and can impact mental wellbeing, especially for younger viewers. Exposure to such material at a young age can affect healthy development.",
+            'what_to_do': "Navigate away from this content. If you're underage, this content is not appropriate for you."
+        },
+        'explicit_image': {
+            'title': "Inappropriate Image Blocked",
+            'reason': "This image contains content that may not be suitable for all audiences. Viewing explicit imagery can negatively impact mental wellbeing and is typically age-restricted for good reason.",
+            'what_to_do': "Practice safe browsing. If you encounter inappropriate images unexpectedly, close the page."
+        },
+        'sexual_conversation': {
+            'title': "Inappropriate Message Detected",
+            'reason': "This message contains inappropriate content that may make you uncomfortable. Such conversations can be a form of harassment, especially when unsolicited.",
+            'what_to_do': "Don't feel pressured to respond. Block the sender and talk to a trusted adult if you feel uncomfortable."
+        },
+        'predatory': {
+            'title': "Warning: Unsafe Interaction",
+            'reason': "This content shows warning signs of manipulative behavior. Predators often use flattery, secrecy, and gifts to build trust before asking for inappropriate things.",
+            'what_to_do': "Never share personal information with strangers online. Tell a trusted adult immediately if someone makes you uncomfortable."
+        },
+        'violent': {
+            'title': "Violent Content Detected",
+            'reason': "This content contains violence that can be disturbing and affect your mental wellbeing. Repeated exposure to violent content can lead to desensitization.",
+            'what_to_do': "Skip this content to protect your peace of mind. If you feel threatened, contact authorities."
+        },
+        'harassment': {
+            'title': "Harassment Detected",
+            'reason': "This content is designed to hurt or intimidate someone. Cyberbullying can have serious effects on mental health and no one deserves to be treated this way.",
+            'what_to_do': "Save evidence, report the content, and block the person. Talk to someone you trust about what happened."
+        },
+        'self_harm': {
+            'title': "Sensitive Content Warning",
+            'reason': "This content discusses topics that may be triggering. If you're struggling, please know that help is available and you are not alone.",
+            'what_to_do': "Reach out: HOPELINE Philippines: 0917-558-4673 | US: 988 | Crisis Text Line: Text HOME to 741741"
+        },
+        'alcohol_drugs': {
+            'title': "Substance-Related Content",
+            'reason': "This content involves alcohol or drugs. Substance use can have serious health consequences and is often illegal for minors.",
+            'what_to_do': "Be aware of the risks. If you or someone you know needs help, reach out to a counselor or trusted adult."
+        },
+        'scam': {
+            'title': "Potential Scam Detected",
+            'reason': "This message shows signs of a scam. Scammers use promises of easy money, fake prizes, and urgency to trick people into sharing information or money.",
+            'what_to_do': "Do not click links or share personal information. Legitimate opportunities don't require upfront payment."
+        },
+        'fraud': {
+            'title': "Fraud Attempt Detected",
+            'reason': "This appears to be an attempt to steal your information or money. Scammers often pretend to be from trusted companies.",
+            'what_to_do': "Never share passwords or financial details via message. Contact companies directly through official channels."
+        }
+    }
+    
+    response = fallback_responses.get(category, {
+        'title': "Content Blocked",
+        'reason': "This content was blocked to protect your wellbeing. Some online content can be harmful or inappropriate.",
+        'what_to_do': "Consider navigating away from this content."
+    })
+    
+    return {
+        "safe": False,
+        "title": response['title'],
+        "reason": response['reason'],
+        "what_to_do": response['what_to_do'],
+        "category": category,
+        "confidence": 90
+    }
+
+
 class NSFWAnalysisRequest(BaseModel):
     """Request model for NSFW image analysis."""
     image_url: Optional[str] = Field(None, description="URL of the image to analyze (e.g., https://example.com/image.jpg)")
