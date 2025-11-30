@@ -8,8 +8,108 @@ from pathlib import Path
 from threading import Lock
 from typing import Any, Dict, List, Optional
 import json
+import numpy as np
+from PIL import Image
+import io
+import base64
+import urllib.request
 
 from pydantic import BaseModel, Field
+
+# --- NSFW Model Setup ---
+NSFW_MODEL = None
+# Model should be placed in: backend/app/models/sentry_content_filter.kiras
+NSFW_MODEL_PATH = Path(__file__).parent / "models" / "sentry_content_filter.kiras"
+
+def load_nsfw_model():
+    """Load the KIRAS NSFW detection model."""
+    global NSFW_MODEL
+    if NSFW_MODEL is None:
+        try:
+            import pickle
+            from tensorflow.keras import models
+            from tensorflow.keras.optimizers import Adam
+            
+            if NSFW_MODEL_PATH.exists():
+                print(f"📦 Loading NSFW model from: {NSFW_MODEL_PATH}")
+                with open(NSFW_MODEL_PATH, 'rb') as f:
+                    kiras_bundle = pickle.load(f)
+                
+                # Reconstruct the model
+                model = models.model_from_json(kiras_bundle["architecture"])
+                model.set_weights(kiras_bundle["weights"])
+                model.compile(
+                    optimizer=Adam(learning_rate=0.001),
+                    loss='categorical_crossentropy',
+                    metrics=['accuracy']
+                )
+                
+                metadata = kiras_bundle["metadata"]
+                class_indices = kiras_bundle["class_indices"]
+                idx_to_class = {v: k for k, v in class_indices.items()}
+                
+                NSFW_MODEL = {
+                    "model": model,
+                    "metadata": metadata,
+                    "class_indices": class_indices,
+                    "idx_to_class": idx_to_class
+                }
+                print(f"✅ NSFW model loaded! Classes: {metadata['classes']}")
+            else:
+                print(f"⚠️ NSFW model not found at: {NSFW_MODEL_PATH}")
+        except Exception as e:
+            print(f"❌ Failed to load NSFW model: {e}")
+    return NSFW_MODEL
+
+def predict_nsfw(img_array):
+    """Predict if an image is NSFW using the local model."""
+    model_data = load_nsfw_model()
+    if model_data is None:
+        return None
+    
+    model = model_data["model"]
+    metadata = model_data["metadata"]
+    idx_to_class = model_data["idx_to_class"]
+    
+    # Ensure numpy array
+    if not isinstance(img_array, np.ndarray):
+        img_array = np.array(img_array)
+    
+    # Handle single image
+    if len(img_array.shape) == 3:
+        img_array = np.expand_dims(img_array, axis=0)
+    
+    # Resize if needed
+    target_h = metadata['img_height']
+    target_w = metadata['img_width']
+    if img_array.shape[1:3] != (target_h, target_w):
+        resized = []
+        for i in range(img_array.shape[0]):
+            img = Image.fromarray(img_array[i].astype('uint8'))
+            img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
+            resized.append(np.array(img))
+        img_array = np.array(resized)
+    
+    # Normalize
+    if np.max(img_array) > 1:
+        img_array = img_array.astype('float32') / 255.0
+    
+    # Predict
+    predictions = model.predict(img_array, verbose=0)
+    
+    predicted_idx = np.argmax(predictions[0])
+    predicted_class = idx_to_class[predicted_idx]
+    confidence = float(predictions[0][predicted_idx])
+    
+    return {
+        "class": predicted_class,
+        "confidence": confidence,
+        "is_safe": predicted_class == "safe",
+        "probabilities": {
+            idx_to_class[i]: float(predictions[0][i])
+            for i in range(len(predictions[0]))
+        }
+    }
 
 # --- Load custom prompts ---
 try:
@@ -512,3 +612,145 @@ async def chat_with_ai(request: Request):
     except Exception as e:
         print(f"An unexpected error occurred during chat: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class NSFWAnalysisRequest(BaseModel):
+    """Request model for NSFW image analysis."""
+    image_url: Optional[str] = Field(None, description="URL of the image to analyze (e.g., https://example.com/image.jpg)")
+    image_base64: Optional[str] = Field(None, description="Base64-encoded image data (e.g., data:image/jpeg;base64,/9j/4AAQ...)")
+
+
+@app.post("/analyze-image-nsfw")
+async def analyze_image_nsfw(request_data: NSFWAnalysisRequest):
+    """
+    Analyzes image content using the LOCAL KIRAS NSFW model.
+    Much faster and more accurate than Gemini for NSFW detection.
+    
+    Provide either image_url OR image_base64 (not both required).
+    
+    Returns: { "safe": bool, "class": str, "confidence": float, "probabilities": {...} }
+    """
+    image_url = request_data.image_url
+    image_base64 = request_data.image_base64
+    
+    # Clean up empty/default strings from Swagger UI
+    if image_url and image_url.strip() in ["", "string"]:
+        image_url = None
+    if image_base64 and image_base64.strip() in ["", "string"]:
+        image_base64 = None
+    
+    if not image_url and not image_base64:
+        raise HTTPException(status_code=400, detail="image_url or image_base64 is required")
+    
+    try:
+        # Load image from URL or base64
+        if image_base64 and image_base64.startswith("data:"):
+            # Handle base64 image (must start with data: prefix)
+            if ',' in image_base64:
+                image_base64 = image_base64.split(',')[1]
+            img_bytes = base64.b64decode(image_base64)
+            img = Image.open(io.BytesIO(img_bytes))
+        elif image_base64 and len(image_base64) > 100:
+            # Raw base64 without data: prefix (long string = likely base64)
+            img_bytes = base64.b64decode(image_base64)
+            img = Image.open(io.BytesIO(img_bytes))
+        elif image_url:
+            # Download from URL
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'image/*,*/*;q=0.8',
+            }
+            req = urllib.request.Request(image_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as response:
+                image_data = response.read()
+            img = Image.open(io.BytesIO(image_data))
+        else:
+            raise HTTPException(status_code=400, detail="Valid image_url or image_base64 is required")
+        
+        # Convert to RGB if necessary
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        # Log image info for debugging
+        print(f"🔍 NSFW Analysis - Image size: {img.size}, mode: {img.mode}")
+        
+        # Run NSFW prediction
+        result = predict_nsfw(np.array(img))
+        
+        # Log the raw result
+        print(f"📊 NSFW Result: {result}")
+        
+        if result is None:
+            # Model not loaded, fall back to safe
+            return {
+                "safe": True,
+                "title": "Model Not Available",
+                "reason": "NSFW detection model is not loaded.",
+                "what_to_do": "Proceed with caution.",
+                "category": "error",
+                "confidence": 0
+            }
+        
+        # Format response to match extension's expected format
+        is_safe = result["is_safe"]
+        confidence = result["confidence"] * 100
+        
+        if is_safe:
+            return {
+                "safe": True,
+                "title": "Image Appears Safe",
+                "reason": f"This image was classified as safe with {confidence:.1f}% confidence.",
+                "what_to_do": "No action needed.",
+                "category": "safe",
+                "confidence": round(confidence),
+                "class": result["class"],
+                "probabilities": result["probabilities"]
+            }
+        else:
+            return {
+                "safe": False,
+                "title": "Inappropriate Image Detected",
+                "reason": f"This image has been flagged as potentially inappropriate with {confidence:.1f}% confidence.",
+                "what_to_do": "Click to view if you're certain you want to proceed.",
+                "category": "explicit_content",
+                "confidence": round(confidence),
+                "class": result["class"],
+                "probabilities": result["probabilities"]
+            }
+            
+    except urllib.error.HTTPError as e:
+        print(f"Failed to download image: {e}")
+        return {
+            "safe": True,
+            "title": "Image Not Accessible",
+            "reason": "Could not download the image for analysis.",
+            "what_to_do": "Proceed with caution.",
+            "category": "error",
+            "confidence": 0
+        }
+    except Exception as e:
+        print(f"Error in NSFW analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "safe": True,
+            "title": "Analysis Error",
+            "reason": f"Error analyzing image: {str(e)}",
+            "what_to_do": "Proceed with your own judgment.",
+            "category": "error",
+            "confidence": 0
+        }
+
+
+@app.get("/nsfw-model-status")
+async def nsfw_model_status():
+    """Check if the NSFW model is loaded and ready."""
+    model_data = load_nsfw_model()
+    if model_data:
+        return {
+            "loaded": True,
+            "model_name": model_data["metadata"]["model_name"],
+            "version": model_data["metadata"]["version"],
+            "classes": model_data["metadata"]["classes"]
+        }
+    return {"loaded": False}

@@ -18,10 +18,102 @@ function debounce(func, delay) {
 
 // Configuration
 const BACKEND_URL = 'http://localhost:8000';
+
+// NSFW Detection Configuration
+// Use backend API with the .keras model (most accurate)
+const USE_BACKEND_NSFW = true;
+
+/**
+ * Converts an image element to base64 using canvas
+ * @param {HTMLImageElement} imgElement - The image element
+ * @returns {string|null} Base64 string or null if failed
+ */
+function imageToBase64(imgElement) {
+  try {
+    // Create canvas and draw image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Use natural dimensions for better quality
+    canvas.width = imgElement.naturalWidth || imgElement.width;
+    canvas.height = imgElement.naturalHeight || imgElement.height;
+    
+    // Draw image to canvas
+    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+    
+    // Get base64 (JPEG for smaller size)
+    const base64 = canvas.toDataURL('image/jpeg', 0.9);
+    return base64;
+  } catch (error) {
+    // CORS error likely - can't access cross-origin images
+    console.warn('Sentry: Cannot convert image to base64 (CORS):', error.message);
+    return null;
+  }
+}
+
+/**
+ * Analyzes an image using the backend NSFW model (.keras)
+ * This is the most accurate method - uses your trained model
+ * @param {HTMLImageElement} imgElement - The image element to analyze
+ * @param {string} imageUrl - The URL of the image
+ * @param {string} context - Surrounding text context
+ * @returns {Promise<Object>} Analysis result
+ */
+async function analyzeImageWithBackendNSFW(imgElement, imageUrl, context) {
+  try {
+    console.log(`🔍 Sentry: Analyzing image with backend NSFW model: ${imageUrl.substring(0, 50)}...`);
+    const startTime = performance.now();
+    
+    // Try to convert image to base64 first (works for social media CDNs that block external requests)
+    let requestBody;
+    const base64Data = imageToBase64(imgElement);
+    
+    if (base64Data) {
+      console.log(`📸 Sentry: Using base64 encoding for image analysis`);
+      requestBody = { image_base64: base64Data };
+    } else {
+      // Fallback to URL (may not work for some CDNs)
+      console.log(`🔗 Sentry: Using URL for image analysis (base64 failed)`);
+      requestBody = { image_url: imageUrl };
+    }
+    
+    const response = await fetch(`${BACKEND_URL}/analyze-image-nsfw`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      console.error(`Sentry: Backend NSFW API error: ${response.status}`);
+      // Fall back to Vision API
+      return analyzeImageWithVisionAPI(imgElement, imageUrl, context);
+    }
+    
+    const result = await response.json();
+    const analysisTime = (performance.now() - startTime).toFixed(2);
+    
+    console.log(`⚡ Sentry: Backend NSFW analysis completed in ${analysisTime}ms`);
+    console.log(`   Result: ${result.safe ? '✅ Safe' : '🔞 Unsafe'} (${result.confidence}% confidence)`);
+    
+    return result;
+    
+  } catch (error) {
+    console.error('Sentry: Backend NSFW analysis error:', error);
+    // Fall back to Vision API
+    return analyzeImageWithVisionAPI(imgElement, imageUrl, context);
+  }
+}
+
+// Social media detection
 const isInstagram = window.location.hostname.includes('instagram.com');
 const isFacebook = window.location.hostname.includes('facebook.com');
-const SCAN_DEBOUNCE_TIME = (isInstagram || isFacebook) ? 2000 : 1200; // MUCH longer for social media (DOM changes constantly)
-const SCAN_COOLDOWN_TIME = (isInstagram || isFacebook) ? 5000 : 4000; // Longer cooldown for social media
+const isTwitter = window.location.hostname.includes('twitter.com') || window.location.hostname.includes('x.com');
+const isSocialMedia = isInstagram || isFacebook || isTwitter;
+
+const SCAN_DEBOUNCE_TIME = isSocialMedia ? 2000 : 1200; // MUCH longer for social media (DOM changes constantly)
+const SCAN_COOLDOWN_TIME = isSocialMedia ? 5000 : 4000; // Longer cooldown for social media
 const MIN_CONTENT_LENGTH = 5; // Very low to catch short profanity like "fuck", "shit"
 
 // Global state
@@ -244,32 +336,11 @@ function instantImageBlock(imgElement, imgSrc, context) {
     };
   }
   
-  // 6. SOCIAL MEDIA CDN IMAGES - Skip Vision API but check context
-  const isInstagramCDN = imgSrc.includes('fbcdn.net') || imgSrc.includes('cdninstagram.com');
-  const isFacebookCDN = imgSrc.includes('fbcdn.net') || imgSrc.includes('facebook.com/rsrc.php');
+  // 6. SOCIAL MEDIA CDN IMAGES - NOW ANALYZED VIA BASE64!
+  // Previously we skipped these, but now we convert to base64 and analyze with NSFW model
+  // So we return null to let them go through to PHASE 2 (backend NSFW analysis)
   
-  if (isInstagramCDN || isFacebookCDN) {
-    // Check if context has profanity/explicit keywords
-    const profanityInContext = /\b(fuck|shit|bitch|pussy|cock|dick|sexy|hot af|damn|ass)\b/i.test(combinedText);
-    
-    if (profanityInContext) {
-      console.log("⚡ Sentry: INSTANT IMAGE BLOCK - Social media image with explicit context");
-      return {
-        safe: false,
-        title: "Potentially Inappropriate Content",
-        reason: "This social media image has explicit language in its context.",
-        what_to_do: "Click to view if you trust the source.",
-        category: "explicit_content",
-        confidence: 75
-      };
-    }
-    
-    // For social media CDN, we can't analyze with Vision API - mark as safe to skip
-    // (Unless you want to be very strict and block all social media images)
-    return { safe: true, skipVisionAPI: true };
-  }
-  
-  // No instant decision - needs Vision API
+  // No instant decision - needs Backend NSFW model analysis
   return null;
 }
 
@@ -451,7 +522,10 @@ async function scanPageContent() {
       });
     }
     
-    // SECOND: Find and block suspicious images (like contentscript.js)
+    // SECOND: Skip findSuspiciousImages - rely on backend NSFW model instead
+    // The NSFW model is more accurate than keyword matching
+    // (Disabled because keywords like 'bikini' cause false positives)
+    /*
     const suspiciousImages = findSuspiciousImages();
     suspiciousImages.forEach(img => {
       const imageResponse = {
@@ -464,6 +538,7 @@ async function scanPageContent() {
       };
       blockSpecificElement(img, imageResponse);
     });
+    */
     
     // THIRD: Batch process remaining elements that need AI analysis
     const elementsNeedingAI = [];
@@ -549,9 +624,12 @@ async function scanPageContent() {
         
         // Send image to Vision API for deep analysis (async)
         visionAPICallCount++;
-        console.log(`Sentry: Sending image to Vision API for analysis... (${visionAPICallCount} images)`);
+        console.log(`Sentry: Sending image for analysis... (${visionAPICallCount} images)`);
         
-        analyzeImageWithVisionAPI(element, imgSrc, contentToScan).then(result => {
+        // Use backend NSFW model (most accurate) or fall back to Vision API
+        const analyzeImage = USE_BACKEND_NSFW ? analyzeImageWithBackendNSFW : analyzeImageWithVisionAPI;
+        
+        analyzeImage(element, imgSrc, contentToScan).then(result => {
           // Only block if result is confidently unsafe (not errors)
           if (!result.safe && result.category !== 'error' && result.confidence > 50) {
             console.log(`Sentry: Vision API found unsafe image - blocking! Category: ${result.category}`);
@@ -657,6 +735,14 @@ async function scanPageContent() {
     }
     
     // PHASE 2: BATCH API PROCESSING (10x faster!)
+    // Limit batch size to avoid 400 errors (backend limit is 50)
+    const MAX_BATCH_SIZE = 50;
+    if (elementsNeedingAI.length > MAX_BATCH_SIZE) {
+      console.log(`⚡ Sentry: Limiting batch from ${elementsNeedingAI.length} to ${MAX_BATCH_SIZE} elements`);
+      elementsNeedingAI.length = MAX_BATCH_SIZE;
+      elementsMetadata.length = MAX_BATCH_SIZE;
+    }
+    
     if (elementsNeedingAI.length > 0) {
       console.log(`⚡ Sentry: Sending ${elementsNeedingAI.length} elements to AI in ONE batch call...`);
       
@@ -778,19 +864,28 @@ function getMainContentArea() {
     }
   }
   
-  // Facebook Feed - Newsfeed only (middle section)
+  // Facebook Feed - Newsfeed only (middle section, NOT sidebar!)
   if (isFacebook && !window.location.pathname.includes('/messages/')) {
     const feedSelectors = [
-      '[role="feed"]', // Main newsfeed
-      'div[id*="stream"]'
+      'div[role="feed"]', // Main newsfeed - most specific
+      'div[role="main"] div[role="feed"]', // Feed inside main
+      'div[data-pagelet="Feed"]', // Facebook pagelet feed
+      'div[data-pagelet="MainFeed"]'
     ];
     
     for (const selector of feedSelectors) {
       const container = document.querySelector(selector);
       if (container) {
-        console.log(`✅ Sentry: Scanning ONLY Facebook feed area: ${selector}`);
+        console.log(`✅ Sentry: Scanning ONLY Facebook feed area (center column): ${selector}`);
         return container;
       }
+    }
+    
+    // Fallback: Try to find main content area excluding right sidebar
+    const mainContent = document.querySelector('div[role="main"]');
+    if (mainContent) {
+      console.log(`✅ Sentry: Scanning Facebook main area (excluding sidebar)`);
+      return mainContent;
     }
   }
   
@@ -822,6 +917,23 @@ function getMainContentArea() {
       const container = document.querySelector(selector);
       if (container) {
         console.log(`✅ Sentry: Scanning ONLY Instagram DM area: ${selector}`);
+        return container;
+      }
+    }
+  }
+  
+  // Twitter/X - Main timeline only (center column)
+  if (isTwitter) {
+    const twitterSelectors = [
+      'div[data-testid="primaryColumn"]', // Main timeline column
+      'main[role="main"]',
+      'section[role="region"]'
+    ];
+    
+    for (const selector of twitterSelectors) {
+      const container = document.querySelector(selector);
+      if (container) {
+        console.log(`✅ Sentry: Scanning ONLY Twitter/X main column: ${selector}`);
         return container;
       }
     }
@@ -1208,7 +1320,10 @@ function blockSpecificElement(element, aiResponse) {
   
   console.log(`Sentry: Blocked specific element (${targetElement.tagName}) for ${aiResponse.category}`);
   
-  // 🖼️ NEW: If blocking text content, also block associated images
+  // 🖼️ DISABLED: Associated image blocking causes false positives
+  // Images should ONLY be blocked by the NSFW model, not by text association
+  // This was blocking safe images just because they were near any flagged text
+  /*
   if (targetElement.tagName !== 'IMG') {
     const associatedImages = findAssociatedImages(targetElement);
     
@@ -1241,6 +1356,7 @@ function blockSpecificElement(element, aiResponse) {
       });
     }
   }
+  */
 }
 
 /**
@@ -1262,13 +1378,38 @@ function findSmallestBlockableElement(element, aiResponse) {
   // For images, always block the image itself
   // Make sure images are clickable by ensuring pointer-events
   if (element.tagName === 'IMG') {
-    element.style.cursor = 'pointer';
-    element.style.pointerEvents = 'auto';
-    element.style.userSelect = 'none'; // Prevent selection
+    // Apply inline styles directly for maximum override (Twitter/X uses !important)
+    element.style.setProperty('filter', 'blur(30px)', 'important');
+    element.style.setProperty('cursor', 'pointer', 'important');
+    element.style.setProperty('pointer-events', 'auto', 'important');
+    element.style.setProperty('user-select', 'none', 'important');
+    element.style.setProperty('transition', 'filter 0.3s ease', 'important');
+    element.style.setProperty('opacity', '1', 'important');
     
     // Prevent default image behaviors (like drag, right-click save)
     element.setAttribute('draggable', 'false');
     element.addEventListener('dragstart', (e) => e.preventDefault());
+    
+    // For Twitter/X: Also blur parent containers that might contain the image
+    if (isTwitter) {
+      const twitterContainers = [
+        element.closest('div[data-testid="tweetPhoto"]'),
+        element.closest('div[data-testid="card.wrapper"]'),
+        element.closest('a[href*="/photo/"]'),
+        element.closest('div[style*="background-image"]')
+      ];
+      
+      twitterContainers.forEach(container => {
+        if (container && !container.classList.contains('sentry-image-wrapper-blocked')) {
+          container.style.setProperty('filter', 'blur(30px)', 'important');
+          container.style.setProperty('overflow', 'hidden', 'important');
+          container.classList.add('sentry-image-wrapper-blocked');
+          console.log(`🖼️ Sentry: Also blurred Twitter container`);
+        }
+      });
+    }
+    
+    console.log(`🖼️ Sentry: Applied blur to image: ${element.src?.substring(0, 50)}...`);
     
     return element;
   }
@@ -1527,17 +1668,28 @@ function showConfirmationPopup(element, aiResponse) {
     // Remove Sentry attributes
     element.removeAttribute('data-sentry-blocked');
     element.removeAttribute('data-sentry-category');
+    element.removeAttribute('data-sentry-scanned');
     
-    // Reset inline styles
-    element.style.filter = 'none';
+    // Reset inline styles with !important override
+    element.style.setProperty('filter', 'none', 'important');
+    element.style.removeProperty('filter');
     element.style.cursor = '';
     element.style.pointerEvents = '';
     element.style.userSelect = '';
     element.style.zIndex = '';
+    element.style.transition = '';
     
-    // For images, restore draggable attribute
+    // For images, also unblur parent wrapper (Twitter/X)
     if (element.tagName === 'IMG') {
       element.removeAttribute('draggable');
+      
+      // Find and unblur wrapper
+      const imgWrapper = element.closest('.sentry-image-wrapper-blocked, div[style*="blur"], a[href*="/photo/"]');
+      if (imgWrapper) {
+        imgWrapper.style.setProperty('filter', 'none', 'important');
+        imgWrapper.style.removeProperty('filter');
+        imgWrapper.classList.remove('sentry-image-wrapper-blocked');
+      }
     }
     
     // Remove event listeners
@@ -1741,6 +1893,126 @@ const debouncedScan = debounce(() => {
   }
 }, SCAN_DEBOUNCE_TIME);
 
+/**
+ * 🖼️ DYNAMIC IMAGE SCANNER - Scans new images as they appear on the page
+ * This handles dynamically loaded content (Facebook, Twitter, Instagram, etc.)
+ * @param {HTMLImageElement} img - Image element to scan
+ */
+async function scanNewImage(img) {
+  // Skip if already scanned or blocked
+  if (scannedElements.has(img) || 
+      img.classList.contains('sentry-blocked-content') ||
+      img.hasAttribute('data-sentry-scanned')) {
+    return;
+  }
+  
+  // Mark as being scanned to prevent duplicate scans
+  img.setAttribute('data-sentry-scanned', 'pending');
+  
+  // Skip tiny images (icons, avatars under 80px)
+  if (img.naturalWidth < 80 || img.naturalHeight < 80) {
+    if (img.width < 80 || img.height < 80) {
+      img.setAttribute('data-sentry-scanned', 'skipped-small');
+      return;
+    }
+  }
+  
+  // Skip Sentry UI images
+  if (img.closest('.sentry-confirmation-overlay') ||
+      img.closest('.sentry-confirmation-popup') ||
+      img.id?.startsWith('sentry-')) {
+    return;
+  }
+  
+  const imgSrc = img.src || img.dataset?.src || img.getAttribute('data-src') || '';
+  
+  // Skip if no valid src
+  if (!imgSrc || imgSrc.startsWith('data:image/svg') || imgSrc.includes('emoji')) {
+    img.setAttribute('data-sentry-scanned', 'skipped-nosrc');
+    return;
+  }
+  
+  // Get context
+  const altText = img.alt || '';
+  const parentText = img.closest('article, div, section')?.innerText?.substring(0, 200) || '';
+  const context = `${altText} ${parentText}`.trim();
+  
+  console.log(`🖼️ Sentry: Scanning new image: ${imgSrc.substring(0, 60)}...`);
+  
+  // PHASE 1: Try instant image blocking first (0ms)
+  const instantResult = instantImageBlock(img, imgSrc, context);
+  
+  if (instantResult) {
+    if (instantResult.skipVisionAPI) {
+      img.setAttribute('data-sentry-scanned', 'safe');
+      scannedElements.add(img);
+      return;
+    }
+    
+    // Instant block!
+    console.log(`⚡ Sentry: INSTANT IMAGE BLOCK on dynamic image!`);
+    blockSpecificElement(img, instantResult);
+    img.setAttribute('data-sentry-scanned', 'blocked');
+    scannedElements.add(img);
+    return;
+  }
+  
+  // PHASE 2: Send to backend NSFW model
+  try {
+    const result = await analyzeImageWithBackendNSFW(img, imgSrc, context);
+    
+    if (!result.safe && result.category !== 'error' && result.confidence > 50) {
+      console.log(`🔞 Sentry: Backend NSFW detected unsafe image - blocking!`);
+      blockSpecificElement(img, result);
+      img.setAttribute('data-sentry-scanned', 'blocked');
+    } else {
+      img.setAttribute('data-sentry-scanned', 'safe');
+    }
+    
+    scannedElements.add(img);
+    
+  } catch (error) {
+    console.error('Sentry: Error scanning dynamic image:', error);
+    img.setAttribute('data-sentry-scanned', 'error');
+    scannedElements.add(img);
+  }
+}
+
+/**
+ * 🖼️ Scans all visible images on the page
+ * Called on initial load and periodically
+ */
+function scanAllVisibleImages() {
+  // On social media, only scan images in main content area (not sidebar)
+  const contentArea = isSocialMedia ? getMainContentArea() : document.body;
+  if (!contentArea) return;
+  
+  const images = contentArea.querySelectorAll('img');
+  let scannedCount = 0;
+  
+  images.forEach(img => {
+    // Only scan visible, unscanned, large enough images
+    if (img.offsetParent !== null && 
+        !img.hasAttribute('data-sentry-scanned') &&
+        !scannedElements.has(img) &&
+        img.width >= 80 && img.height >= 80) {
+      
+      // Check if image is loaded
+      if (img.complete && img.naturalWidth > 0) {
+        scanNewImage(img);
+        scannedCount++;
+      } else {
+        // Wait for image to load
+        img.addEventListener('load', () => scanNewImage(img), { once: true });
+      }
+    }
+  });
+  
+  if (scannedCount > 0) {
+    console.log(`🖼️ Sentry: Queued ${scannedCount} images for NSFW scanning`);
+  }
+}
+
 // MutationObserver to watch for page changes - IMPROVED with better filtering
 const observer = new MutationObserver((mutations) => {
   // First, maintain existing blurs
@@ -1760,19 +2032,55 @@ const observer = new MutationObserver((mutations) => {
             node.classList.add('sentry-blocked-content');
           }
         }
+        
+        // 🖼️ DYNAMIC IMAGE DETECTION - Scan new images immediately!
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          // Check if the node itself is an image
+          if (node.tagName === 'IMG') {
+            if (node.complete && node.naturalWidth > 0) {
+              scanNewImage(node);
+            } else {
+              node.addEventListener('load', () => scanNewImage(node), { once: true });
+            }
+          }
+          
+          // Check for images inside the added node
+          const newImages = node.querySelectorAll?.('img') || [];
+          newImages.forEach(img => {
+            if (img.complete && img.naturalWidth > 0) {
+              scanNewImage(img);
+            } else {
+              img.addEventListener('load', () => scanNewImage(img), { once: true });
+            }
+          });
+        }
       });
     }
   });
   
   // Check for relevant changes - with STRICT filtering to avoid mouse movement triggers
   const relevantChanges = mutations.filter(mutation => {
-    // Skip Sentry elements
-    if (mutation.target.id?.startsWith('sentry-') || 
-        mutation.target.classList?.contains('sentry-blocked-content') ||
-        mutation.target.classList?.contains('sentry-confirmation-overlay') ||
-        mutation.target.closest('[id^="sentry-"]') ||
-        mutation.target.closest('.sentry-confirmation-overlay')) {
-      return false;
+    // Skip if target is not an element (text nodes don't have closest)
+    if (!mutation.target || mutation.target.nodeType !== Node.ELEMENT_NODE) {
+      // For text nodes, check parent
+      if (mutation.target?.parentElement) {
+        const parent = mutation.target.parentElement;
+        if (parent.id?.startsWith('sentry-') || 
+            parent.classList?.contains('sentry-blocked-content')) {
+          return false;
+        }
+      }
+    }
+    
+    // Skip Sentry elements (only for element nodes)
+    if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+      if (mutation.target.id?.startsWith('sentry-') || 
+          mutation.target.classList?.contains('sentry-blocked-content') ||
+          mutation.target.classList?.contains('sentry-confirmation-overlay') ||
+          mutation.target.closest?.('[id^="sentry-"]') ||
+          mutation.target.closest?.('.sentry-confirmation-overlay')) {
+        return false;
+      }
     }
     
     // IGNORE attribute-only changes (hover effects, style changes from mouse movement)
@@ -2058,9 +2366,26 @@ function maintainBlockedElements() {
         element.setAttribute('data-sentry-blocked', 'true');
         element.setAttribute('data-sentry-category', aiResponse.category);
       }
+      
+      // Force inline blur style to override any platform CSS changes
+      const currentFilter = element.style.filter;
+      if (!currentFilter || !currentFilter.includes('blur')) {
+        element.style.filter = 'blur(30px)';
+        element.style.setProperty('filter', 'blur(30px)', 'important');
+      }
     } else {
       // Element no longer in DOM, remove from tracking
       blockedElements.delete(element);
+    }
+  });
+  
+  // Also re-apply blur to all elements with sentry-blocked-content class
+  // (in case class exists but styles were stripped)
+  document.querySelectorAll('.sentry-blocked-content').forEach(element => {
+    const currentFilter = element.style.filter;
+    if (!currentFilter || !currentFilter.includes('blur')) {
+      element.style.filter = 'blur(30px)';
+      element.style.setProperty('filter', 'blur(30px)', 'important');
     }
   });
 }
@@ -2112,9 +2437,22 @@ window.addEventListener('load', () => {
   // Run another scan after full page load
   scanPageContent();
   
+  // 🖼️ Initial image scan
+  scanAllVisibleImages();
+  
   // Periodically maintain blocked elements (every 2 seconds)
   setInterval(maintainBlockedElements, 2000);
+  
+  // 🖼️ Periodically scan for new images (every 3 seconds) - catches lazy-loaded images
+  setInterval(scanAllVisibleImages, 3000);
 });
+
+// 🖼️ Scan images when user scrolls (catches lazy-loaded content)
+const debouncedScrollScan = debounce(() => {
+  scanAllVisibleImages();
+}, 500);
+
+window.addEventListener('scroll', debouncedScrollScan, { passive: true });
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {

@@ -1,6 +1,14 @@
 // This script is dedicated to creating and managing the floating chatbot UI.
 /*global chrome */
 
+// ⚠️ DO NOT RUN CHATBOT ON LOCALHOST DEV SITES
+if (window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.includes('localhost:')) {
+  console.log("Sentry Chatbot: Skipping on localhost/dashboard");
+  throw new Error("Sentry chatbot intentionally disabled on localhost");
+}
+
 function createChatbot() {
   // --- 1. Create UI Elements ---
   const chatButton = document.createElement('div');
@@ -36,6 +44,7 @@ function createChatbot() {
   const sendButton = document.getElementById('sentry-chat-send-btn');
   
   let hasWelcomed = false; // To show welcome message only once per session
+  let chatHistory = []; // Store chat messages
 
   // --- 2. Idle Timer Logic ---
   let idleTimer;
@@ -137,7 +146,7 @@ function createChatbot() {
   // --- 6. Helper Functions (UPDATED) ---
 
   // --- NEW: Appends a message to the chat window ---
-  function appendMessage(text, sender) {
+  function appendMessage(text, sender, skipSave = false) {
     const messageElement = document.createElement('div');
     
     // Fix for the InvalidCharacterError by cleaning up the class name
@@ -151,7 +160,48 @@ function createChatbot() {
     messagesContainer.appendChild(messageElement);
     // Scroll to the bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Save message to storage and history (unless it's a typing indicator or loading from storage)
+    if (!skipSave && sender !== 'sentry typing') {
+      const message = { text, sender, timestamp: Date.now() };
+      chatHistory.push(message);
+      saveChatHistory();
+    }
+    
     return messageElement;
+  }
+  
+  // --- NEW: Save chat history to Chrome storage ---
+  function saveChatHistory() {
+    chrome.storage.local.set({ sentryChat: chatHistory }, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error saving chat history:", chrome.runtime.lastError);
+      }
+    });
+  }
+  
+  // --- NEW: Load chat history from Chrome storage ---
+  function loadChatHistory() {
+    chrome.storage.local.get(['sentryChat'], (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error loading chat history:", chrome.runtime.lastError);
+        return;
+      }
+      
+      if (result.sentryChat && Array.isArray(result.sentryChat)) {
+        chatHistory = result.sentryChat;
+        
+        // Display all saved messages
+        chatHistory.forEach(msg => {
+          appendMessage(msg.text, msg.sender, true); // skipSave = true to avoid duplicate saving
+        });
+        
+        // Mark as welcomed if there are any messages
+        if (chatHistory.length > 0) {
+          hasWelcomed = true;
+        }
+      }
+    });
   }
   
   // --- NEW: Handles the process of sending a message to the AI ---
@@ -232,10 +282,16 @@ function createChatbot() {
     
     if (isVisible) {
       resetIdleState();
-      // --- NEW: Show welcome message ---
+      // --- NEW: Load chat history when opening for the first time ---
       if (!hasWelcomed) {
-        appendMessage("Hello! I'm Sentry, your AI guardian for a safer web browsing experience. How can I assist you today?", 'sentry');
-        hasWelcomed = true;
+        loadChatHistory();
+        // Show welcome message only if no history exists
+        setTimeout(() => {
+          if (chatHistory.length === 0) {
+            appendMessage("Hello! I'm Sentry, your AI guardian for a safer web browsing experience. How can I assist you today?", 'sentry');
+          }
+          hasWelcomed = true;
+        }, 100);
       }
     } else {
       startIdleTimer();

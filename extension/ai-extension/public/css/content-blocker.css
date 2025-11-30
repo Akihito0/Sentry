@@ -6,21 +6,33 @@
 /* Blurred content overlay */
 .sentry-blocked-content {
   position: relative;
-  filter: blur(10px);
+  filter: blur(30px) !important;
+  -webkit-filter: blur(30px) !important;
   cursor: pointer !important;
-  transition: filter 0.3s ease;
-  user-select: none;
+  transition: filter 0.3s ease !important;
+  user-select: none !important;
   pointer-events: auto !important;
-  z-index: 10;
+  z-index: 10 !important;
   background: transparent !important;
   background-color: transparent !important;
 }
 
-/* Prevent click-through for images */
+/* Stronger blur for images (Twitter/X, Facebook, Instagram) */
 img.sentry-blocked-content {
-  display: block;
-  position: relative;
-  z-index: 10;
+  display: block !important;
+  position: relative !important;
+  z-index: 10 !important;
+  filter: blur(30px) !important;
+  -webkit-filter: blur(30px) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Image wrapper blocked (for Twitter/X) */
+.sentry-image-wrapper-blocked {
+  filter: blur(30px) !important;
+  -webkit-filter: blur(30px) !important;
+  overflow: hidden !important;
 }
 
 /* Text wrapper for profanity */
