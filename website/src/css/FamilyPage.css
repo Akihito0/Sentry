@@ -37,15 +37,30 @@
 .family-page .family-section-grid .activity-report-card   { grid-area: activity-report; }
 .family-page .family-section-grid .content-filtering-card { grid-area: content-filtering; }
 .family-page .family-section-grid .flagged-report-card   { grid-area: flagged-report; }
+.family-page .family-section-grid .family-id-card        { grid-area: family-id; }
+.family-page .family-section-grid .activity-logs-card    { grid-area: activity-logs; }
+
+.family-page .family-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 25px;
+  grid-template-areas:
+    "family-id flagged-report"
+    "family-members flagged-report"
+    "critical-alerts flagged-report"
+    "activity-logs activity-report"; 
+}
 
 @media (max-width: 1024px) {
     .family-page .family-section-grid {
         grid-template-columns: 1fr; 
         grid-template-areas:
+            "family-id"
             "notification-center"
             "flagged-report"
             "family-members"
             "critical-alerts"
+            "activity-logs"
             "activity-report"
             "content-filtering";
     }
@@ -765,4 +780,328 @@
   outline: none;
   border-color: #1890ff;
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Add Member Form Styles */
+.family-page .header-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.family-page .add-member-btn {
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.family-page .add-member-btn:hover {
+  background-color: #389e0d;
+}
+
+.family-page .add-member-form {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.family-page .add-member-form .form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.family-page .add-member-form input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.family-page .add-member-form input:focus {
+  outline: none;
+  border-color: #52c41a;
+  box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+}
+
+.family-page .add-member-form button[type="submit"] {
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.family-page .add-member-form button[type="submit"]:hover:not(:disabled) {
+  background-color: #389e0d;
+}
+
+.family-page .add-member-form button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.family-page .add-member-form .form-hint {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  text-align: center;
+}
+
+.family-page .loading-members,
+.family-page .no-members {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 1px dashed #d9d9d9;
+}
+
+.family-page .member-email {
+  font-size: 11px;
+  color: #1890ff;
+}
+
+.family-page .remove-member-button {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffa39e;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.family-page .remove-member-button:hover {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+/* Dynamic avatar colors based on first letter */
+.family-page .family-members-card .avatar-a { background-color: #f56a00; }
+.family-page .family-members-card .avatar-b { background-color: #7265e6; }
+.family-page .family-members-card .avatar-c { background-color: #ffbf00; }
+.family-page .family-members-card .avatar-d { background-color: #00a2ae; }
+.family-page .family-members-card .avatar-e { background-color: #eb2f96; }
+.family-page .family-members-card .avatar-f { background-color: #52c41a; }
+.family-page .family-members-card .avatar-g { background-color: #1890ff; }
+.family-page .family-members-card .avatar-h { background-color: #722ed1; }
+.family-page .family-members-card .avatar-i { background-color: #13c2c2; }
+.family-page .family-members-card .avatar-j { background-color: #6772e5; }
+.family-page .family-members-card .avatar-k { background-color: #fa541c; }
+.family-page .family-members-card .avatar-l { background-color: #2f54eb; }
+.family-page .family-members-card .avatar-m { background-color: #eb2f96; }
+.family-page .family-members-card .avatar-n { background-color: #faad14; }
+.family-page .family-members-card .avatar-o { background-color: #52c41a; }
+.family-page .family-members-card .avatar-p { background-color: #722ed1; }
+.family-page .family-members-card .avatar-q { background-color: #1890ff; }
+.family-page .family-members-card .avatar-r { background-color: #ff4d4f; }
+.family-page .family-members-card .avatar-s { background-color: #3ECF8E; }
+.family-page .family-members-card .avatar-t { background-color: #fa8c16; }
+.family-page .family-members-card .avatar-u { background-color: #a0d911; }
+.family-page .family-members-card .avatar-v { background-color: #13c2c2; }
+.family-page .family-members-card .avatar-w { background-color: #2f54eb; }
+.family-page .family-members-card .avatar-x { background-color: #f5222d; }
+.family-page .family-members-card .avatar-y { background-color: #fadb14; }
+.family-page .family-members-card .avatar-z { background-color: #722ed1; }
+
+/* Family ID Card Styles */
+.family-page .family-id-card {
+  background: linear-gradient(135deg, #e6f4ff, #f0f5ff) !important;
+  border: 1px solid #91caff;
+}
+
+.family-page .family-id-card h3 {
+  margin-bottom: 8px;
+}
+
+.family-page .card-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.family-page .family-id-display {
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.family-page .family-id-display code {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #333;
+  word-break: break-all;
+  flex: 1;
+}
+
+.family-page .family-id-display code.hidden {
+  letter-spacing: 2px;
+}
+
+.family-page .family-id-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.family-page .family-id-actions button {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.family-page .family-id-actions button:hover {
+  background-color: #096dd9;
+}
+
+.family-page .family-id-actions button.copied {
+  background-color: #52c41a;
+}
+
+.family-page .family-id-hint {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Activity Logs Card Styles */
+.family-page .activity-logs-card {
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.family-page .activity-logs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.family-page .activity-logs-header h3 {
+  margin: 0;
+}
+
+.family-page .activity-logs-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.family-page .loading-logs,
+.family-page .no-logs {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  border: 1px dashed #d9d9d9;
+}
+
+.family-page .no-logs ol {
+  text-align: left;
+  margin: 10px 0 0 20px;
+  padding: 0;
+}
+
+.family-page .no-logs li {
+  margin-bottom: 5px;
+}
+
+.family-page .activity-log-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px 15px;
+  border-left: 4px solid #1890ff;
+}
+
+.family-page .activity-log-item .log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.family-page .log-type-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.family-page .log-type-badge.search {
+  background-color: #e6f4ff;
+  color: #1890ff;
+}
+
+.family-page .log-type-badge.content {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.family-page .activity-log-item .log-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.family-page .activity-log-item .log-user {
+  font-size: 13px;
+  color: #1890ff;
+  margin-bottom: 6px;
+}
+
+.family-page .activity-log-item .log-excerpt {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+  word-break: break-word;
+  font-style: italic;
+}
+
+.family-page .activity-log-item .log-url {
+  font-size: 12px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.family-page .activity-log-item .log-keywords {
+  font-size: 11px;
+  color: #fa541c;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #eee;
 }

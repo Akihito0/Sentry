@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import '../css/FamilyPage.css';
 import useFlaggedReports, {
   formatRelativeTime,
@@ -6,15 +6,186 @@ import useFlaggedReports, {
   severityCopy,
   getSourceLabel
 } from '../hooks/useFlaggedReports';
+import {
+  db,
+  auth,
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  onSnapshot
+} from '../database/firebase';
 
 const FamilyPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [familyMembers, setFamilyMembers] = useState([
-    { id: 1, name: 'Jordan', role: 'child', parentId: null, status: 'Offline', lastSeen: '1 hour ago' },
-    { id: 2, name: 'Sarah', role: 'child', parentId: null, status: 'Offline', lastSeen: '1 hour ago' }
-  ]);
+  const [familyMembers, setFamilyMembers] = useState([]);
   const [editingMemberId, setEditingMemberId] = useState(null);
   const [selectedRole, setSelectedRole] = useState('all');
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [newMemberName, setNewMemberName] = useState('');
+  const [addingMember, setAddingMember] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [loadingMembers, setLoadingMembers] = useState(true);
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [showFamilyId, setShowFamilyId] = useState(false);
+  const [copiedFamilyId, setCopiedFamilyId] = useState(false);
+
+  // Get current user's family ID (using their UID as family identifier)
+  const currentUser = auth.currentUser;
+  const familyId = currentUser?.uid;
+
+  // Fetch activity logs from backend
+  const fetchActivityLogs = async () => {
+    if (!familyId) return;
+    
+    setLoadingLogs(true);
+    try {
+      const response = await fetch(`http://localhost:8000/activity-logs/${familyId}?limit=50`);
+      if (response.ok) {
+        const data = await response.json();
+        const logs = data.logs || [];
+        setActivityLogs(logs);
+        
+        // Auto-add members who appear in logs but aren't in the family yet
+        autoAddNewMembers(logs);
+      }
+    } catch (error) {
+      console.error('Error fetching activity logs:', error);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
+
+  // Automatically add new members discovered from activity logs
+  const autoAddNewMembers = async (logs) => {
+    if (!familyId || !logs.length) return;
+    
+    // Get unique emails from logs
+    const logEmails = [...new Set(logs.map(log => log.userEmail?.toLowerCase()).filter(Boolean))];
+    
+    // Get current member emails from Firestore (fresh query to avoid race conditions)
+    try {
+      const membersRef = collection(db, 'families', familyId, 'members');
+      const snapshot = await getDocs(membersRef);
+      const existingEmails = snapshot.docs.map(doc => doc.data().email?.toLowerCase());
+      
+      // Find emails that are in logs but not in members
+      const newEmails = logEmails.filter(email => 
+        email !== 'unknown' && !existingEmails.includes(email)
+      );
+      
+      // Add each new member (only if not already exists)
+      for (const email of newEmails) {
+        // Double-check this email doesn't exist (query by email)
+        const existingQuery = query(membersRef, where('email', '==', email));
+        const existingDocs = await getDocs(existingQuery);
+        
+        if (existingDocs.empty) {
+          await addDoc(membersRef, {
+            email: email,
+            name: email.split('@')[0],
+            role: 'child',
+            parentId: null,
+            status: 'Online',
+            lastSeen: new Date().toISOString(),
+            addedAt: new Date().toISOString(),
+            addedBy: 'auto-detected',
+            autoAdded: true
+          });
+          console.log('Auto-added family member:', email);
+        }
+      }
+    } catch (error) {
+      console.error('Error in autoAddNewMembers:', error);
+    }
+  };
+
+  // Fetch logs on mount and periodically
+  useEffect(() => {
+    fetchActivityLogs();
+    const interval = setInterval(fetchActivityLogs, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [familyId]);
+
+  // Copy Family ID to clipboard
+  const copyFamilyId = () => {
+    if (familyId) {
+      navigator.clipboard.writeText(familyId);
+      setCopiedFamilyId(true);
+      setTimeout(() => setCopiedFamilyId(false), 2000);
+    }
+  };
+
+  // Fetch family members from Firestore
+  useEffect(() => {
+    if (!familyId) {
+      setLoadingMembers(false);
+      return;
+    }
+
+    const membersRef = collection(db, 'families', familyId, 'members');
+    const unsubscribe = onSnapshot(membersRef, (snapshot) => {
+      const members = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        lastSeen: doc.data().lastSeen || 'Never'
+      }));
+      setFamilyMembers(members);
+      setLoadingMembers(false);
+    }, (error) => {
+      console.error('Error fetching family members:', error);
+      setLoadingMembers(false);
+    });
+
+    return () => unsubscribe();
+  }, [familyId]);
+
+  // Add new family member to Firestore
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    if (!newMemberEmail.trim() || !familyId) return;
+
+    setAddingMember(true);
+    try {
+      const membersRef = collection(db, 'families', familyId, 'members');
+      await addDoc(membersRef, {
+        email: newMemberEmail.trim().toLowerCase(),
+        name: newMemberName.trim() || newMemberEmail.split('@')[0],
+        role: 'child',
+        parentId: null,
+        status: 'Offline',
+        lastSeen: 'Never',
+        addedAt: new Date().toISOString(),
+        addedBy: currentUser.email
+      });
+      setNewMemberEmail('');
+      setNewMemberName('');
+      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error adding family member:', error);
+      alert('Failed to add family member. Please try again.');
+    } finally {
+      setAddingMember(false);
+    }
+  };
+
+  // Remove family member from Firestore
+  const handleRemoveMember = async (memberId) => {
+    if (!familyId || !window.confirm('Are you sure you want to remove this member?')) return;
+
+    try {
+      const memberRef = doc(db, 'families', familyId, 'members', memberId);
+      await deleteDoc(memberRef);
+    } catch (error) {
+      console.error('Error removing family member:', error);
+      alert('Failed to remove family member. Please try again.');
+    }
+  };
   
   const {
     flaggedReports,
@@ -31,23 +202,34 @@ const FamilyPage = () => {
     return flaggedReports.filter((report) => (report.category || '').toLowerCase() === selectedCategory.toLowerCase());
   }, [flaggedReports, selectedCategory]);
 
-  const handleRoleChange = (memberId, newRole) => {
-    setFamilyMembers(members =>
-      members.map(member =>
-        member.id === memberId
-          ? { ...member, role: newRole, parentId: newRole === 'parent' ? null : member.parentId }
-          : member
-      )
-    );
-    setEditingMemberId(null);
+  const handleRoleChange = async (memberId, newRole) => {
+    if (!familyId) return;
+    
+    try {
+      const memberRef = doc(db, 'families', familyId, 'members', memberId);
+      await updateDoc(memberRef, {
+        role: newRole,
+        parentId: newRole === 'parent' ? null : familyMembers.find(m => m.id === memberId)?.parentId
+      });
+      setEditingMemberId(null);
+    } catch (error) {
+      console.error('Error updating role:', error);
+      alert('Failed to update role. Please try again.');
+    }
   };
 
-  const handleParentAssignment = (childId, parentId) => {
-    setFamilyMembers(members =>
-      members.map(member =>
-        member.id === childId ? { ...member, parentId: parentId || null } : member
-      )
-    );
+  const handleParentAssignment = async (childId, parentId) => {
+    if (!familyId) return;
+    
+    try {
+      const memberRef = doc(db, 'families', familyId, 'members', childId);
+      await updateDoc(memberRef, {
+        parentId: parentId || null
+      });
+    } catch (error) {
+      console.error('Error assigning parent:', error);
+      alert('Failed to assign parent. Please try again.');
+    }
   };
 
   const filteredMembers = useMemo(() => {
@@ -94,32 +276,98 @@ const FamilyPage = () => {
       <div className="family-content-only-container">
         <div className="family-section-grid">
 
+          {/* Family ID Card - Share with family members */}
+          <div className="card family-id-card">
+            <h3>🔗 Family ID</h3>
+            <p className="card-description">Share this ID with family members so their browser activity syncs here.</p>
+            
+            <div className="family-id-display">
+              <code className={showFamilyId ? 'visible' : 'hidden'}>
+                {showFamilyId ? familyId : '••••••••••••••••••••'}
+              </code>
+              <div className="family-id-actions">
+                <button onClick={() => setShowFamilyId(!showFamilyId)}>
+                  {showFamilyId ? '👁️ Hide' : '👁️ Show'}
+                </button>
+                <button onClick={copyFamilyId} className={copiedFamilyId ? 'copied' : ''}>
+                  {copiedFamilyId ? '✓ Copied!' : '📋 Copy'}
+                </button>
+              </div>
+            </div>
+            <p className="family-id-hint">
+              Family members enter this ID in the Sentry browser extension (👤 tab) to sync their activity.
+            </p>
+          </div>
+
           <div className="card family-members-card">
             <div className="family-members-header">
               <h3>Family Members</h3>
-              <select 
-                value={selectedRole} 
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="role-filter"
-              >
-                <option value="all">All Roles</option>
-                <option value="parent">Parents</option>
-                <option value="child">Children</option>
-              </select>
+              <div className="header-controls">
+                <button 
+                  className="add-member-btn"
+                  onClick={() => setShowAddForm(!showAddForm)}
+                >
+                  {showAddForm ? '✕ Cancel' : '+ Add Member'}
+                </button>
+                <select 
+                  value={selectedRole} 
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="role-filter"
+                >
+                  <option value="all">All Roles</option>
+                  <option value="parent">Parents</option>
+                  <option value="child">Children</option>
+                </select>
+              </div>
             </div>
+
+            {showAddForm && (
+              <form className="add-member-form" onSubmit={handleAddMember}>
+                <div className="form-row">
+                  <input
+                    type="email"
+                    placeholder="Email address (Gmail)"
+                    value={newMemberEmail}
+                    onChange={(e) => setNewMemberEmail(e.target.value)}
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Name (optional)"
+                    value={newMemberName}
+                    onChange={(e) => setNewMemberName(e.target.value)}
+                  />
+                </div>
+                <button type="submit" disabled={addingMember || !newMemberEmail.trim()}>
+                  {addingMember ? 'Adding...' : 'Add as Child'}
+                </button>
+                <p className="form-hint">New members are added as "child" by default. You can change their role after adding.</p>
+              </form>
+            )}
+
             <div className="member-list">
-              {filteredMembers.map((member) => (
+              {loadingMembers ? (
+                <div className="loading-members">Loading family members...</div>
+              ) : filteredMembers.length === 0 ? (
+                <div className="no-members">
+                  {familyMembers.length === 0 
+                    ? 'No family members yet. Click "Add Member" to get started!'
+                    : 'No members match the selected filter.'}
+                </div>
+              ) : (
+                filteredMembers.map((member) => (
                 <div key={member.id} className="member-item">
-                  <div className={`member-avatar avatar-${member.name.toLowerCase()}`}>
-                    {member.name.charAt(0)}
+                  <div className={`member-avatar avatar-${(member.name || 'u').toLowerCase().charAt(0)}`}>
+                    {(member.name || member.email || 'U').charAt(0).toUpperCase()}
                   </div>
                   <div className="member-info">
                     <div className="member-name-row">
-                      <h4>{member.name}</h4>
+                      <h4>{member.name || member.email}</h4>
                       <span className={`role-badge role-${member.role}`}>
                         {member.role === 'parent' ? 'Parent' : 'Child'}
                       </span>
                     </div>
+                    <span className="member-email">{member.email}</span>
                     <span>{member.status} - Last seen {member.lastSeen}</span>
                     {member.role === 'child' && member.parentId && (
                       <span className="parent-info"> Parent: {getParentName(member.parentId)}</span>
@@ -132,7 +380,12 @@ const FamilyPage = () => {
                     >
                       {editingMemberId === member.id ? '✕' : 'Edit Role'}
                     </button>
-                    <button className="view-report-button">View Report</button>
+                    <button 
+                      className="remove-member-button"
+                      onClick={() => handleRemoveMember(member.id)}
+                    >
+                      Remove
+                    </button>
                   </div>
                   
                   {editingMemberId === member.id && (
@@ -153,12 +406,12 @@ const FamilyPage = () => {
                           <label>Assign to Parent:</label>
                           <select
                             value={member.parentId || ''}
-                            onChange={(e) => handleParentAssignment(member.id, e.target.value ? parseInt(e.target.value) : null)}
+                            onChange={(e) => handleParentAssignment(member.id, e.target.value || null)}
                           >
                             <option value="">No parent assigned</option>
                             {parents.map(parent => (
                               <option key={parent.id} value={parent.id}>
-                                {parent.name}
+                                {parent.name || parent.email}
                               </option>
                             ))}
                           </select>
@@ -167,7 +420,8 @@ const FamilyPage = () => {
                     </div>
                   )}
                 </div>
-              ))}
+              ))
+              )}
             </div>
           </div>
 
@@ -190,6 +444,63 @@ const FamilyPage = () => {
                 <span className="alert-time">13h 1min ago</span>
               </p>
               <span className="help-icon">❓</span>
+            </div>
+          </div>
+
+          {/* Activity Logs from Family Members */}
+          <div className="card activity-logs-card">
+            <div className="activity-logs-header">
+              <h3>📋 Family Activity Logs</h3>
+              <button 
+                className="refresh-button"
+                onClick={fetchActivityLogs}
+                disabled={loadingLogs}
+              >
+                {loadingLogs ? 'Loading...' : '🔄 Refresh'}
+              </button>
+            </div>
+            <p className="card-description">
+              Real-time activity detections from family members' browsers
+            </p>
+
+            <div className="activity-logs-list">
+              {loadingLogs ? (
+                <div className="loading-logs">Loading activity logs...</div>
+              ) : activityLogs.length === 0 ? (
+                <div className="no-logs">
+                  No activity logs yet. Make sure family members have:
+                  <ol>
+                    <li>Installed the Sentry extension</li>
+                    <li>Entered the Family ID in the extension</li>
+                    <li>Set their email address</li>
+                  </ol>
+                </div>
+              ) : (
+                activityLogs.slice(0, 10).map((log) => (
+                  <div key={log.id} className="activity-log-item">
+                    <div className="log-header">
+                      <span className={`log-type-badge ${log.type}`}>
+                        {log.type === 'search' ? '🔍 Search' : '📄 Content'}
+                      </span>
+                      <span className="log-time">{formatRelativeTime(log.timestamp)}</span>
+                    </div>
+                    <div className="log-user">
+                      👤 {log.userEmail}
+                    </div>
+                    <div className="log-excerpt">
+                      "{truncate(log.excerpt, 100)}"
+                    </div>
+                    <div className="log-url">
+                      🔗 {new URL(log.url).hostname}
+                    </div>
+                    {log.matchedKeywords?.length > 0 && (
+                      <div className="log-keywords">
+                        Matched: {log.matchedKeywords.join(', ')}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

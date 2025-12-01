@@ -914,3 +914,131 @@ async def nsfw_model_status():
             "classes": model_data["metadata"]["classes"]
         }
     return {"loaded": False}
+
+
+# --- Activity Logs for Family Monitoring ---
+# In-memory storage for activity logs (keyed by family ID)
+# In production, this should use a database like Firestore
+activity_logs_cache: Dict[str, List[Dict[str, Any]]] = {}
+MAX_ACTIVITY_LOGS_PER_FAMILY = 500
+
+
+class ActivityLog(BaseModel):
+    """Model for activity log entries from browser extensions."""
+    id: str = Field(..., description="Unique log ID")
+    timestamp: str = Field(..., description="ISO timestamp")
+    userEmail: str = Field(..., description="Email of the monitored user")
+    familyId: str = Field(..., description="Family group ID (parent's UID)")
+    url: str = Field(..., description="URL where detection occurred")
+    type: str = Field(..., description="Detection type: search or content")
+    excerpt: str = Field(..., description="Text excerpt that was detected")
+    matchedKeywords: List[str] = Field(default=[], description="Keywords that matched")
+    pageTitle: Optional[str] = Field(default="", description="Page title")
+
+
+@app.post("/activity-logs")
+async def sync_activity_log(log: ActivityLog):
+    """
+    Sync a single activity log from a browser extension.
+    This allows parents to see their children's browsing activity.
+    """
+    family_id = log.familyId
+    
+    if family_id not in activity_logs_cache:
+        activity_logs_cache[family_id] = []
+    
+    # Add the log
+    log_dict = log.model_dump()
+    activity_logs_cache[family_id].append(log_dict)
+    
+    # Trim to max size
+    if len(activity_logs_cache[family_id]) > MAX_ACTIVITY_LOGS_PER_FAMILY:
+        activity_logs_cache[family_id] = activity_logs_cache[family_id][-MAX_ACTIVITY_LOGS_PER_FAMILY:]
+    
+    print(f"📝 Activity log synced: {log.userEmail} - {log.type} - {log.excerpt[:50]}")
+    return {"status": "synced", "count": len(activity_logs_cache[family_id])}
+
+
+class RegisterMemberRequest(BaseModel):
+    """Request to register a family member from the extension."""
+    familyId: str = Field(..., description="Family group ID (parent's UID)")
+    email: str = Field(..., description="Email of the member")
+    name: Optional[str] = Field(default="", description="Display name")
+
+
+@app.post("/register-member")
+async def register_family_member(request: RegisterMemberRequest):
+    """
+    Register a family member when they set up the extension.
+    This adds them to the family's member list in Firestore automatically.
+    Called when a child enters the Family ID and their email in the extension.
+    """
+    # Note: This endpoint is called by the extension
+    # The actual Firestore write happens on the frontend (website)
+    # This endpoint just validates and returns success
+    # The extension will also call the website's API to register
+    
+    print(f"👤 Member registration request: {request.email} → family {request.familyId[:8]}...")
+    
+    return {
+        "status": "pending",
+        "message": "Member registration received. Add via Firestore on website.",
+        "familyId": request.familyId,
+        "email": request.email
+    }
+
+
+@app.post("/activity-logs/batch")
+async def sync_activity_logs_batch(request: Request):
+    """
+    Sync multiple activity logs at once (more efficient).
+    Expects: { "familyId": "...", "logs": [...] }
+    """
+    data = await request.json()
+    family_id = data.get("familyId")
+    logs = data.get("logs", [])
+    
+    if not family_id:
+        raise HTTPException(status_code=400, detail="familyId is required")
+    
+    if family_id not in activity_logs_cache:
+        activity_logs_cache[family_id] = []
+    
+    # Add all logs, avoiding duplicates by ID
+    existing_ids = {log.get("id") for log in activity_logs_cache[family_id]}
+    new_logs = [log for log in logs if log.get("id") not in existing_ids]
+    
+    activity_logs_cache[family_id].extend(new_logs)
+    
+    # Trim to max size
+    if len(activity_logs_cache[family_id]) > MAX_ACTIVITY_LOGS_PER_FAMILY:
+        activity_logs_cache[family_id] = activity_logs_cache[family_id][-MAX_ACTIVITY_LOGS_PER_FAMILY:]
+    
+    print(f"📝 Batch synced {len(new_logs)} logs for family {family_id}")
+    return {"status": "synced", "added": len(new_logs), "total": len(activity_logs_cache[family_id])}
+
+
+@app.get("/activity-logs/{family_id}")
+async def get_activity_logs(
+    family_id: str,
+    user_email: Optional[str] = None,
+    limit: int = 100
+):
+    """
+    Get activity logs for a family.
+    Parents can view all family members' logs.
+    Optionally filter by user_email.
+    """
+    logs = activity_logs_cache.get(family_id, [])
+    
+    if user_email:
+        logs = [log for log in logs if log.get("userEmail", "").lower() == user_email.lower()]
+    
+    # Sort by timestamp descending (newest first)
+    logs = sorted(logs, key=lambda x: x.get("timestamp", ""), reverse=True)
+    
+    return {
+        "familyId": family_id,
+        "logs": logs[:limit],
+        "total": len(logs)
+    }

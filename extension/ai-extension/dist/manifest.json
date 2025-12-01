@@ -19,10 +19,14 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "tabs", "identity"],
   "host_permissions": [
     "http://localhost:8000/*"
   ],
+  "oauth2": {
+    "client_id": "768177512844-YOUR_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
