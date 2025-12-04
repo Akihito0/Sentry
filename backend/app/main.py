@@ -13,6 +13,8 @@ from PIL import Image
 import io
 import base64
 import urllib.request
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 from pydantic import BaseModel, Field
 
@@ -145,6 +147,40 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+# Initialize Firebase Admin
+try:
+    # Try to initialize Firebase with credentials from environment
+    firebase_config = {
+        "type": "service_account",
+        "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+        "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+        "private_key": os.getenv("FIREBASE_PRIVATE_KEY", "").replace('\\n', '\n'),
+        "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+        "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": os.getenv("FIREBASE_CERT_URL")
+    }
+    
+    # Initialize Firebase only if we have the required config
+    if firebase_config["project_id"] and firebase_config["private_key"] and firebase_config["client_email"]:
+        cred = credentials.Certificate(firebase_config)
+        firebase_admin.initialize_app(cred)
+        db = firestore.client()
+        print("✅ Firebase Admin initialized successfully")
+        USE_FIREBASE = True
+    else:
+        print("⚠️ Firebase credentials not found in environment variables")
+        print("   Falling back to local JSON storage")
+        db = None
+        USE_FIREBASE = False
+except Exception as e:
+    print(f"⚠️ Firebase initialization failed: {e}")
+    print("   Falling back to local JSON storage")
+    db = None
+    USE_FIREBASE = False
+
 BASE_DIR = Path(__file__).resolve().parent
 FLAGGED_EVENTS_FILE = BASE_DIR / "flagged_events.json"
 _flagged_events_lock = Lock()
@@ -187,7 +223,7 @@ class FlaggedEvent(BaseModel):
 
 
 MAX_FLAGGED_EVENTS = 250
-flagged_events_cache: List[Dict[str, Any]] = _load_flagged_events()
+flagged_events_cache: List[Dict[str, Any]] = _load_flagged_events() if not USE_FIREBASE else []
 
 
 def _serialize_flagged_event(event: FlaggedEvent) -> Dict[str, Any]:
@@ -240,39 +276,88 @@ async def get_flagged_events(
 ):
     limit = max(1, min(limit, MAX_FLAGGED_EVENTS))
 
-    with _flagged_events_lock:
-        events = list(flagged_events_cache)
+    if USE_FIREBASE and db:
+        # Fetch from Firebase Firestore
+        try:
+            query = db.collection('flagged_events')
+            
+            # Apply filters
+            if category:
+                query = query.where('category', '==', category)
+            if user_id:
+                query = query.where('user_id', '==', user_id)
+            
+            # Order by detected_at descending and limit
+            query = query.order_by('detected_at', direction=firestore.Query.DESCENDING).limit(limit)
+            
+            docs = query.stream()
+            events = []
+            for doc in docs:
+                event_data = doc.to_dict()
+                event_data['id'] = doc.id
+                events.append(event_data)
+            
+            return {"items": events}
+        except Exception as e:
+            print(f"Error fetching from Firebase: {e}")
+            return {"items": [], "error": str(e)}
+    else:
+        # Fallback to local cache
+        with _flagged_events_lock:
+            events = list(flagged_events_cache)
 
-    if category:
-        category_lower = category.lower()
-        events = [
-            event for event in events
-            if category_lower in (event.get("category") or "").lower()
-        ]
+        if category:
+            category_lower = category.lower()
+            events = [
+                event for event in events
+                if category_lower in (event.get("category") or "").lower()
+            ]
 
-    if user_id:
-        events = [
-            event for event in events
-            if event.get("user_id") == user_id
-        ]
+        if user_id:
+            events = [
+                event for event in events
+                if event.get("user_id") == user_id
+            ]
 
-    events.sort(key=lambda event: _parse_event_datetime(event.get("detected_at")), reverse=True)
+        events.sort(key=lambda event: _parse_event_datetime(event.get("detected_at")), reverse=True)
 
-    return {"items": events[:limit]}
+        return {"items": events[:limit]}
 
 
 @app.post("/flagged-events")
 async def create_flagged_event(event: FlaggedEvent):
     serialized = _serialize_flagged_event(event)
 
-    with _flagged_events_lock:
-        flagged_events_cache.append(serialized)
-        if len(flagged_events_cache) > MAX_FLAGGED_EVENTS:
-            overflow = len(flagged_events_cache) - MAX_FLAGGED_EVENTS
-            del flagged_events_cache[0:overflow]
-        _persist_flagged_events(flagged_events_cache)
+    if USE_FIREBASE and db:
+        # Store in Firebase Firestore
+        try:
+            # Add to Firestore
+            doc_ref = db.collection('flagged_events').document()
+            serialized['id'] = doc_ref.id
+            doc_ref.set(serialized)
+            
+            print(f"✅ Stored flagged event in Firebase: {serialized.get('category')}")
+            return {"status": "stored", "id": doc_ref.id, "storage": "firebase"}
+        except Exception as e:
+            print(f"❌ Error storing to Firebase: {e}")
+            # Fallback to local storage on error
+            with _flagged_events_lock:
+                flagged_events_cache.append(serialized)
+                if len(flagged_events_cache) > MAX_FLAGGED_EVENTS:
+                    overflow = len(flagged_events_cache) - MAX_FLAGGED_EVENTS
+                    del flagged_events_cache[0:overflow]
+                _persist_flagged_events(flagged_events_cache)
+            return {"status": "stored", "items": len(flagged_events_cache), "storage": "local_fallback"}
+    else:
+        # Store locally
+        with _flagged_events_lock:
+            flagged_events_cache.append(serialized)
+            if len(flagged_events_cache) > MAX_FLAGGED_EVENTS:
+                overflow = len(flagged_events_cache) - MAX_FLAGGED_EVENTS
+                del flagged_events_cache[0:overflow]
+            _persist_flagged_events(flagged_events_cache)
 
-    return {"status": "stored", "items": len(flagged_events_cache)}
+        return {"status": "stored", "items": len(flagged_events_cache), "storage": "local"}
 
 @app.post("/analyze-content")
 async def analyze_content(request: Request):
@@ -1042,3 +1127,144 @@ async def get_activity_logs(
         "logs": logs[:limit],
         "total": len(logs)
     }
+
+
+# Blur reveal tracking storage
+blur_reveal_cache = []
+MAX_BLUR_REVEALS = 1000
+
+class BlurRevealEvent(BaseModel):
+    category: str
+    source: str
+    page_url: str
+    revealed_at: str
+    sessionId: Optional[str] = None
+    user_id: Optional[str] = None
+
+@app.post("/track-blur-reveal")
+async def track_blur_reveal(event: BlurRevealEvent):
+    """
+    Track when a user reveals blurred content by clicking on it.
+    This helps understand user behavior and content interaction patterns.
+    """
+    reveal_data = {
+        "category": event.category,
+        "source": event.source,
+        "page_url": event.page_url,
+        "revealed_at": event.revealed_at,
+        "sessionId": event.sessionId,
+        "user_id": event.user_id,
+        "id": f"reveal-{datetime.now().timestamp()}-{event.sessionId or 'unknown'}"
+    }
+    
+    if USE_FIREBASE and db:
+        # Store in Firebase Firestore
+        try:
+            doc_ref = db.collection('blur_reveals').document()
+            reveal_data['id'] = doc_ref.id
+            doc_ref.set(reveal_data)
+            
+            print(f"📊 Tracked blur reveal in Firebase: {event.category} on {event.source}")
+            return {"status": "tracked", "id": doc_ref.id, "storage": "firebase"}
+        except Exception as e:
+            print(f"❌ Error storing blur reveal to Firebase: {e}")
+            # Fallback to local cache
+            blur_reveal_cache.append(reveal_data)
+            if len(blur_reveal_cache) > MAX_BLUR_REVEALS:
+                blur_reveal_cache.pop(0)
+            return {"status": "tracked", "total": len(blur_reveal_cache), "storage": "local_fallback"}
+    else:
+        # Store locally
+        blur_reveal_cache.append(reveal_data)
+        
+        # Keep only recent reveals
+        if len(blur_reveal_cache) > MAX_BLUR_REVEALS:
+            blur_reveal_cache.pop(0)
+        
+        print(f"📊 Tracked blur reveal locally: {event.category} on {event.source}")
+        return {"status": "tracked", "total": len(blur_reveal_cache), "storage": "local"}
+
+
+@app.get("/blur-reveals")
+async def get_blur_reveals(
+    limit: int = 100,
+    category: Optional[str] = None,
+    user_id: Optional[str] = None
+):
+    """
+    Get blur reveal statistics.
+    Can be filtered by category or user_id.
+    """
+    if USE_FIREBASE and db:
+        # Fetch from Firebase Firestore
+        try:
+            query = db.collection('blur_reveals')
+            
+            # Apply filters
+            if category:
+                query = query.where('category', '==', category)
+            if user_id:
+                query = query.where('user_id', '==', user_id)
+            
+            # Order by revealed_at descending and limit
+            query = query.order_by('revealed_at', direction=firestore.Query.DESCENDING).limit(limit)
+            
+            docs = query.stream()
+            reveals = []
+            for doc in docs:
+                reveal_data = doc.to_dict()
+                reveal_data['id'] = doc.id
+                reveals.append(reveal_data)
+            
+            # Calculate statistics
+            total_reveals = len(reveals)
+            categories_count = {}
+            sources_count = {}
+            
+            for reveal in reveals:
+                cat = reveal.get("category", "unknown")
+                src = reveal.get("source", "unknown")
+                categories_count[cat] = categories_count.get(cat, 0) + 1
+                sources_count[src] = sources_count.get(src, 0) + 1
+            
+            return {
+                "total": total_reveals,
+                "items": reveals,
+                "categories": categories_count,
+                "sources": sources_count,
+                "storage": "firebase"
+            }
+        except Exception as e:
+            print(f"Error fetching blur reveals from Firebase: {e}")
+            return {"total": 0, "items": [], "categories": {}, "sources": {}, "error": str(e)}
+    else:
+        # Fallback to local cache
+        reveals = list(blur_reveal_cache)
+        
+        if category:
+            reveals = [r for r in reveals if category.lower() in r.get("category", "").lower()]
+        
+        if user_id:
+            reveals = [r for r in reveals if r.get("user_id") == user_id]
+        
+        # Sort by timestamp descending
+        reveals.sort(key=lambda x: x.get("revealed_at", ""), reverse=True)
+        
+        # Calculate statistics
+        total_reveals = len(reveals)
+        categories_count = {}
+        sources_count = {}
+        
+        for reveal in reveals:
+            cat = reveal.get("category", "unknown")
+            src = reveal.get("source", "unknown")
+            categories_count[cat] = categories_count.get(cat, 0) + 1
+            sources_count[src] = sources_count.get(src, 0) + 1
+        
+        return {
+            "total": total_reveals,
+            "items": reveals[:limit],
+            "categories": categories_count,
+            "sources": sources_count,
+            "storage": "local"
+        }

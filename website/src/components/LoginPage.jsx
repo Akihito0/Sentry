@@ -167,7 +167,7 @@ const LoginPage = ({ toggleMode }) => {
                                 />
                             </div>
                             <button type="submit" className="submit-button">
-                                Login Securely
+                                Login
                             </button>
                         </form>
 

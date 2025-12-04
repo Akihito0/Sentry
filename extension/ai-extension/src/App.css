@@ -186,7 +186,7 @@
 }
 
 .tab-description {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #666;
   margin-bottom: 0.5rem;
 }
@@ -232,7 +232,7 @@
 
 .input-group label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #666;
   margin-bottom: 0.25rem;
   font-weight: 500;
@@ -243,7 +243,7 @@
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   box-sizing: border-box;
 }
 
@@ -293,6 +293,7 @@
   margin: 0 0 0.5rem 0;
   text-align: center;
   color: #333;
+  font-size: 1.2rem;
 }
 
 .login-section form {

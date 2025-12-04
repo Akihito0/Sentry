@@ -517,10 +517,6 @@ function createNotificationBubble(ai, category) {
     });
     
     secondaryButton.addEventListener('click', () => {
-      document.querySelectorAll('.sentry-blurred-content').forEach(el => {
-        el.style.filter = 'none';
-      });
-    });
   } else {
     // For other content
     primaryButton.addEventListener('click', () => {
@@ -528,11 +524,12 @@ function createNotificationBubble(ai, category) {
         el.style.filter = el.nodeName.toLowerCase() === 'img' ? 'blur(10px)' : 'blur(5px)';
       });
     });
-    
     secondaryButton.addEventListener('click', () => {
       document.querySelectorAll('.sentry-blurred-content').forEach(el => {
         el.style.filter = 'none';
       });
+      // Track that user revealed all content
+      trackBlurReveal(category, window.location.hostname);
     });
   }
   
@@ -900,6 +897,71 @@ async function reportFlaggedContent(ai = {}, category = 'unsafe_content', option
   }
 }
 
+/**
+ * Track when a user reveals blurred content by clicking on it
+ * @param {string} category - The category of content that was revealed
+ * @param {string} source - The source/platform where the reveal happened
+ */
+async function trackBlurReveal(category = 'unsafe_content', source = window.location.hostname) {
+  try {
+    const revealData = {
+      category,
+      source,
+      page_url: window.location.href,
+      revealed_at: new Date().toISOString(),
+      sessionId: SENTRY_SESSION_ID
+    };
+    
+    // Send tracking data to backend for blur reveal stats
+    await fetch(`${BACKEND_URL}/track-blur-reveal`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(revealData)
+    });
+    
+    // ALSO store as a flagged event (this counts toward explicit/scam/phishing stats)
+    const flaggedEventData = {
+      category,
+      summary: `User revealed ${category} content`,
+      reason: `Blurred content was clicked and revealed by user`,
+      what_to_do: 'Content was reviewed by user',
+      page_url: window.location.href,
+      source,
+      content_excerpt: `User chose to reveal this ${category} content`,
+      severity: category.includes('explicit') || category.includes('scam') ? 'high' : 'medium',
+      detected_at: new Date().toISOString(),
+      user_id: null,
+      metadata: {
+        sessionId: SENTRY_SESSION_ID,
+        action: 'user_revealed'
+      }
+    };
+    
+    await fetch(FLAGGED_EVENTS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(flaggedEventData)
+    });
+    
+    // Also send message to background script for Chrome storage sync
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage({
+        type: 'BLUR_REVEALED',
+        data: {
+          category,
+          source,
+          page_url: window.location.href,
+          revealed_at: new Date().toISOString()
+        }
+      });
+    }
+    
+    console.log('Sentry: Tracked blur reveal and stored as flagged event:', category);
+  } catch (error) {
+    console.warn('Sentry: Unable to track blur reveal', error);
+  }
+}
+
 // Track consecutive skipped scans to avoid log spam
 let consecutiveSkippedScans = 0;
 let lastMessageTime = 0;
@@ -1223,10 +1285,16 @@ function handleMessengerScamDetection() {
         transition: filter 0.3s ease;
       `;
       
-      // Add click handler to toggle blur
+      // Add click handler to toggle blur and track clicks
       container.addEventListener('click', (e) => {
         e.stopPropagation();
+        const wasBlurred = container.style.filter !== 'none';
         container.style.filter = container.style.filter === 'none' ? 'blur(8px)' : 'none';
+        
+        // Track the blur reveal action
+        if (wasBlurred) {
+          trackBlurReveal('potential scam', 'messenger');
+        }
       });
     });
     

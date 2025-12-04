@@ -80,7 +80,14 @@ const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000 } = {}) => {
       if (withLoader) setLoadingReports(true);
       setReportError(null);
       try {
-        const response = await fetch(buildEndpoint(limit));
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        
+        const response = await fetch(buildEndpoint(limit), {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
         }
@@ -90,7 +97,10 @@ const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000 } = {}) => {
         setLastSyncedAt(new Date().toISOString());
       } catch (error) {
         console.error('Unable to fetch flagged events', error);
-        setReportError(error.message || 'Unable to sync flagged notifications');
+        const errorMsg = error.name === 'AbortError' 
+          ? 'Backend connection timeout - is the server running?' 
+          : error.message || 'Unable to sync flagged notifications';
+        setReportError(errorMsg);
         setFlaggedReports((prev) => (prev.length ? prev : FALLBACK_FLAGGED_REPORTS));
       } finally {
         setLoadingReports(false);

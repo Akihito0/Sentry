@@ -12,6 +12,7 @@ import useFlaggedReports, {
   severityCopy,
   getSourceLabel
 } from '../hooks/useFlaggedReports';
+import useBlurRevealStats from '../hooks/useBlurRevealStats';
 
 const FAMILY_MEMBERS = ['Noah Gabby', 'Jordii Cabs', 'Karlo Gon'];
 
@@ -164,7 +165,7 @@ const RightSection = ({ userName, openFamilyView, reportsData }) => {
   );
 };
 
-const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_MEMBERS, reportsData }) => {
+const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_MEMBERS, reportsData, revealStats = {} }) => {
   const {
     blockedWebsites = 0,
     phishingAttempts = 0,
@@ -183,6 +184,10 @@ const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_M
 
   const topReports = useMemo(() => flaggedReports.slice(0, 3), [flaggedReports]);
   const totalAlerts = severityStats.total || flaggedReports.length;
+
+  // Calculate blur reveal stats
+  const totalReveals = revealStats.total || 0;
+  const revealCategories = revealStats.categories || {};
 
   const categoryStats = useMemo(() => {
     const flaggedTextFields = flaggedReports.map((report) =>
@@ -216,6 +221,31 @@ const Main = ({ openMenu, userName, analyticsData = {}, familyMembers = FAMILY_M
         </button>
         <h5>Hello <b>{userName}</b>, Welcome Back!</h5>
       </header>
+
+      {/* Blur Reveal Statistics Card */}
+      {totalReveals > 0 && (
+        <div className="flagged-alert-card" style={{ marginBottom: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+          <div className="flagged-alert-card-header">
+            <div>
+              <h4 style={{ color: 'white' }}>🔓 Content Reveal Activity</h4>
+              <p style={{ color: 'rgba(255,255,255,0.9)' }}>Tracking when blurred content was clicked and revealed</p>
+            </div>
+          </div>
+
+          <div className="flagged-alert-card-meta" style={{ color: 'white' }}>
+            <span>{totalReveals} reveal{totalReveals === 1 ? '' : 's'} tracked</span>
+          </div>
+
+          <div className="flagged-alert-stats">
+            {Object.entries(revealCategories).slice(0, 3).map(([category, count]) => (
+              <div key={category} className="flagged-alert-stat" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                <span style={{ textTransform: 'capitalize' }}>{category.replace(/_/g, ' ')}</span>
+                <strong>{count}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flagged-alert-card">
         <div className="flagged-alert-card-header">
@@ -304,6 +334,7 @@ const DashboardView = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userName, setUserName] = useState('UserName');
   const reportsData = useFlaggedReports({ limit: 12, autoRefreshMs: 60000 });
+  const { revealStats, loading: revealStatsLoading } = useBlurRevealStats({ autoRefreshMs: 60000 });
 
   const analyticsData = useMemo(() => {
     const flagged = reportsData.flaggedReports || [];
@@ -386,6 +417,7 @@ const DashboardView = () => {
             analyticsData={analyticsData}
             familyMembers={FAMILY_MEMBERS}
             reportsData={reportsData}
+            revealStats={revealStats}
           />
         )}
         {active === 1 && <FamilyPage />}
