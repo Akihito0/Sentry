@@ -859,6 +859,88 @@ def get_fallback_educational_response(category: str, is_image: bool = False) -> 
     }
 
 
+class AIRecommendationsRequest(BaseModel):
+    """Request model for AI-powered safety recommendations."""
+    prompt: str = Field(..., description="The full prompt for Gemini")
+    category: str = Field(..., description="Category of the incident")
+    user_type: str = Field(..., description="Either 'parent' or 'child'")
+    severity: str = Field(default="medium", description="Severity level")
+
+
+@app.post("/ai-recommendations")
+async def get_ai_recommendations(request: AIRecommendationsRequest):
+    """
+    Generates personalized AI-powered recommendations for handling safety incidents.
+    Uses Gemini to provide context-aware, role-specific guidance.
+    
+    Expects: {
+        "prompt": "Full prompt with context",
+        "category": "explicit_content",
+        "user_type": "parent",
+        "severity": "high"
+    }
+    Returns: { "recommendations": "...", "category": "...", "user_type": "..." }
+    """
+    try:
+        # Use the Gemini model configured in the app
+        model = genai.GenerativeModel(
+            model_name='gemini-2.0-flash-exp',
+            generation_config={
+                "temperature": 0.8,
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 2048,
+            }
+        )
+        
+        # Generate recommendations
+        response = model.generate_content(request.prompt)
+        recommendations_text = response.text.strip()
+        
+        return {
+            "recommendations": recommendations_text,
+            "category": request.category,
+            "user_type": request.user_type,
+            "severity": request.severity
+        }
+    
+    except Exception as e:
+        print(f"❌ Error generating AI recommendations: {e}")
+        # Return fallback recommendations
+        fallback = generate_fallback_recommendations(request.category, request.user_type)
+        return {
+            "recommendations": fallback,
+            "category": request.category,
+            "user_type": request.user_type,
+            "severity": request.severity,
+            "fallback": True
+        }
+
+
+def generate_fallback_recommendations(category: str, user_type: str) -> str:
+    """Generate fallback recommendations when AI is unavailable."""
+    if user_type == "parent":
+        return """1. Have an open, non-judgmental conversation with your child about what happened.
+
+2. Review and adjust your family's online safety rules and device settings.
+
+3. Stay engaged with their online activities and maintain open communication.
+
+4. Consider consulting with a professional if the incident has caused distress.
+
+5. Use this as a learning opportunity to strengthen your family's digital literacy."""
+    else:
+        return """1. Tell a trusted adult (parent, teacher, or guardian) about what happened.
+
+2. You did nothing wrong - this content appeared unexpectedly or someone sent it to you.
+
+3. Block and report any suspicious accounts or content on the platform.
+
+4. Continue being careful about what you click and who you talk to online.
+
+5. Remember that you can always ask for help when something online makes you uncomfortable."""
+
+
 class NSFWAnalysisRequest(BaseModel):
     """Request model for NSFW image analysis."""
     image_url: Optional[str] = Field(None, description="URL of the image to analyze (e.g., https://example.com/image.jpg)")

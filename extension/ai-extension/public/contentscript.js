@@ -517,8 +517,9 @@ function createNotificationBubble(ai, category) {
     });
     
     secondaryButton.addEventListener('click', () => {
-  } else {
-    // For other content
+  } 
+  else {
+    // For ot,her content
     primaryButton.addEventListener('click', () => {
       document.querySelectorAll('.sentry-blurred-content').forEach(el => {
         el.style.filter = el.nodeName.toLowerCase() === 'img' ? 'blur(10px)' : 'blur(5px)';
@@ -1327,3 +1328,4 @@ window.addEventListener('beforeunload', () => {
         clearTimeout(scanTimeout);
     }
 });
+}

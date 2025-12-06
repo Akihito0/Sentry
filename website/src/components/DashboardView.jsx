@@ -6,6 +6,7 @@ import { auth, db, doc, getDoc } from '../database/firebase';
 import SafeBrowsing from './SafeBrowsing.jsx';
 import Settings from './Settings.jsx';
 import FamilyPage from './FamilyPage.jsx';
+import SafetyReports from './SafetyReports.jsx';
 import useFlaggedReports, {
   formatRelativeTime,
   truncate,
@@ -333,7 +334,9 @@ const DashboardView = () => {
   const [active, setActive] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userName, setUserName] = useState('UserName');
-  const reportsData = useFlaggedReports({ limit: 12, autoRefreshMs: 60000 });
+  const [userAccountType, setUserAccountType] = useState('parent'); // 'parent' or 'child'
+  const [selectedReport, setSelectedReport] = useState(null); // For modal
+  const reportsData = useFlaggedReports({ limit: 100, autoRefreshMs: 60000 }); // Increased limit for table
   const { revealStats, loading: revealStatsLoading } = useBlurRevealStats({ autoRefreshMs: 60000 });
 
   const analyticsData = useMemo(() => {
@@ -387,6 +390,8 @@ const DashboardView = () => {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setUserName(data.name || 'UserName');
+            // Get account type from user profile, default to 'parent' for now
+            setUserAccountType(data.accountType || 'parent');
           } else {
             console.warn('No user document found for:', user.uid);
           }
@@ -411,14 +416,24 @@ const DashboardView = () => {
       {/* ✅ Render center content based on selected sidebar item */}
       <div className="main-section">
         {active === 0 && (
-          <Main
-            openMenu={() => setSidebarOpen(true)}
-            userName={userName}
-            analyticsData={analyticsData}
-            familyMembers={FAMILY_MEMBERS}
-            reportsData={reportsData}
-            revealStats={revealStats}
-          />
+          <div style={{ width: '100%', padding: '20px' }}>
+            {/* Dashboard Header */}
+            <header style={{ marginBottom: '20px' }}>
+              <button className="menu-btn" id="menu-open" onClick={() => setSidebarOpen(true)}>
+                <i className='bx bx-menu'></i>
+              </button>
+              <h5>Hello <b>{userName}</b>, Welcome Back!</h5>
+            </header>
+
+            {/* Safety Reports Table - Primary Dashboard View */}
+            <SafetyReports
+              reports={reportsData.flaggedReports || []}
+              isParent={userAccountType === 'parent'}
+              currentUserId={auth.currentUser?.uid}
+              onShowDetails={(report) => setSelectedReport(report)}
+              loading={reportsData.loadingReports}
+            />
+          </div>
         )}
         {active === 1 && <FamilyPage />}
         {active === 2 && <SafeBrowsing />}
