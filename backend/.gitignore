@@ -4,4 +4,4 @@ __pycache__/
 .env
 logs/
 *.log
-.flaggged_events.json
+.flagged_events.json
