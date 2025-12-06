@@ -1991,7 +1991,37 @@ function findSmallestBlockableElement(element, aiResponse) {
 }
 
 /**
+ * Re-applies blur styles to an image element
+ * Facebook and other sites can reset styles when scrolling
+ * @param {Element} element The image element to re-blur
+ */
+function reapplyImageBlur(element) {
+  if (element.tagName === 'IMG') {
+    element.style.setProperty('filter', 'blur(30px)', 'important');
+    element.style.setProperty('cursor', 'pointer', 'important');
+    element.style.setProperty('pointer-events', 'auto', 'important');
+    element.style.setProperty('user-select', 'none', 'important');
+    element.style.setProperty('opacity', '1', 'important');
+    
+    // Also re-blur any parent wrappers (for Twitter/Facebook)
+    const wrappers = [
+      element.closest('.sentry-image-wrapper-blocked'),
+      element.closest('div[data-testid="tweetPhoto"]'),
+      element.closest('a[href*="/photo/"]')
+    ];
+    
+    wrappers.forEach(wrapper => {
+      if (wrapper) {
+        wrapper.style.setProperty('filter', 'blur(30px)', 'important');
+        wrapper.style.setProperty('overflow', 'hidden', 'important');
+      }
+    });
+  }
+}
+
+/**
  * Sets up persistent blur that re-applies when element comes back into view
+ * Also periodically checks to maintain blur (Facebook resets styles on scroll)
  * @param {Element} element The blocked element
  */
 function setupPersistentBlur(element) {
@@ -2005,17 +2035,49 @@ function setupPersistentBlur(element) {
         if (entry.isIntersecting && el.getAttribute('data-sentry-blocked') === 'true') {
           if (!el.classList.contains('sentry-blocked-content')) {
             el.classList.add('sentry-blocked-content');
-            console.log("Sentry: Re-applied blur to element that scrolled back into view");
+            console.log("🔒 Sentry: Re-applied blur class to element that scrolled back into view");
+          }
+          
+          // CRITICAL: Re-apply inline styles for images (Facebook resets these!)
+          if (el.tagName === 'IMG') {
+            reapplyImageBlur(el);
+            console.log("🔒 Sentry: Re-applied blur STYLES to image that scrolled back into view");
           }
         }
       });
     }, {
-      threshold: 0.1 // Trigger when 10% of element is visible
+      threshold: [0, 0.1, 0.5, 1.0] // Multiple thresholds for better detection
     });
   }
   
   // Observe this element
   intersectionObserver.observe(element);
+  
+  // ADDITIONAL FIX: Set up a style observer to detect when Facebook removes our blur
+  if (element.tagName === 'IMG' && !element._sentryStyleObserver) {
+    const styleObserver = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
+          // Check if blur was removed but element should still be blocked
+          if (element.getAttribute('data-sentry-blocked') === 'true') {
+            const currentFilter = element.style.filter || '';
+            if (!currentFilter.includes('blur')) {
+              console.log("🔒 Sentry: Detected blur removal - re-applying!");
+              reapplyImageBlur(element);
+              element.classList.add('sentry-blocked-content');
+            }
+          }
+        }
+      });
+    });
+    
+    styleObserver.observe(element, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class'] 
+    });
+    
+    element._sentryStyleObserver = styleObserver;
+  }
 }
 
 /**
@@ -2884,6 +2946,7 @@ function startObserver() {
 
 /**
  * Maintains blur on all blocked elements (runs periodically)
+ * ENHANCED: Also re-applies full image blur styles that Facebook strips
  */
 function maintainBlockedElements() {
   blockedElements.forEach((aiResponse, element) => {
@@ -2891,7 +2954,7 @@ function maintainBlockedElements() {
       // Ensure element still has the blocked class
       if (!element.classList.contains('sentry-blocked-content')) {
         element.classList.add('sentry-blocked-content');
-        console.log("Sentry: Maintained blur on element");
+        console.log("🔒 Sentry: Maintained blur class on element");
       }
       
       // Ensure data attribute is still set
@@ -2900,11 +2963,20 @@ function maintainBlockedElements() {
         element.setAttribute('data-sentry-category', aiResponse.category);
       }
       
-      // Force inline blur style to override any platform CSS changes
-      const currentFilter = element.style.filter;
-      if (!currentFilter || !currentFilter.includes('blur')) {
-        element.style.filter = 'blur(30px)';
-        element.style.setProperty('filter', 'blur(30px)', 'important');
+      // For images, use the full reapply function
+      if (element.tagName === 'IMG') {
+        const currentFilter = element.style.filter || '';
+        if (!currentFilter.includes('blur')) {
+          reapplyImageBlur(element);
+          console.log("🔒 Sentry: Maintained full blur styles on image");
+        }
+      } else {
+        // For other elements, just ensure blur filter
+        const currentFilter = element.style.filter;
+        if (!currentFilter || !currentFilter.includes('blur')) {
+          element.style.filter = 'blur(30px)';
+          element.style.setProperty('filter', 'blur(30px)', 'important');
+        }
       }
     } else {
       // Element no longer in DOM, remove from tracking
@@ -2912,13 +2984,21 @@ function maintainBlockedElements() {
     }
   });
   
-  // Also re-apply blur to all elements with sentry-blocked-content class
-  // (in case class exists but styles were stripped)
-  document.querySelectorAll('.sentry-blocked-content').forEach(element => {
-    const currentFilter = element.style.filter;
-    if (!currentFilter || !currentFilter.includes('blur')) {
-      element.style.filter = 'blur(30px)';
-      element.style.setProperty('filter', 'blur(30px)', 'important');
+  // Also check all elements with data-sentry-blocked attribute
+  // (catches cases where element was blocked but not in our Map)
+  document.querySelectorAll('[data-sentry-blocked="true"]').forEach(element => {
+    if (!element.classList.contains('sentry-blocked-content')) {
+      element.classList.add('sentry-blocked-content');
+    }
+    
+    const currentFilter = element.style.filter || '';
+    if (!currentFilter.includes('blur')) {
+      if (element.tagName === 'IMG') {
+        reapplyImageBlur(element);
+      } else {
+        element.style.setProperty('filter', 'blur(30px)', 'important');
+      }
+      console.log("🔒 Sentry: Re-applied blur to element with data-sentry-blocked attribute");
     }
   });
 }
@@ -2986,6 +3066,22 @@ const debouncedScrollScan = debounce(() => {
 }, 500);
 
 window.addEventListener('scroll', debouncedScrollScan, { passive: true });
+
+// 🔒 MAINTAIN BLURS ON SCROLL - Facebook strips styles when scrolling
+// This runs more frequently to catch blur removal quickly
+const debouncedBlurMaintain = debounce(() => {
+  // Quick check all blocked images to ensure blur is maintained
+  document.querySelectorAll('img[data-sentry-blocked="true"]').forEach(img => {
+    const currentFilter = img.style.filter || '';
+    if (!currentFilter.includes('blur')) {
+      reapplyImageBlur(img);
+      img.classList.add('sentry-blocked-content');
+      console.log("🔒 Sentry: Scroll-triggered blur maintenance on image");
+    }
+  });
+}, 100); // More frequent check on scroll
+
+window.addEventListener('scroll', debouncedBlurMaintain, { passive: true });
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
