@@ -181,6 +181,17 @@ const FamilyPage = () => {
       }));
       setFamilyMembers(members);
       setLoadingMembers(false);
+      
+      // Load blocking settings for each child member
+      const loadedSettings = {};
+      members.forEach(member => {
+        if (member.role === 'child' && member.blockingSettings) {
+          loadedSettings[member.id] = member.blockingSettings;
+        }
+      });
+      if (Object.keys(loadedSettings).length > 0) {
+        setChildSettings(prev => ({ ...prev, ...loadedSettings }));
+      }
     }, (error) => {
       console.error('Error fetching family members:', error);
       setLoadingMembers(false);
@@ -328,15 +339,40 @@ const FamilyPage = () => {
     updateChildSetting(childId, category, keywordKey, newList);
   };
 
-  // Save child settings to Firestore
+  // Save child settings to Firestore and sync to backend
   const saveChildSettings = async (childId) => {
     if (!familyId) return;
     
     try {
+      const settings = getChildSettings(childId);
+      const member = familyMembers.find(m => m.id === childId);
+      const childName = member?.name || member?.email?.split('@')[0] || 'Unknown';
+      const childEmail = member?.email || '';
+      
+      // Save to Firestore (under member document)
       const memberRef = doc(db, 'families', familyId, 'members', childId);
       await updateDoc(memberRef, {
-        blockingSettings: getChildSettings(childId)
+        blockingSettings: settings
       });
+      
+      // Also sync to backend for content script access
+      try {
+        await fetch('http://localhost:8000/sync-blocking-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            familyId: familyId,
+            childId: childId,
+            childName: childName,
+            childEmail: childEmail,
+            settings: settings
+          })
+        });
+        console.log('Blocking settings synced to backend');
+      } catch (syncError) {
+        console.warn('Could not sync to backend:', syncError);
+      }
+      
       alert('Settings saved successfully!');
     } catch (error) {
       console.error('Error saving child settings:', error);

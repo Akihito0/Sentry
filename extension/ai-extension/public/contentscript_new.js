@@ -60,6 +60,12 @@ function imageToBase64(imgElement) {
  * @returns {Promise<Object>} Analysis result
  */
 async function analyzeImageWithBackendNSFW(imgElement, imageUrl, context) {
+  // Check if NSFW image blocking is enabled in settings
+  if (!blockingSettings.nsfw.blockImages) {
+    console.log('Sentry: NSFW image blocking is disabled in settings');
+    return { safe: true, reason: 'NSFW image blocking disabled' };
+  }
+  
   try {
     console.log(`🔍 Sentry: Analyzing image with backend NSFW model: ${imageUrl.substring(0, 50)}...`);
     const startTime = performance.now();
@@ -147,6 +153,24 @@ const FLAGGED_EVENTS_ENDPOINT = `${BACKEND_URL}/flagged-events`;
 let currentUserEmail = '';
 let currentUserName = '';
 
+// Store blocking settings (fetched from backend/Firebase)
+let blockingSettings = {
+  nsfw: {
+    blockImages: true,
+    blockKeywords: false,
+    keywords: []
+  },
+  scams: {
+    blockPhishing: true,
+    blockKeywords: false,
+    keywords: []
+  },
+  custom: {
+    enabled: false,
+    websites: []
+  }
+};
+
 // Fetch current user info from background script
 async function fetchCurrentUserInfo() {
   try {
@@ -155,14 +179,196 @@ async function fetchCurrentUserInfo() {
       currentUserEmail = response.email || '';
       currentUserName = response.name || (currentUserEmail ? currentUserEmail.split('@')[0] : '');
       console.log('Sentry: Current user loaded:', currentUserName, '(' + currentUserEmail + ')');
+      
+      // Fetch blocking settings after getting user info
+      if (currentUserEmail) {
+        await fetchBlockingSettings();
+      }
     }
   } catch (error) {
     console.warn('Sentry: Could not fetch current user info:', error);
   }
 }
 
-// Fetch user info on script load
-fetchCurrentUserInfo();
+// Fetch blocking settings from backend
+async function fetchBlockingSettings() {
+  if (!currentUserEmail) {
+    console.warn('Sentry: Cannot fetch blocking settings - no user email');
+    return;
+  }
+  
+  try {
+    console.log('Sentry: Fetching blocking settings for:', currentUserEmail);
+    const url = `${BACKEND_URL}/get-blocking-settings/${encodeURIComponent(currentUserEmail)}`;
+    console.log('Sentry: Fetching from URL:', url);
+    const response = await fetch(url);
+    
+    console.log('Sentry: Response status:', response.status);
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Sentry: Raw response data:', JSON.stringify(data));
+      if (data.settings) {
+        // Merge fetched settings with defaults
+        // Settings keys match what's saved from FamilyPage: nsfw, scams, custom
+        if (data.settings.nsfw) {
+          blockingSettings.nsfw = {
+            blockImages: data.settings.nsfw.blockImages ?? true,
+            blockKeywords: data.settings.nsfw.blockKeywords ?? false,
+            keywords: data.settings.nsfw.keywords || []
+          };
+        }
+        if (data.settings.scams) {
+          blockingSettings.scams = {
+            blockPhishing: data.settings.scams.blockPhishing ?? true,
+            blockKeywords: data.settings.scams.blockKeywords ?? false,
+            keywords: data.settings.scams.keywords || []
+          };
+        }
+        if (data.settings.custom) {
+          blockingSettings.custom = {
+            enabled: data.settings.custom.enabled ?? false,
+            websites: data.settings.custom.websites || []
+          };
+        }
+        console.log('Sentry: Blocking settings loaded:', blockingSettings);
+        
+        // Check if current page should be blocked
+        checkCustomWebsiteBlocking();
+      }
+    } else {
+      console.warn('Sentry: Could not fetch blocking settings:', response.status);
+    }
+  } catch (error) {
+    console.warn('Sentry: Error fetching blocking settings:', error);
+  }
+}
+
+// Check if current website is in the custom blocked list
+function checkCustomWebsiteBlocking() {
+  console.log('Sentry: Checking custom website blocking...');
+  console.log('Sentry: custom.enabled:', blockingSettings.custom.enabled);
+  console.log('Sentry: custom.websites:', blockingSettings.custom.websites);
+  
+  if (!blockingSettings.custom.enabled) {
+    console.log('Sentry: Custom website blocking is DISABLED');
+    return;
+  }
+  
+  if (blockingSettings.custom.websites.length === 0) {
+    console.log('Sentry: No websites in block list');
+    return;
+  }
+  
+  const currentUrl = window.location.href.toLowerCase();
+  const currentHost = window.location.hostname.toLowerCase();
+  console.log('Sentry: Current host:', currentHost);
+  
+  for (const blockedSite of blockingSettings.custom.websites) {
+    const sitePattern = blockedSite.toLowerCase().trim();
+    if (!sitePattern) continue;
+    
+    console.log('Sentry: Checking if', currentHost, 'matches blocked pattern:', sitePattern);
+    
+    // Check if the current URL or hostname contains the blocked pattern
+    if (currentHost.includes(sitePattern) || currentUrl.includes(sitePattern)) {
+      console.log('Sentry: ✅ MATCH FOUND! Blocking website:', sitePattern);
+      showBlockedWebsiteModal(sitePattern);
+      return;
+    }
+  }
+}
+
+// Show modal for blocked websites requiring parent permission
+function showBlockedWebsiteModal(blockedSite) {
+  // Remove existing modal if any
+  const existingModal = document.getElementById('sentry-blocked-website-modal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'sentry-blocked-website-modal';
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2147483647;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  `;
+  
+  // Create modal content
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  `;
+  
+  modal.innerHTML = `
+    <div style="margin-bottom: 24px;">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" style="margin: 0 auto;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+    </div>
+    <h1 style="color: #1F2937; font-size: 28px; font-weight: 700; margin: 0 0 16px 0;">
+      Website Blocked
+    </h1>
+    <p style="color: #6B7280; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      This website has been blocked by your parent or guardian. 
+      Access to <strong style="color: #EF4444;">${blockedSite}</strong> requires parent permission.
+    </p>
+    <div style="background: #FEF2F2; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+      <p style="color: #991B1B; font-size: 14px; margin: 0;">
+        🔒 Protected by Sentry Parental Controls
+      </p>
+    </div>
+    <button id="sentry-go-back-btn" style="
+      background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    ">
+      Go Back to Safety
+    </button>
+  `;
+  
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  
+  // Add event listener to button
+  document.getElementById('sentry-go-back-btn').addEventListener('click', () => {
+    window.history.back();
+    // If can't go back, redirect to a safe page
+    setTimeout(() => {
+      if (document.getElementById('sentry-blocked-website-modal')) {
+        window.location.href = 'https://www.google.com';
+      }
+    }, 100);
+  });
+  
+  // Prevent scrolling on the blocked page
+  document.body.style.overflow = 'hidden';
+}
+
+// Note: fetchCurrentUserInfo() is called in the initialization section at the bottom of this file
 
 function normalizeExcerpt(rawText = "") {
   if (!rawText) return "";
@@ -868,41 +1074,47 @@ function instantLocalBlock(element, contentText) {
   }
   
   // 9. SCAM/PHISHING PATTERNS - English, Filipino, and Cebuano
-  const scamPatternEnglish = /\b(congratulations.*won|claim your prize|urgent.*act now|click here.*whatsapp|wa\.me|telegram.*money|earn \$\d+|get rich quick|investment opportunity.*guaranteed|free money|work from home.*\$\d+|you have been selected|lottery winner|inheritance from|nigerian prince)\b/i;
-  
-  const scamPatternFilipino = /\b(nanalo ka|panalo ka|kunin ang premyo|trabaho sa bahay|malaking sweldo|kumita agad|i-click dito|dali lang|libre.*premyo|congratulations.*nanalo|selected ka|claim.*prize|swerte mo)\b/i;
-  
-  const scamPatternCebuano = /\b(daog ka|kuhaa ang premyo|trabaho sa balay|dako nga suweldo|kita dayon|i-click diri|pinduta|sayon ra|libre.*premyo|daog.*prize|swerte nimo)\b/i;
-  
-  if (scamPatternEnglish.test(content) || scamPatternFilipino.test(content) || scamPatternCebuano.test(content)) {
-    console.log("⚡ Sentry: INSTANT BLOCK - Scam/phishing detected (0ms)");
-    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
-    return {
-      safe: false,
-      title: "Potential Scam Detected",
-      reason: "Click to learn why this content was blocked and get helpful information.",
-      what_to_do: "Tap to see details about this content.",
-      category: "scam",
-      confidence: 85,
-      originalContent: contentText.substring(0, 500)
-    };
+  // Only check if scam/phishing blocking is enabled in settings
+  if (blockingSettings.scams.blockPhishing) {
+    const scamPatternEnglish = /\b(congratulations.*won|claim your prize|urgent.*act now|click here.*whatsapp|wa\.me|telegram.*money|earn \$\d+|get rich quick|investment opportunity.*guaranteed|free money|work from home.*\$\d+|you have been selected|lottery winner|inheritance from|nigerian prince)\b/i;
+    
+    const scamPatternFilipino = /\b(nanalo ka|panalo ka|kunin ang premyo|trabaho sa bahay|malaking sweldo|kumita agad|i-click dito|dali lang|libre.*premyo|congratulations.*nanalo|selected ka|claim.*prize|swerte mo)\b/i;
+    
+    const scamPatternCebuano = /\b(daog ka|kuhaa ang premyo|trabaho sa balay|dako nga suweldo|kita dayon|i-click diri|pinduta|sayon ra|libre.*premyo|daog.*prize|swerte nimo)\b/i;
+    
+    if (scamPatternEnglish.test(content) || scamPatternFilipino.test(content) || scamPatternCebuano.test(content)) {
+      console.log("⚡ Sentry: INSTANT BLOCK - Scam/phishing detected (0ms)");
+      // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+      return {
+        safe: false,
+        title: "Potential Scam Detected",
+        reason: "Click to learn why this content was blocked and get helpful information.",
+        what_to_do: "Tap to see details about this content.",
+        category: "scam",
+        confidence: 85,
+        originalContent: contentText.substring(0, 500)
+      };
+    }
   }
   
   // 10. FRAUD / IDENTITY THEFT - All languages
-  const fraudPattern = /\b(send your password|give me your otp|verify your account urgently|i'm from microsoft|irs calling|send money now|western union|money gram|bank transfer urgently|your account will be closed|ipadala ang password|ibigay ang otp|i-verify agad|ipadala ug kwarta|magpadala ug)\b/i;
-  
-  if (fraudPattern.test(content)) {
-    console.log("⚡ Sentry: INSTANT BLOCK - Fraud detected (0ms)");
-    // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
-    return {
-      safe: false,
-      title: "Fraud Attempt Detected",
-      reason: "Click to learn why this content was blocked and get helpful information.",
-      what_to_do: "Tap to see details about this content.",
-      category: "fraud",
-      confidence: 92,
-      originalContent: contentText.substring(0, 500)
-    };
+  // Only check if scam/phishing blocking is enabled in settings
+  if (blockingSettings.scams.blockPhishing) {
+    const fraudPattern = /\b(send your password|give me your otp|verify your account urgently|i'm from microsoft|irs calling|send money now|western union|money gram|bank transfer urgently|your account will be closed|ipadala ang password|ibigay ang otp|i-verify agad|ipadala ug kwarta|magpadala ug)\b/i;
+    
+    if (fraudPattern.test(content)) {
+      console.log("⚡ Sentry: INSTANT BLOCK - Fraud detected (0ms)");
+      // NO API CALL HERE - educational reason will be fetched ON-DEMAND when user clicks
+      return {
+        safe: false,
+        title: "Fraud Attempt Detected",
+        reason: "Click to learn why this content was blocked and get helpful information.",
+        what_to_do: "Tap to see details about this content.",
+        category: "fraud",
+        confidence: 92,
+        originalContent: contentText.substring(0, 500)
+      };
+    }
   }
   
   // 11. KNOWN EXPLICIT DOMAINS (for images)
@@ -961,7 +1173,13 @@ async function scanPageContent() {
   const scanStartTime = performance.now();
   
   // Scam/phishing keywords with better detection (used for container targeting)
-  const scamKeywords = /\b(job opportunity|congratulations|you'?ve? won|claim your prize|urgent|act now|limited time|click here|whatsapp|wa\.me|telegram|t\.me|contact us|work from home|earn \$|salary range|daily income|free money|get rich|investment opportunity)\b/i;
+  // Include custom scam keywords from blocking settings
+  const baseScamKeywords = ['job opportunity', 'congratulations', "you've won", 'you won', 'claim your prize', 'urgent', 'act now', 'limited time', 'click here', 'whatsapp', 'wa.me', 'telegram', 't.me', 'contact us', 'work from home', 'earn $', 'salary range', 'daily income', 'free money', 'get rich', 'investment opportunity'];
+  const customScamKeywords = (blockingSettings.scams.blockKeywords && blockingSettings.scams.keywords.length > 0) 
+    ? blockingSettings.scams.keywords 
+    : [];
+  const allScamKeywords = [...baseScamKeywords, ...customScamKeywords];
+  const scamKeywordsPattern = new RegExp(`\\b(${allScamKeywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'i');
 
   try {
     // DISABLED: Real-time text wrapping causes stacking issues on social media
@@ -970,13 +1188,20 @@ async function scanPageContent() {
     
     // ONLY wrap text on non-social media sites
     if (!isInstagram && !isFacebook) {
-      const profanityKeywords = [
+      // Base profanity keywords
+      const baseProfanityKeywords = [
         'fuck', 'fucking', 'fucker', 'fucked', 'motherfucker',
         'shit', 'bitch', 'ass', 'asshole', 'bastard', 'damn',
         'cunt', 'whore', 'slut', 'nigger', 'nigga', 'dick', 'pussy',
         'putangina', 'putang ina', 'gago', 'bobo', 'tanga', 'ulol',
         'tarantado', 'leche', 'puta', 'tangina', 'hayop', 'shunga'
       ];
+      
+      // Add custom NSFW keywords from blocking settings
+      const customNsfwKeywords = (blockingSettings.nsfw.blockKeywords && blockingSettings.nsfw.keywords.length > 0) 
+        ? blockingSettings.nsfw.keywords 
+        : [];
+      const profanityKeywords = [...baseProfanityKeywords, ...customNsfwKeywords];
       
       const wrappedTextNodes = findAndWrapTextNodes(profanityKeywords);
       
@@ -3045,8 +3270,11 @@ function checkPageMetadata() {
 
 // Early initialization when DOM is ready (before images/styles load)
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     console.log("Sentry: DOM ready - starting early scan");
+    
+    // Fetch user info and blocking settings FIRST before any scanning
+    await fetchCurrentUserInfo();
     
     // Check page metadata immediately
     if (checkPageMetadata()) {
@@ -3062,13 +3290,19 @@ if (document.readyState === 'loading') {
 } else {
   // DOM already loaded
   console.log("Sentry: DOM already loaded - starting scan now");
-  if (checkPageMetadata()) {
-    console.warn("Sentry: Page URL/title indicates adult content!");
-  }
-  if (document.body) {
-    scanPageContent();
-    startObserver();
-  }
+  
+  // Fetch user info and blocking settings immediately
+  (async () => {
+    await fetchCurrentUserInfo();
+    
+    if (checkPageMetadata()) {
+      console.warn("Sentry: Page URL/title indicates adult content!");
+    }
+    if (document.body) {
+      scanPageContent();
+      startObserver();
+    }
+  })();
 }
 
 // Full initialization on page load

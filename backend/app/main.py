@@ -370,6 +370,99 @@ async def create_flagged_event(event: FlaggedEvent):
 
         return {"status": "stored", "items": len(flagged_events_cache), "storage": "local"}
 
+
+# ============================================
+# CHILD BLOCKING SETTINGS ENDPOINTS
+# ============================================
+
+class BlockingSettingsRequest(BaseModel):
+    familyId: str
+    childId: str
+    childName: str
+    childEmail: str
+    settings: Dict[str, Any]
+
+
+@app.post("/sync-blocking-settings")
+async def sync_blocking_settings(request: BlockingSettingsRequest):
+    """
+    Sync child blocking settings from dashboard to Firebase.
+    Settings are stored under: blocking_settings/{childEmail}
+    """
+    if not USE_FIREBASE or not db:
+        return {"status": "error", "message": "Firebase not configured"}
+    
+    try:
+        # Store settings with child email as document ID for easy lookup
+        safe_email = request.childEmail.replace('@', '_at_').replace('.', '_dot_')
+        doc_ref = db.collection('blocking_settings').document(safe_email)
+        
+        doc_ref.set({
+            'familyId': request.familyId,
+            'childId': request.childId,
+            'childName': request.childName,
+            'childEmail': request.childEmail,
+            'settings': request.settings,
+            'updatedAt': datetime.utcnow().isoformat()
+        })
+        
+        print(f"✅ Synced blocking settings for {request.childName} ({request.childEmail})")
+        return {"status": "success", "message": f"Settings synced for {request.childName}"}
+    except Exception as e:
+        print(f"❌ Error syncing blocking settings: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@app.get("/get-blocking-settings/{user_email}")
+async def get_blocking_settings(user_email: str):
+    """
+    Get blocking settings for a specific user (child).
+    Called by content script to get NSFW keywords, scam keywords, and blocked websites.
+    """
+    if not USE_FIREBASE or not db:
+        return {"status": "error", "message": "Firebase not configured", "settings": None}
+    
+    try:
+        safe_email = user_email.replace('@', '_at_').replace('.', '_dot_')
+        doc_ref = db.collection('blocking_settings').document(safe_email)
+        doc = doc_ref.get()
+        
+        if doc.exists:
+            data = doc.to_dict()
+            print(f"📋 Retrieved blocking settings for {user_email}")
+            return {
+                "status": "success",
+                "childName": data.get('childName', ''),
+                "settings": data.get('settings', {})
+            }
+        else:
+            # Return default settings if none found
+            print(f"⚠️ No blocking settings found for {user_email}, using defaults")
+            return {
+                "status": "success",
+                "childName": user_email.split('@')[0],
+                "settings": {
+                    "nsfw": {
+                        "blockImages": True,
+                        "blockKeywords": True,
+                        "keywords": ["porn", "xxx", "nude", "naked", "sex", "nsfw", "adult content", "explicit", "pornhub", "xvideos"]
+                    },
+                    "scams": {
+                        "blockPhishing": True,
+                        "blockKeywords": True,
+                        "keywords": ["free money", "you won", "claim prize", "lottery winner", "nigerian prince", "wire transfer"]
+                    },
+                    "custom": {
+                        "enabled": False,
+                        "websites": []
+                    }
+                }
+            }
+    except Exception as e:
+        print(f"❌ Error getting blocking settings: {e}")
+        return {"status": "error", "message": str(e), "settings": None}
+
+
 @app.post("/analyze-content")
 async def analyze_content(request: Request):
     """
