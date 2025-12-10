@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import {
   auth,
+  db,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  doc,
+  setDoc
 } from './firebase';
 
 /*global chrome*/
@@ -127,22 +130,55 @@ function App() {
     }
 
     try {
+      const familyIdTrimmed = familyIdInput.trim();
+      const emailLower = user.email.toLowerCase();
+      
+      console.log('Attempting to join family:', familyIdTrimmed);
+      console.log('User email:', emailLower);
+      console.log('User authenticated:', !!user);
+      
+      // Register member directly to Firestore (prevents duplicates using email as doc ID)
+      const safeDocId = emailLower.replace('@', '_at_').replace(/\./g, '_dot_');
+      const memberRef = doc(db, 'families', familyIdTrimmed, 'members', safeDocId);
+      
+      console.log('Writing to path:', `families/${familyIdTrimmed}/members/${safeDocId}`);
+      
+      await setDoc(memberRef, {
+        email: emailLower,
+        name: user.displayName || emailLower.split('@')[0],
+        role: 'child',
+        parentId: null,
+        status: 'Online',
+        lastSeen: new Date().toISOString(),
+        addedAt: new Date().toISOString(),
+        addedBy: 'extension-auto',
+        autoAdded: true
+      }, { merge: true }); // merge: true prevents overwriting existing data
+      
+      console.log('✅ Member registered to Firestore successfully!');
+
+      // Also notify background script to store locally
       const response = await chrome.runtime.sendMessage({
         type: 'SET_CURRENT_USER',
         email: user.email,
-        familyId: familyIdInput.trim()
+        familyId: familyIdTrimmed
       });
 
       if (response.success) {
-        setFamilyId(familyIdInput.trim());
+        setFamilyId(familyIdTrimmed);
+        setIsFamilyMember(true);
+        showMessage('Joined family successfully! You now appear on the dashboard.');
+      } else {
+        // Still show success since Firestore write worked
+        setFamilyId(familyIdTrimmed);
         setIsFamilyMember(true);
         showMessage('Joined family successfully!');
-      } else {
-        showMessage(response.error || 'Failed to join family', 'error');
       }
     } catch (error) {
-      console.error('Error joining family:', error);
-      showMessage('Failed to join family', 'error');
+      console.error('❌ Error joining family:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      showMessage('Failed to join family: ' + error.message, 'error');
     }
   };
 

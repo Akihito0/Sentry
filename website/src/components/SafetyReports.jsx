@@ -347,7 +347,7 @@ Format your response with clear numbered points and brief explanations for each 
             <tbody>
               {sortedReports.map((report, index) => {
                 const eventId = report.event_id || `event-${index}`;
-                const userName = report.user_name || report.user_id || 'Unknown User';
+                const userName = report.user_name || (report.user_email ? report.user_email.split('@')[0] : null) || (report.user_id && report.user_id.includes('@') ? report.user_id.split('@')[0] : report.user_id) || 'Unknown User';
                 const title = report.title || report.summary || 'Flagged Content';
                 const category = report.category || 'unsafe_content';
                 

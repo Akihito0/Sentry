@@ -149,32 +149,41 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize Firebase Admin
 try:
-    # Try to initialize Firebase with credentials from environment
-    firebase_config = {
-        "type": "service_account",
-        "project_id": os.getenv("FIREBASE_PROJECT_ID"),
-        "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-        "private_key": os.getenv("FIREBASE_PRIVATE_KEY", "").replace('\\n', '\n'),
-        "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
-        "client_id": os.getenv("FIREBASE_CLIENT_ID"),
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": os.getenv("FIREBASE_CERT_URL")
-    }
+    # Try to load from JSON file first (recommended)
+    firebase_json_path = Path(__file__).parent.parent / "sentry-project-8f412-firebase-adminsdk-fbsvc-7189c0346d.json"
     
-    # Initialize Firebase only if we have the required config
-    if firebase_config["project_id"] and firebase_config["private_key"] and firebase_config["client_email"]:
-        cred = credentials.Certificate(firebase_config)
+    if firebase_json_path.exists():
+        cred = credentials.Certificate(str(firebase_json_path))
         firebase_admin.initialize_app(cred)
         db = firestore.client()
-        print("✅ Firebase Admin initialized successfully")
+        print("✅ Firebase Admin initialized from JSON file")
         USE_FIREBASE = True
     else:
-        print("⚠️ Firebase credentials not found in environment variables")
-        print("   Falling back to local JSON storage")
-        db = None
-        USE_FIREBASE = False
+        # Fallback to environment variables
+        firebase_config = {
+            "type": "service_account",
+            "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+            "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+            "private_key": os.getenv("FIREBASE_PRIVATE_KEY", "").replace('\\n', '\n'),
+            "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+            "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": os.getenv("FIREBASE_CERT_URL")
+        }
+        
+        if firebase_config["project_id"] and firebase_config["private_key"] and firebase_config["client_email"]:
+            cred = credentials.Certificate(firebase_config)
+            firebase_admin.initialize_app(cred)
+            db = firestore.client()
+            print("✅ Firebase Admin initialized from environment variables")
+            USE_FIREBASE = True
+        else:
+            print("⚠️ Firebase credentials not found")
+            print("   Falling back to local JSON storage")
+            db = None
+            USE_FIREBASE = False
 except Exception as e:
     print(f"⚠️ Firebase initialization failed: {e}")
     print("   Falling back to local JSON storage")
@@ -218,7 +227,9 @@ class FlaggedEvent(BaseModel):
     content_excerpt: Optional[str] = None
     severity: str = Field(default="medium", description="low/medium/high confidence")
     detected_at: datetime = Field(default_factory=datetime.utcnow)
-    user_id: Optional[str] = Field(default=None, description="Optional owner id")
+    user_id: Optional[str] = Field(default=None, description="Optional owner id (email)")
+    user_name: Optional[str] = Field(default=None, description="Display name of the user")
+    user_email: Optional[str] = Field(default=None, description="Email of the user")
     metadata: Optional[Dict[str, Any]] = None
 
 
@@ -1108,19 +1119,29 @@ async def sync_activity_log(log: ActivityLog):
     """
     Sync a single activity log from a browser extension.
     This allows parents to see their children's browsing activity.
+    Now stores in both memory cache AND Firestore for real-time updates!
     """
     family_id = log.familyId
     
     if family_id not in activity_logs_cache:
         activity_logs_cache[family_id] = []
     
-    # Add the log
+    # Add the log to memory cache
     log_dict = log.model_dump()
     activity_logs_cache[family_id].append(log_dict)
     
     # Trim to max size
     if len(activity_logs_cache[family_id]) > MAX_ACTIVITY_LOGS_PER_FAMILY:
         activity_logs_cache[family_id] = activity_logs_cache[family_id][-MAX_ACTIVITY_LOGS_PER_FAMILY:]
+    
+    # Also store in Firestore for real-time updates
+    if USE_FIREBASE and db:
+        try:
+            logs_ref = db.collection('families').document(family_id).collection('activity_logs')
+            logs_ref.document(log.id).set(log_dict)
+            print(f"📝 Activity log synced to Firestore: {log.userEmail} - {log.type}")
+        except Exception as e:
+            print(f"⚠️ Failed to sync activity log to Firestore: {e}")
     
     print(f"📝 Activity log synced: {log.userEmail} - {log.type} - {log.excerpt[:50]}")
     return {"status": "synced", "count": len(activity_logs_cache[family_id])}
@@ -1139,20 +1160,77 @@ async def register_family_member(request: RegisterMemberRequest):
     Register a family member when they set up the extension.
     This adds them to the family's member list in Firestore automatically.
     Called when a child enters the Family ID and their email in the extension.
+    Now actually writes to Firestore with duplicate prevention!
     """
-    # Note: This endpoint is called by the extension
-    # The actual Firestore write happens on the frontend (website)
-    # This endpoint just validates and returns success
-    # The extension will also call the website's API to register
-    
     print(f"👤 Member registration request: {request.email} → family {request.familyId[:8]}...")
     
-    return {
-        "status": "pending",
-        "message": "Member registration received. Add via Firestore on website.",
-        "familyId": request.familyId,
-        "email": request.email
-    }
+    if not USE_FIREBASE or not db:
+        return {
+            "status": "error",
+            "message": "Firebase not configured on backend",
+            "familyId": request.familyId,
+            "email": request.email
+        }
+    
+    try:
+        email_lower = request.email.lower().strip()
+        members_ref = db.collection('families').document(request.familyId).collection('members')
+        
+        # Check if member already exists (prevent duplicates)
+        existing_query = members_ref.where('email', '==', email_lower).limit(1)
+        existing_docs = list(existing_query.stream())
+        
+        if existing_docs:
+            # Member already exists - just update lastSeen
+            doc_ref = existing_docs[0].reference
+            doc_ref.update({
+                'lastSeen': datetime.utcnow().isoformat(),
+                'status': 'Online'
+            })
+            print(f"✅ Member already exists, updated status: {email_lower}")
+            return {
+                "status": "exists",
+                "message": "Member already in family, status updated",
+                "familyId": request.familyId,
+                "email": email_lower,
+                "memberId": existing_docs[0].id
+            }
+        
+        # Add new member - use email as document ID to prevent race condition duplicates
+        member_data = {
+            'email': email_lower,
+            'name': request.name or email_lower.split('@')[0],
+            'role': 'child',
+            'parentId': None,
+            'status': 'Online',
+            'lastSeen': datetime.utcnow().isoformat(),
+            'addedAt': datetime.utcnow().isoformat(),
+            'addedBy': 'extension-auto',
+            'autoAdded': True
+        }
+        
+        # Use email (sanitized) as doc ID to make it atomic - prevents race conditions
+        safe_doc_id = email_lower.replace('@', '_at_').replace('.', '_dot_')
+        doc_ref = members_ref.document(safe_doc_id)
+        doc_ref.set(member_data, merge=True)  # merge=True prevents overwriting if exists
+        
+        print(f"✅ New member added to Firestore: {email_lower}")
+        return {
+            "status": "added",
+            "message": "Member successfully added to family",
+            "familyId": request.familyId,
+            "email": email_lower,
+            "memberId": doc_ref.id
+        }
+        
+    except Exception as e:
+        print(f"❌ Error registering member: {e}")
+        return {
+            "status": "error",
+            "message": str(e),
+            "familyId": request.familyId,
+            "email": request.email
+        }
 
 
 @app.post("/activity-logs/batch")

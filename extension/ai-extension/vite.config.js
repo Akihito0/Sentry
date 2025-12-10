@@ -25,7 +25,7 @@ export default defineConfig({
       input: {
         main: resolve( 'index.html'),
         background: resolve( 'public/background.js'),
-        contentscript: resolve( 'public/contentscript.js'),
+        contentscript_new: resolve( 'public/contentscript_new.js'),
         chatbotUI: resolve( 'public/chatbotUI.js'),
       },
       output: {

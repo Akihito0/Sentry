@@ -17,7 +17,9 @@ import {
   doc,
   query,
   where,
-  onSnapshot
+  onSnapshot,
+  orderBy,
+  limit
 } from '../database/firebase';
 
 const FamilyPage = () => {
@@ -39,7 +41,41 @@ const FamilyPage = () => {
   const currentUser = auth.currentUser;
   const familyId = currentUser?.uid;
 
-  // Fetch activity logs from backend
+  // Real-time listener for activity logs from Firestore
+  useEffect(() => {
+    if (!familyId) return;
+
+    const logsRef = collection(db, 'families', familyId, 'activity_logs');
+    const q = query(logsRef, orderBy('timestamp', 'desc'), limit(50));
+
+    setLoadingLogs(true);
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const logs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setActivityLogs(logs);
+        setLoadingLogs(false);
+        
+        // Auto-add members who appear in logs but aren't in the family yet
+        if (logs.length > 0) {
+          autoAddNewMembers(logs);
+        }
+      },
+      (error) => {
+        console.error('Error listening to activity logs:', error);
+        setLoadingLogs(false);
+        // Fallback to HTTP fetch if Firestore fails
+        fetchActivityLogs();
+      }
+    );
+
+    return () => unsubscribe();
+  }, [familyId]);
+
+  // Fallback: Fetch activity logs from backend (HTTP)
   const fetchActivityLogs = async () => {
     if (!familyId) return;
     
@@ -68,25 +104,33 @@ const FamilyPage = () => {
     // Get unique emails from logs
     const logEmails = [...new Set(logs.map(log => log.userEmail?.toLowerCase()).filter(Boolean))];
     
+    // Filter out 'unknown' emails
+    const validEmails = logEmails.filter(email => email !== 'unknown');
+    
+    if (validEmails.length === 0) return;
+    
     // Get current member emails from Firestore (fresh query to avoid race conditions)
     try {
       const membersRef = collection(db, 'families', familyId, 'members');
       const snapshot = await getDocs(membersRef);
-      const existingEmails = snapshot.docs.map(doc => doc.data().email?.toLowerCase());
+      const existingEmails = new Set(snapshot.docs.map(doc => doc.data().email?.toLowerCase()));
       
       // Find emails that are in logs but not in members
-      const newEmails = logEmails.filter(email => 
-        email !== 'unknown' && !existingEmails.includes(email)
-      );
+      const newEmails = validEmails.filter(email => !existingEmails.has(email));
       
-      // Add each new member (only if not already exists)
+      // Add each new member with atomic check
       for (const email of newEmails) {
-        // Double-check this email doesn't exist (query by email)
+        // Double-check this email doesn't exist using query
         const existingQuery = query(membersRef, where('email', '==', email));
         const existingDocs = await getDocs(existingQuery);
         
         if (existingDocs.empty) {
-          await addDoc(membersRef, {
+          // Use email as document ID to prevent race condition duplicates
+          const safeDocId = email.replace('@', '_at_').replace(/\./g, '_dot_');
+          const memberDocRef = doc(db, 'families', familyId, 'members', safeDocId);
+          
+          const { setDoc } = await import('../database/firebase');
+          await setDoc(memberDocRef, {
             email: email,
             name: email.split('@')[0],
             role: 'child',
@@ -96,7 +140,7 @@ const FamilyPage = () => {
             addedAt: new Date().toISOString(),
             addedBy: 'auto-detected',
             autoAdded: true
-          });
+          }, { merge: true });
           console.log('Auto-added family member:', email);
         }
       }
@@ -104,13 +148,6 @@ const FamilyPage = () => {
       console.error('Error in autoAddNewMembers:', error);
     }
   };
-
-  // Fetch logs on mount and periodically
-  useEffect(() => {
-    fetchActivityLogs();
-    const interval = setInterval(fetchActivityLogs, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-  }, [familyId]);
 
   // Copy Family ID to clipboard
   const copyFamilyId = () => {
@@ -145,24 +182,41 @@ const FamilyPage = () => {
     return () => unsubscribe();
   }, [familyId]);
 
-  // Add new family member to Firestore
+  // Add new family member to Firestore (with duplicate prevention)
   const handleAddMember = async (e) => {
     e.preventDefault();
     if (!newMemberEmail.trim() || !familyId) return;
 
     setAddingMember(true);
     try {
+      const emailLower = newMemberEmail.trim().toLowerCase();
       const membersRef = collection(db, 'families', familyId, 'members');
-      await addDoc(membersRef, {
-        email: newMemberEmail.trim().toLowerCase(),
-        name: newMemberName.trim() || newMemberEmail.split('@')[0],
+      
+      // Check if member already exists
+      const existingQuery = query(membersRef, where('email', '==', emailLower));
+      const existingDocs = await getDocs(existingQuery);
+      
+      if (!existingDocs.empty) {
+        alert('This member already exists in your family!');
+        setAddingMember(false);
+        return;
+      }
+      
+      // Use email as document ID to prevent race condition duplicates
+      const safeDocId = emailLower.replace('@', '_at_').replace(/\./g, '_dot_');
+      const memberDocRef = doc(db, 'families', familyId, 'members', safeDocId);
+      
+      const { setDoc } = await import('../database/firebase');
+      await setDoc(memberDocRef, {
+        email: emailLower,
+        name: newMemberName.trim() || emailLower.split('@')[0],
         role: 'child',
         parentId: null,
         status: 'Offline',
         lastSeen: 'Never',
         addedAt: new Date().toISOString(),
         addedBy: currentUser.email
-      });
+      }, { merge: true });
       setNewMemberEmail('');
       setNewMemberName('');
       setShowAddForm(false);

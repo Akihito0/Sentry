@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { db, collection, onSnapshot, query, orderBy, limit as firestoreLimit } from '../database/firebase';
 
 const DEFAULT_BACKEND = 'http://localhost:8000';
 const backendFromEnv = (import.meta.env?.VITE_BACKEND_URL || '').trim();
@@ -69,12 +70,58 @@ const buildEndpoint = (limit) => {
   return `${BACKEND_BASE_URL.replace(/\/$/, '')}/flagged-events?limit=${safeLimit}`;
 };
 
-const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000 } = {}) => {
+const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000, useRealtime = true } = {}) => {
   const [flaggedReports, setFlaggedReports] = useState([]);
   const [loadingReports, setLoadingReports] = useState(true);
   const [reportError, setReportError] = useState(null);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
 
+  // Real-time Firestore listener for live updates
+  useEffect(() => {
+    if (!useRealtime || !db) {
+      return;
+    }
+
+    setLoadingReports(true);
+    setReportError(null);
+
+    try {
+      const flaggedEventsRef = collection(db, 'flagged_events');
+      const q = query(
+        flaggedEventsRef,
+        orderBy('detected_at', 'desc'),
+        firestoreLimit(limit)
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const events = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setFlaggedReports(events);
+          setLastSyncedAt(new Date().toISOString());
+          setLoadingReports(false);
+          setReportError(null);
+        },
+        (error) => {
+          console.error('Firestore listener error:', error);
+          setReportError('Unable to connect to real-time updates. Falling back to polling.');
+          // Don't clear existing reports on error
+          setLoadingReports(false);
+        }
+      );
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error setting up Firestore listener:', error);
+      setReportError('Failed to initialize real-time connection');
+      setLoadingReports(false);
+    }
+  }, [limit, useRealtime]);
+
+  // Fallback: HTTP polling (used when Firestore is unavailable or useRealtime is false)
   const fetchFlaggedReports = useCallback(
     async (withLoader = false) => {
       if (withLoader) setLoadingReports(true);
@@ -109,17 +156,20 @@ const useFlaggedReports = ({ limit = 40, autoRefreshMs = 45000 } = {}) => {
     [limit]
   );
 
+  // Use HTTP polling as fallback when realtime is disabled or on error
   useEffect(() => {
+    if (useRealtime) return; // Skip if using realtime
     fetchFlaggedReports(true);
-  }, [fetchFlaggedReports]);
+  }, [fetchFlaggedReports, useRealtime]);
 
   useEffect(() => {
+    if (useRealtime) return undefined; // Skip polling if using realtime
     if (!autoRefreshMs) return undefined;
     const intervalId = setInterval(() => {
       fetchFlaggedReports(false);
     }, autoRefreshMs);
     return () => clearInterval(intervalId);
-  }, [fetchFlaggedReports, autoRefreshMs]);
+  }, [fetchFlaggedReports, autoRefreshMs, useRealtime]);
 
   const categoryFilters = useMemo(() => {
     const unique = new Set();

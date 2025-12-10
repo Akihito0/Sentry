@@ -143,6 +143,27 @@ let intersectionObserver = null; // Observer to re-apply blur when scrolling bac
 const SENTRY_SESSION_ID = `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
 const FLAGGED_EVENTS_ENDPOINT = `${BACKEND_URL}/flagged-events`;
 
+// Store current user info (fetched from background script)
+let currentUserEmail = '';
+let currentUserName = '';
+
+// Fetch current user info from background script
+async function fetchCurrentUserInfo() {
+  try {
+    const response = await chrome.runtime.sendMessage({ type: 'GET_CURRENT_USER' });
+    if (response && response.success) {
+      currentUserEmail = response.email || '';
+      currentUserName = currentUserEmail ? currentUserEmail.split('@')[0] : '';
+      console.log('Sentry: Current user loaded:', currentUserEmail);
+    }
+  } catch (error) {
+    console.warn('Sentry: Could not fetch current user info:', error);
+  }
+}
+
+// Fetch user info on script load
+fetchCurrentUserInfo();
+
 function normalizeExcerpt(rawText = "") {
   if (!rawText) return "";
   return rawText.replace(/\s+/g, " ").trim().slice(0, 280);
@@ -162,6 +183,11 @@ function inferSeverityFromCategory(category = "", confidence = 50) {
 async function reportFlaggedContentToBackend(aiResponse = {}, options = {}) {
   if (!FLAGGED_EVENTS_ENDPOINT || typeof fetch !== "function") return;
 
+  // Ensure we have user info
+  if (!currentUserEmail) {
+    await fetchCurrentUserInfo();
+  }
+
   const summary =
     aiResponse.title ||
     aiResponse.summary ||
@@ -180,7 +206,9 @@ async function reportFlaggedContentToBackend(aiResponse = {}, options = {}) {
       inferSeverityFromCategory(aiResponse.category, aiResponse.confidence || 50)
     ).toLowerCase(),
     detected_at: new Date().toISOString(),
-    user_id: options.userId || null,
+    user_id: currentUserEmail || options.userId || null,
+    user_name: currentUserName || (currentUserEmail ? currentUserEmail.split('@')[0] : null),
+    user_email: currentUserEmail || null,
     metadata: {
       sessionId: SENTRY_SESSION_ID,
       elementTag: options.elementTag || null,

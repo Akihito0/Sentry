@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import '../css/Dashboard.css';
 import logo from '../image/logo.png';
 import profile from '../image/profile.png';
-import { auth, db, doc, getDoc } from '../database/firebase';
+import { auth, db, doc, getDoc, onAuthStateChanged } from '../database/firebase';
 import SafeBrowsing from './SafeBrowsing.jsx';
 import Settings from './Settings.jsx';
 import FamilyPage from './FamilyPage.jsx';
@@ -381,27 +381,31 @@ const DashboardView = () => {
   }, [reportsData.flaggedReports]);
 
   useEffect(() => {
-    const fetchUserName = async () => {
-      const user = auth.currentUser;
+    // Use onAuthStateChanged to wait for auth to be ready
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const docRef = doc(db, 'Sentry-User', user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setUserName(data.name || 'UserName');
+            setUserName(data.name || user.displayName || user.email?.split('@')[0] || 'User');
             // Get account type from user profile, default to 'parent' for now
             setUserAccountType(data.accountType || 'parent');
           } else {
+            // Fallback to auth user info if no Firestore document
+            setUserName(user.displayName || user.email?.split('@')[0] || 'User');
             console.warn('No user document found for:', user.uid);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
+          // Fallback to auth user info on error
+          setUserName(user.displayName || user.email?.split('@')[0] || 'User');
         }
       }
-    };
+    });
 
-    fetchUserName();
+    return () => unsubscribe();
   }, []);
 
   return (

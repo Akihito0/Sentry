@@ -31,7 +31,9 @@ import {
   collection,
   onSnapshot,
   query,
-  where
+  where,
+  orderBy,
+  limit
 } from "firebase/firestore";
 
 //not the official one - this is just a read-only config, shall change later
@@ -78,5 +80,7 @@ export {
   collection,
   onSnapshot,
   query,
-  where
+  where,
+  orderBy,
+  limit
 };
