@@ -4,4 +4,4 @@ __pycache__/
 .env
 logs/
 *.log
-.flagged_events.json
+.flagged_events.json"backend/sentry-project-8f412-firebase-adminsdk-fbsvc-7189c0346d.json" 
