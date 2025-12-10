@@ -57,7 +57,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
     case 'SET_CURRENT_USER':
-      setCurrentUser(message.email, message.familyId).then(sendResponse);
+      setCurrentUser(message.email, message.familyId, message.displayName).then(sendResponse);
       return true;
 
     case 'GET_CURRENT_USER':
@@ -111,17 +111,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // Current user management (stored locally - user sets their email)
-async function setCurrentUser(email, familyId = '') {
+async function setCurrentUser(email, familyId = '', displayName = '') {
   try {
-    const updates = { currentUserEmail: email.toLowerCase() };
+    const updates = { 
+      currentUserEmail: email.toLowerCase(),
+      currentUserName: displayName || email.split('@')[0] 
+    };
     if (familyId) {
       updates.familyId = familyId;
       
       // Auto-register this member with the family
-      registerMemberWithFamily(email.toLowerCase(), familyId);
+      registerMemberWithFamily(email.toLowerCase(), familyId, displayName);
     }
     await chrome.storage.local.set(updates);
-    console.log('Sentry: Set current user:', email, 'Family:', familyId);
+    console.log('Sentry: Set current user:', email, 'Name:', displayName, 'Family:', familyId);
     return { success: true };
   } catch (error) {
     console.error('Sentry: Error setting current user:', error);
@@ -130,7 +133,7 @@ async function setCurrentUser(email, familyId = '') {
 }
 
 // Register member with family (adds to Firestore via backend)
-async function registerMemberWithFamily(email, familyId) {
+async function registerMemberWithFamily(email, familyId, displayName = '') {
   try {
     const response = await fetch(`${BACKEND_URL}/register-member`, {
       method: 'POST',
@@ -138,7 +141,7 @@ async function registerMemberWithFamily(email, familyId) {
       body: JSON.stringify({
         familyId: familyId,
         email: email,
-        name: email.split('@')[0]
+        name: displayName || email.split('@')[0]
       })
     });
     
@@ -155,15 +158,16 @@ async function registerMemberWithFamily(email, familyId) {
 
 async function getCurrentUser() {
   try {
-    const result = await chrome.storage.local.get(['currentUserEmail', 'familyId']);
+    const result = await chrome.storage.local.get(['currentUserEmail', 'currentUserName', 'familyId']);
     return { 
       success: true, 
       email: result.currentUserEmail || '',
+      name: result.currentUserName || (result.currentUserEmail ? result.currentUserEmail.split('@')[0] : ''),
       familyId: result.familyId || ''
     };
   } catch (error) {
     console.error('Sentry: Error getting current user:', error);
-    return { success: false, error: error.message, email: '', familyId: '' };
+    return { success: false, error: error.message, email: '', name: '', familyId: '' };
   }
 }
 

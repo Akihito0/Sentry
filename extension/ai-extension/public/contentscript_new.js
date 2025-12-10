@@ -153,8 +153,8 @@ async function fetchCurrentUserInfo() {
     const response = await chrome.runtime.sendMessage({ type: 'GET_CURRENT_USER' });
     if (response && response.success) {
       currentUserEmail = response.email || '';
-      currentUserName = currentUserEmail ? currentUserEmail.split('@')[0] : '';
-      console.log('Sentry: Current user loaded:', currentUserEmail);
+      currentUserName = response.name || (currentUserEmail ? currentUserEmail.split('@')[0] : '');
+      console.log('Sentry: Current user loaded:', currentUserName, '(' + currentUserEmail + ')');
     }
   } catch (error) {
     console.warn('Sentry: Could not fetch current user info:', error);

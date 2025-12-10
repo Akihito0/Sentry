@@ -36,6 +36,13 @@ const FamilyPage = () => {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [showFamilyId, setShowFamilyId] = useState(false);
   const [copiedFamilyId, setCopiedFamilyId] = useState(false);
+  
+  // Expanded child card state (only one card expanded at a time)
+  const [expandedChildId, setExpandedChildId] = useState(null);
+  const [activeSettingsTab, setActiveSettingsTab] = useState('nsfw');
+  
+  // Child blocking settings (per child)
+  const [childSettings, setChildSettings] = useState({});
 
   // Get current user's family ID (using their UID as family identifier)
   const currentUser = auth.currentUser;
@@ -240,6 +247,102 @@ const FamilyPage = () => {
       alert('Failed to remove family member. Please try again.');
     }
   };
+
+  // Default NSFW keywords
+  const DEFAULT_NSFW_KEYWORDS = ['porn', 'xxx', 'nude', 'naked', 'sex', 'nsfw', 'adult content', 'explicit', 'pornhub', 'xvideos'];
+  const DEFAULT_SCAM_KEYWORDS = ['free money', 'you won', 'claim prize', 'lottery winner', 'nigerian prince', 'wire transfer'];
+
+  // Get child settings (with defaults) - nested structure
+  const getChildSettings = (childId) => {
+    return childSettings[childId] || {
+      nsfw: {
+        blockImages: true,
+        blockKeywords: true,
+        keywords: [...DEFAULT_NSFW_KEYWORDS]
+      },
+      scams: {
+        blockPhishing: true,
+        blockKeywords: true,
+        keywords: [...DEFAULT_SCAM_KEYWORDS]
+      },
+      custom: {
+        enabled: false,
+        websites: []
+      }
+    };
+  };
+
+  // Toggle child card expansion (only one at a time)
+  const toggleChildExpanded = (childId) => {
+    if (expandedChildId === childId) {
+      setExpandedChildId(null); // Close if same card clicked
+    } else {
+      setExpandedChildId(childId); // Open new card, close previous
+      setActiveSettingsTab('nsfw'); // Reset to first tab
+    }
+  };
+
+  // Get active tab
+  const getActiveTab = () => activeSettingsTab;
+
+  // Set active tab
+  const setActiveTabForChild = (childId, tab) => {
+    setActiveSettingsTab(tab);
+  };
+
+  // Update child setting (nested structure: category.setting)
+  const updateChildSetting = (childId, category, setting, value) => {
+    const currentSettings = getChildSettings(childId);
+    const newSettings = {
+      ...childSettings,
+      [childId]: {
+        ...currentSettings,
+        [category]: {
+          ...currentSettings[category],
+          [setting]: value
+        }
+      }
+    };
+    setChildSettings(newSettings);
+  };
+
+  // Add keyword to a category
+  const addKeyword = (childId, category, keyword) => {
+    if (!keyword.trim()) return;
+    const currentSettings = getChildSettings(childId);
+    const keywordKey = category === 'custom' ? 'websites' : 'keywords';
+    const currentList = currentSettings[category]?.[keywordKey] || [];
+    
+    if (!currentList.includes(keyword.trim().toLowerCase())) {
+      const newList = [...currentList, keyword.trim().toLowerCase()];
+      updateChildSetting(childId, category, keywordKey, newList);
+    }
+  };
+
+  // Remove keyword from a category
+  const removeKeyword = (childId, category, keywordToRemove) => {
+    const currentSettings = getChildSettings(childId);
+    const keywordKey = category === 'custom' ? 'websites' : 'keywords';
+    const currentList = currentSettings[category]?.[keywordKey] || [];
+    const newList = currentList.filter(k => k !== keywordToRemove);
+    updateChildSetting(childId, category, keywordKey, newList);
+  };
+
+  // Save child settings to Firestore
+  const saveChildSettings = async (childId) => {
+    if (!familyId) return;
+    
+    try {
+      const memberRef = doc(db, 'families', familyId, 'members', childId);
+      await updateDoc(memberRef, {
+        blockingSettings: getChildSettings(childId)
+      });
+      alert('Settings saved successfully!');
+    } catch (error) {
+      console.error('Error saving child settings:', error);
+      alert('Failed to save settings. Please try again.');
+    }
+  };
   
   const {
     flaggedReports,
@@ -272,34 +375,10 @@ const FamilyPage = () => {
     }
   };
 
-  const handleParentAssignment = async (childId, parentId) => {
-    if (!familyId) return;
-    
-    try {
-      const memberRef = doc(db, 'families', familyId, 'members', childId);
-      await updateDoc(memberRef, {
-        parentId: parentId || null
-      });
-    } catch (error) {
-      console.error('Error assigning parent:', error);
-      alert('Failed to assign parent. Please try again.');
-    }
-  };
-
   const filteredMembers = useMemo(() => {
     if (selectedRole === 'all') return familyMembers;
     return familyMembers.filter(member => member.role === selectedRole);
   }, [familyMembers, selectedRole]);
-
-  const parents = useMemo(() => 
-    familyMembers.filter(member => member.role === 'parent'),
-    [familyMembers]
-  );
-
-  const getParentName = (parentId) => {
-    const parent = familyMembers.find(m => m.id === parentId);
-    return parent ? parent.name : 'None';
-  };
 
   const categoryStats = useMemo(() => {
     const flaggedTextFields = flaggedReports.map((report) =>
@@ -410,36 +489,45 @@ const FamilyPage = () => {
                 </div>
               ) : (
                 filteredMembers.map((member) => (
-                <div key={member.id} className="member-item">
-                  <div className={`member-avatar avatar-${(member.name || 'u').toLowerCase().charAt(0)}`}>
-                    {(member.name || member.email || 'U').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="member-info">
-                    <div className="member-name-row">
-                      <h4>{member.name || member.email}</h4>
-                      <span className={`role-badge role-${member.role}`}>
-                        {member.role === 'parent' ? 'Parent' : 'Child'}
-                      </span>
+                <div key={member.id} className="member-card-wrapper">
+                  <div className="member-item">
+                    <div className={`member-avatar avatar-${(member.name || 'u').toLowerCase().charAt(0)}`}>
+                      {(member.name || member.email || 'U').charAt(0).toUpperCase()}
                     </div>
-                    <span className="member-email">{member.email}</span>
-                    <span>{member.status} - Last seen {member.lastSeen}</span>
-                    {member.role === 'child' && member.parentId && (
-                      <span className="parent-info"> Parent: {getParentName(member.parentId)}</span>
-                    )}
-                  </div>
-                  <div className="member-actions">
-                    <button 
-                      className="edit-role-button"
-                      onClick={() => setEditingMemberId(editingMemberId === member.id ? null : member.id)}
-                    >
-                      {editingMemberId === member.id ? '✕' : 'Edit Role'}
-                    </button>
-                    <button 
-                      className="remove-member-button"
-                      onClick={() => handleRemoveMember(member.id)}
-                    >
-                      Remove
-                    </button>
+                    <div className="member-info">
+                      <div className="member-name-row">
+                        <h4>{member.name || member.email}</h4>
+                        <span className={`role-badge role-${member.role}`}>
+                          {member.role === 'parent' ? 'Parent' : 'Child'}
+                        </span>
+                      </div>
+                      <span className="member-email">{member.email}</span>
+                      <span>{member.status} - Last seen {member.lastSeen}</span>
+                    </div>
+                    <div className="member-actions">
+                      {member.role === 'child' && (
+                        <button 
+                          className={`settings-toggle-btn ${expandedChildId === member.id ? 'active' : ''}`}
+                          onClick={() => toggleChildExpanded(member.id)}
+                          title="Content Blocking Settings"
+                        >
+                          ⚙️
+                        </button>
+                      )}
+                      <button 
+                        className="edit-role-button"
+                        onClick={() => setEditingMemberId(editingMemberId === member.id ? null : member.id)}
+                      >
+                        {editingMemberId === member.id ? '✕' : 'Edit Role'}
+                      </button>
+                      <button 
+                        className="remove-member-button"
+                        onClick={() => handleRemoveMember(member.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  
                   </div>
                   
                   {editingMemberId === member.id && (
@@ -454,240 +542,286 @@ const FamilyPage = () => {
                           <option value="child">Child</option>
                         </select>
                       </div>
-                      
-                      {member.role === 'child' && (
-                        <div className="parent-selector">
-                          <label>Assign to Parent:</label>
-                          <select
-                            value={member.parentId || ''}
-                            onChange={(e) => handleParentAssignment(member.id, e.target.value || null)}
-                          >
-                            <option value="">No parent assigned</option>
-                            {parents.map(parent => (
-                              <option key={parent.id} value={parent.id}>
-                                {parent.name || parent.email}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
                     </div>
+                  )}
+                  
+                  {/* Expandable Child Settings Panel */}
+                  {member.role === 'child' && expandedChildId === member.id && (
+                        <div className="child-settings-expanded">
+                          {/* Settings Tabs */}
+                          <div className="settings-tabs">
+                            <button 
+                              className={`settings-tab ${activeSettingsTab === 'nsfw' ? 'active' : ''}`}
+                              onClick={() => setActiveSettingsTab('nsfw')}
+                            >
+                              🔞 Blocking NSFW
+                            </button>
+                            <button 
+                              className={`settings-tab ${activeSettingsTab === 'scams' ? 'active' : ''}`}
+                              onClick={() => setActiveSettingsTab('scams')}
+                            >
+                              ⚠️ Blocking Scams & Phishing
+                            </button>
+                            <button 
+                              className={`settings-tab ${activeSettingsTab === 'custom' ? 'active' : ''}`}
+                              onClick={() => setActiveSettingsTab('custom')}
+                            >
+                              🌐 Blocking Custom Websites
+                            </button>
+                          </div>
+                          
+                          {/* NSFW Settings Tab */}
+                          {activeSettingsTab === 'nsfw' && (
+                            <div className="settings-panel nsfw-panel">
+                              <h4>NSFW Content Blocking</h4>
+                              
+                              <div className="toggle-setting">
+                                <label className="toggle-label">
+                                  <span>Block NSFW Images</span>
+                                  <span className="toggle-description">Automatically detect and blur explicit images</span>
+                                </label>
+                                <label className="toggle-switch">
+                                  <input 
+                                    type="checkbox"
+                                    checked={getChildSettings(member.id).nsfw?.blockImages || false}
+                                    onChange={(e) => updateChildSetting(member.id, 'nsfw', 'blockImages', e.target.checked)}
+                                  />
+                                  <span className="toggle-slider"></span>
+                                </label>
+                              </div>
+                              
+                              <div className="toggle-setting">
+                                <label className="toggle-label">
+                                  <span>Block NSFW Keywords</span>
+                                  <span className="toggle-description">Block pages containing explicit keywords</span>
+                                </label>
+                                <label className="toggle-switch">
+                                  <input 
+                                    type="checkbox"
+                                    checked={getChildSettings(member.id).nsfw?.blockKeywords || false}
+                                    onChange={(e) => updateChildSetting(member.id, 'nsfw', 'blockKeywords', e.target.checked)}
+                                  />
+                                  <span className="toggle-slider"></span>
+                                </label>
+                              </div>
+                              
+                              {getChildSettings(member.id).nsfw?.blockKeywords && (
+                                <div className="keyword-section">
+                                  <h5>Blocked Keywords</h5>
+                                  <div className="keyword-input-row">
+                                    <input 
+                                      type="text"
+                                      placeholder="Add a keyword..."
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && e.target.value.trim()) {
+                                          addKeyword(member.id, 'nsfw', e.target.value.trim());
+                                          e.target.value = '';
+                                        }
+                                      }}
+                                    />
+                                    <button 
+                                      className="add-keyword-btn"
+                                      onClick={(e) => {
+                                        const input = e.target.previousSibling;
+                                        if (input.value.trim()) {
+                                          addKeyword(member.id, 'nsfw', input.value.trim());
+                                          input.value = '';
+                                        }
+                                      }}
+                                    >
+                                      + Add
+                                    </button>
+                                  </div>
+                                  <div className="keyword-tags">
+                                    {(getChildSettings(member.id).nsfw?.keywords || []).map((keyword, index) => (
+                                      <span key={index} className="keyword-tag">
+                                        {keyword}
+                                        <button 
+                                          className="remove-keyword-btn"
+                                          onClick={() => removeKeyword(member.id, 'nsfw', keyword)}
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <button 
+                                className="save-settings-btn"
+                                onClick={() => saveChildSettings(member.id)}
+                              >
+                                💾 Save NSFW Settings
+                              </button>
+                            </div>
+                          )}
+                          
+                          {/* Scams & Phishing Settings Tab */}
+                          {activeSettingsTab === 'scams' && (
+                            <div className="settings-panel scams-panel">
+                              <h4>Scams & Phishing Protection</h4>
+                              
+                              <div className="toggle-setting">
+                                <label className="toggle-label">
+                                  <span>Block Phishing Websites</span>
+                                  <span className="toggle-description">Detect and block known phishing sites</span>
+                                </label>
+                                <label className="toggle-switch">
+                                  <input 
+                                    type="checkbox"
+                                    checked={getChildSettings(member.id).scams?.blockPhishing || false}
+                                    onChange={(e) => updateChildSetting(member.id, 'scams', 'blockPhishing', e.target.checked)}
+                                  />
+                                  <span className="toggle-slider"></span>
+                                </label>
+                              </div>
+                              
+                              <div className="toggle-setting">
+                                <label className="toggle-label">
+                                  <span>Block Scam Keywords</span>
+                                  <span className="toggle-description">Block pages with suspicious scam patterns</span>
+                                </label>
+                                <label className="toggle-switch">
+                                  <input 
+                                    type="checkbox"
+                                    checked={getChildSettings(member.id).scams?.blockKeywords || false}
+                                    onChange={(e) => updateChildSetting(member.id, 'scams', 'blockKeywords', e.target.checked)}
+                                  />
+                                  <span className="toggle-slider"></span>
+                                </label>
+                              </div>
+                              
+                              {getChildSettings(member.id).scams?.blockKeywords && (
+                                <div className="keyword-section">
+                                  <h5>Scam Keywords to Block</h5>
+                                  <div className="keyword-input-row">
+                                    <input 
+                                      type="text"
+                                      placeholder="Add a scam keyword..."
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && e.target.value.trim()) {
+                                          addKeyword(member.id, 'scams', e.target.value.trim());
+                                          e.target.value = '';
+                                        }
+                                      }}
+                                    />
+                                    <button 
+                                      className="add-keyword-btn"
+                                      onClick={(e) => {
+                                        const input = e.target.previousSibling;
+                                        if (input.value.trim()) {
+                                          addKeyword(member.id, 'scams', input.value.trim());
+                                          input.value = '';
+                                        }
+                                      }}
+                                    >
+                                      + Add
+                                    </button>
+                                  </div>
+                                  <div className="keyword-tags">
+                                    {(getChildSettings(member.id).scams?.keywords || []).map((keyword, index) => (
+                                      <span key={index} className="keyword-tag scam-tag">
+                                        {keyword}
+                                        <button 
+                                          className="remove-keyword-btn"
+                                          onClick={() => removeKeyword(member.id, 'scams', keyword)}
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <button 
+                                className="save-settings-btn"
+                                onClick={() => saveChildSettings(member.id)}
+                              >
+                                💾 Save Scam Settings
+                              </button>
+                            </div>
+                          )}
+                          
+                          {/* Custom Websites Settings Tab */}
+                          {activeSettingsTab === 'custom' && (
+                            <div className="settings-panel custom-panel">
+                              <h4>Custom Website Blocking</h4>
+                              
+                              <div className="toggle-setting">
+                                <label className="toggle-label">
+                                  <span>Enable Custom Blocking</span>
+                                  <span className="toggle-description">Block specific websites you add to the list</span>
+                                </label>
+                                <label className="toggle-switch">
+                                  <input 
+                                    type="checkbox"
+                                    checked={getChildSettings(member.id).custom?.enabled || false}
+                                    onChange={(e) => updateChildSetting(member.id, 'custom', 'enabled', e.target.checked)}
+                                  />
+                                  <span className="toggle-slider"></span>
+                                </label>
+                              </div>
+                              
+                              {getChildSettings(member.id).custom?.enabled && (
+                                <div className="keyword-section">
+                                  <h5>Blocked Websites</h5>
+                                  <div className="keyword-input-row">
+                                    <input 
+                                      type="text"
+                                      placeholder="Enter website URL (e.g., facebook.com)..."
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && e.target.value.trim()) {
+                                          addKeyword(member.id, 'custom', e.target.value.trim());
+                                          e.target.value = '';
+                                        }
+                                      }}
+                                    />
+                                    <button 
+                                      className="add-keyword-btn"
+                                      onClick={(e) => {
+                                        const input = e.target.previousSibling;
+                                        if (input.value.trim()) {
+                                          addKeyword(member.id, 'custom', input.value.trim());
+                                          input.value = '';
+                                        }
+                                      }}
+                                    >
+                                      + Add
+                                    </button>
+                                  </div>
+                                  <div className="keyword-tags">
+                                    {(getChildSettings(member.id).custom?.websites || []).map((website, index) => (
+                                      <span key={index} className="keyword-tag website-tag">
+                                        🌐 {website}
+                                        <button 
+                                          className="remove-keyword-btn"
+                                          onClick={() => removeKeyword(member.id, 'custom', website)}
+                                        >
+                                          ×
+                                        </button>
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <button 
+                                className="save-settings-btn"
+                                onClick={() => saveChildSettings(member.id)}
+                              >
+                                💾 Save Custom Settings
+                              </button>
+                            </div>
+                          )}
+                        </div>
                   )}
                 </div>
               ))
               )}
             </div>
           </div>
-
-          <div className="card critical-alerts-card">
-            <h3>Critical Alerts (Last 24h)</h3>
-            <div className="alert-item">
-              <span className="alert-icon">❗️</span>
-              <p>
-                <b>Jordan</b>: Potential Phishing Attempt™ blocked on
-                <a href="http://goo.gl.scam-site" target="_blank" rel="noopener noreferrer"> goo.gl.scam-site</a>
-                <span className="alert-time">13h 11min ago</span>
-              </p>
-              <span className="help-icon">❓</span>
-            </div>
-
-            <div className="alert-item">
-              <span className="alert-icon">💬</span>
-              <p>
-                <b>Sarah</b>: Suspicious text detected in "Discord" from user `Unknown#9876`
-                <span className="alert-time">13h 1min ago</span>
-              </p>
-              <span className="help-icon">❓</span>
-            </div>
-          </div>
-
-          {/* Activity Logs from Family Members */}
-          <div className="card activity-logs-card">
-            <div className="activity-logs-header">
-              <h3>📋 Family Activity Logs</h3>
-              <button 
-                className="refresh-button"
-                onClick={fetchActivityLogs}
-                disabled={loadingLogs}
-              >
-                {loadingLogs ? 'Loading...' : '🔄 Refresh'}
-              </button>
-            </div>
-            <p className="card-description">
-              Real-time activity detections from family members' browsers
-            </p>
-
-            <div className="activity-logs-list">
-              {loadingLogs ? (
-                <div className="loading-logs">Loading activity logs...</div>
-              ) : activityLogs.length === 0 ? (
-                <div className="no-logs">
-                  No activity logs yet. Make sure family members have:
-                  <ol>
-                    <li>Installed the Sentry extension</li>
-                    <li>Entered the Family ID in the extension</li>
-                    <li>Set their email address</li>
-                  </ol>
-                </div>
-              ) : (
-                activityLogs.slice(0, 10).map((log) => (
-                  <div key={log.id} className="activity-log-item">
-                    <div className="log-header">
-                      <span className={`log-type-badge ${log.type}`}>
-                        {log.type === 'search' ? '🔍 Search' : '📄 Content'}
-                      </span>
-                      <span className="log-time">{formatRelativeTime(log.timestamp)}</span>
-                    </div>
-                    <div className="log-user">
-                      👤 {log.userEmail}
-                    </div>
-                    <div className="log-excerpt">
-                      "{truncate(log.excerpt, 100)}"
-                    </div>
-                    <div className="log-url">
-                      🔗 {new URL(log.url).hostname}
-                    </div>
-                    {log.matchedKeywords?.length > 0 && (
-                      <div className="log-keywords">
-                        Matched: {log.matchedKeywords.join(', ')}
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="card flagged-report-card">
-            <div className="flagged-report-header">
-              <div>
-                <h3>Flagged Content Report</h3>
-                <p>Live summary of everything the browser extension has blurred.</p>
-              </div>
-              <div className="flagged-report-controls">
-                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
-                  <option value="all">All Categories</option>
-                  {categoryFilters.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  className="refresh-button"
-                  onClick={() => refreshReports(true)}
-                  disabled={loadingReports}
-                >
-                  {loadingReports ? 'Syncing…' : 'Refresh'}
-                </button>
-              </div>
-            </div>
-
-            <div className="flagged-report-meta">
-              <span>{filteredReports.length || 0} alert{filteredReports.length === 1 ? '' : 's'} shown</span>
-              {lastSyncedAt && <span>Updated {formatRelativeTime(lastSyncedAt)}</span>}
-            </div>
-
-            <div className="flagged-report-stats">
-              <div className="flagged-report-stat stat-medium">
-                <span>Scam</span>
-                <strong>{categoryStats.scam}</strong>
-              </div>
-              <div className="flagged-report-stat stat-high">
-                <span>Explicit</span>
-                <strong>{categoryStats.explicit}</strong>
-              </div>
-              <div className="flagged-report-stat stat-low">
-                <span>Phishing</span>
-                <strong>{categoryStats.phishing}</strong>
-              </div>
-              <div className="flagged-report-stat stat-total">
-                <span>Total</span>
-                <strong>{categoryStats.scam + categoryStats.explicit + categoryStats.phishing}</strong>
-              </div>
-            </div>
-
-            {reportError && (
-              <div className="flagged-report-error">
-                {reportError}. Showing the most recent cached data.
-              </div>
-            )}
-
-            <div className="flagged-report-list">
-              {loadingReports ? (
-                <div className="flagged-report-empty">Syncing flagged notifications…</div>
-              ) : filteredReports.length === 0 ? (
-                <div className="flagged-report-empty">No flagged notifications yet. Great job staying safe!</div>
-              ) : (
-                filteredReports.slice(0, 5).map((report, index) => {
-                  const key = report.id || `${report.detected_at || 'report'}-${index}`;
-                  return (
-                    <div className="flagged-report-item" key={key}>
-                      <div className="flagged-report-item-header">
-                        <span className="flagged-report-category">{(report.category || 'unsafe content').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
-                        <span className="flagged-report-time">{formatRelativeTime(report.detected_at)}</span>
-                      </div>
-                      <p className="flagged-report-summary">
-                        {truncate(report.summary || report.reason || report.content_excerpt || 'Flagged content detected')}
-                      </p>
-                      <div className="flagged-report-footer">
-                        <a
-                          href={report.page_url || '#'}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flagged-report-source"
-                        >
-                          {getSourceLabel(report)}
-                        </a>
-                        <span className="flagged-report-guidance">
-                          {report.what_to_do || 'Review before sharing.'}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          <div className="card activity-report-card">
-            <h3>Activity Report - Past 7 Days</h3>
-            <div className="report-charts">
-              <div className="chart-container">
-                <h4>Incidents by Category</h4>
-                <div className="bar-chart">
-                  <div className="bar bar-tall" style={{ height: '80%' }}></div>
-                  <div className="bar bar-medium" style={{ height: '60%' }}></div>
-                  <div className="bar bar-short" style={{ height: '30%' }}></div>
-                </div>
-
-                <div className="chart-legend">
-                  <span className="legend-item"><span className="legend-color legend-sexual"></span> Sexual (12)</span>
-                  <span className="legend-item"><span className="legend-color legend-hatespeech"></span> Hate Speech</span>
-                  <span className="legend-item"><span className="legend-color legend-violence"></span> Violence</span>
-                </div>
-              </div>
-
-              <div className="chart-container">
-                <h4>Blocked Attempts Trend</h4>
-                <div className="line-chart">
-                  <img src="https://via.placeholder.com/200x100/e0e7ff/666666?text=Line+Chart" alt="Blocked Attempts Trend" />
-                </div>
-                <div className="chart-labels">
-                  <span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="report-actions">
-              <button className="link-button">View Full Activity Log</button>
-              <div className="report-details-buttons">
-                <button className="small-button">Details</button>
-                <button className="small-button">Details</button>
-              </div>
-            </div>
-          </div>
-
 
         </div>
       </div>

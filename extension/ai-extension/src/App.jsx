@@ -40,6 +40,7 @@ function App() {
         await chrome.runtime.sendMessage({
           type: 'SET_CURRENT_USER',
           email: currentUser.email,
+          displayName: currentUser.displayName || currentUser.email.split('@')[0],
           familyId: ''
         });
         
@@ -111,6 +112,7 @@ function App() {
       await chrome.runtime.sendMessage({
         type: 'SET_CURRENT_USER',
         email: '',
+        displayName: '',
         familyId: ''
       });
       setFamilyId('');
@@ -161,6 +163,7 @@ function App() {
       const response = await chrome.runtime.sendMessage({
         type: 'SET_CURRENT_USER',
         email: user.email,
+        displayName: user.displayName || user.email.split('@')[0],
         familyId: familyIdTrimmed
       });
 
@@ -370,6 +373,7 @@ function App() {
                     chrome.runtime.sendMessage({
                       type: 'SET_CURRENT_USER',
                       email: user.email,
+                      displayName: user.displayName || user.email.split('@')[0],
                       familyId: ''
                     });
                     showMessage('Left family group');

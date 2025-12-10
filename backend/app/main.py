@@ -150,7 +150,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Initialize Firebase Admin
 try:
     # Try to load from JSON file first (recommended)
-    firebase_json_path = Path(__file__).parent.parent / "sentry-project-8f412-firebase-adminsdk-fbsvc-7189c0346d.json"
+    firebase_json_path = Path(__file__).parent.parent / "sentry-project-8f412-firebase-adminsdk-fbsvc-68104c2a7c.json"
     
     if firebase_json_path.exists():
         cred = credentials.Certificate(str(firebase_json_path))

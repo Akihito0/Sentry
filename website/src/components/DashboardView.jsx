@@ -3,7 +3,6 @@ import '../css/Dashboard.css';
 import logo from '../image/logo.png';
 import profile from '../image/profile.png';
 import { auth, db, doc, getDoc, onAuthStateChanged } from '../database/firebase';
-import SafeBrowsing from './SafeBrowsing.jsx';
 import Settings from './Settings.jsx';
 import FamilyPage from './FamilyPage.jsx';
 import SafetyReports from './SafetyReports.jsx';
@@ -21,7 +20,6 @@ const Sidebar = ({ active, setActive, isOpen, close }) => {
   const items = useMemo(() => [
     { icon: 'bx bx-home-alt-2', label: 'Overview' },
     { icon: 'bx bx-group', label: 'Family' },
-    { icon: 'bx bx-shield-quarter', label: 'Safe Browsing' },
     { icon: 'bx bx-cog', label: 'Setting' },
   ], []);
 
@@ -440,8 +438,7 @@ const DashboardView = () => {
           </div>
         )}
         {active === 1 && <FamilyPage />}
-        {active === 2 && <SafeBrowsing />}
-        {active === 3 && <Settings />}
+        {active === 2 && <Settings />}
       </div>
     </div>
   );

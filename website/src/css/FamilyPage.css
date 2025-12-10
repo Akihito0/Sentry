@@ -42,13 +42,16 @@
 
 .family-page .family-section-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr; 
   gap: 25px;
   grid-template-areas:
-    "family-id flagged-report"
-    "family-members flagged-report"
-    "critical-alerts flagged-report"
-    "activity-logs activity-report"; 
+    "family-id"
+    "family-members"; 
+}
+
+/* Family Members Card takes full width */
+.family-page .family-members-card {
+  width: 100%;
 }
 
 @media (max-width: 1024px) {
@@ -342,18 +345,19 @@
 }
 
 .family-page .family-members-card .member-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px; 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  align-items: start; /* Each card takes only the height it needs */
 }
 
 .family-page .family-members-card .member-item {
   display: flex;
   align-items: center;
-  background-color: #f9f9f9;
+  background-color: transparent;
   border-radius: 8px;
-  padding: 10px 15px;
-  border: 1px solid #eee;
+  padding: 0;
+  border: none;
 }
 
 .family-page .family-members-card .member-avatar {
@@ -723,6 +727,47 @@
   gap: 8px;
   align-items: center;
   margin-left: auto;
+}
+
+/* Settings Toggle Button (Gear Icon) */
+.family-page .settings-toggle-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.family-page .settings-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+.family-page .settings-toggle-btn.active {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.4);
+}
+
+/* Member Card Wrapper for grid layout */
+.family-page .member-card-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.family-page .member-card-wrapper:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .family-page .edit-role-button {
@@ -1104,4 +1149,299 @@
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px solid #eee;
+}
+
+/* ========================================
+   EXPANDABLE CHILD SETTINGS CARD STYLES
+   ======================================== */
+
+/* Settings panel below the member card */
+.family-page .child-settings-expanded {
+  width: 100%;
+  margin-top: 16px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+/* Settings Tabs */
+.family-page .settings-tabs {
+  display: flex;
+  background: #f0f0f0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.family-page .settings-tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.family-page .settings-tab:hover {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.family-page .settings-tab.active {
+  background: white;
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+/* Settings Panels */
+.family-page .settings-panel {
+  padding: 20px;
+}
+
+.family-page .settings-panel h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Toggle Settings */
+.family-page .toggle-setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.family-page .toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.family-page .toggle-label span:first-child {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.family-page .toggle-description {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Toggle Switch */
+.family-page .toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.family-page .toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.family-page .toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.family-page .toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.family-page .toggle-switch input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.family-page .toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Keyword Section */
+.family-page .keyword-section {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.family-page .keyword-section h5 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.family-page .keyword-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.family-page .keyword-input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.family-page .keyword-input-row input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.family-page .add-keyword-btn {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.family-page .add-keyword-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Keyword Tags */
+.family-page .keyword-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.family-page .keyword-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.family-page .keyword-tag:hover {
+  background: #e8e8e8;
+}
+
+.family-page .keyword-tag.scam-tag {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.family-page .keyword-tag.website-tag {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.family-page .remove-keyword-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.family-page .remove-keyword-btn:hover {
+  background: #cf1322;
+  transform: scale(1.1);
+}
+
+/* Save Button */
+.family-page .save-settings-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.family-page .save-settings-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(82, 196, 26, 0.4);
+}
+
+.family-page .save-settings-btn:active {
+  transform: translateY(0);
+}
+
+/* Panel specific styles */
+.family-page .nsfw-panel h4 {
+  color: #f5222d;
+}
+
+.family-page .scams-panel h4 {
+  color: #fa8c16;
+}
+
+.family-page .custom-panel h4 {
+  color: #1890ff;
 }
