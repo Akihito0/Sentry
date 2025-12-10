@@ -174,40 +174,51 @@ let blockingSettings = {
 // Fetch current user info from background script
 async function fetchCurrentUserInfo() {
   try {
+    console.log('👤 Sentry: Fetching current user info from extension...');
     const response = await chrome.runtime.sendMessage({ type: 'GET_CURRENT_USER' });
+    console.log('👤 Sentry: User response:', response);
+    
     if (response && response.success) {
       currentUserEmail = response.email || '';
       currentUserName = response.name || (currentUserEmail ? currentUserEmail.split('@')[0] : '');
-      console.log('Sentry: Current user loaded:', currentUserName, '(' + currentUserEmail + ')');
+      console.log('✅ Sentry: Current user loaded:', currentUserName, '(' + currentUserEmail + ')');
       
       // Fetch blocking settings after getting user info
       if (currentUserEmail) {
+        console.log('📡 Sentry: User email found, fetching blocking settings...');
         await fetchBlockingSettings();
+      } else {
+        console.warn('🚨 Sentry: No user email found! User must log in to extension first.');
+        console.warn('🚨 Sentry: Custom keywords will not work until logged in.');
       }
+    } else {
+      console.warn('🚨 Sentry: No user logged in to extension');
+      console.warn('🚨 Sentry: Please log in to use custom blocking settings');
     }
   } catch (error) {
-    console.warn('Sentry: Could not fetch current user info:', error);
+    console.warn('🚨 Sentry: Could not fetch current user info:', error);
   }
 }
 
 // Fetch blocking settings from backend
 async function fetchBlockingSettings() {
   if (!currentUserEmail) {
-    console.warn('Sentry: Cannot fetch blocking settings - no user email');
+    console.warn('🚨 Sentry: Cannot fetch blocking settings - no user email');
+    console.warn('🚨 Sentry: Make sure you are logged in to the extension!');
     return;
   }
   
   try {
-    console.log('Sentry: Fetching blocking settings for:', currentUserEmail);
+    console.log('📡 Sentry: Fetching blocking settings for:', currentUserEmail);
     const url = `${BACKEND_URL}/get-blocking-settings/${encodeURIComponent(currentUserEmail)}`;
-    console.log('Sentry: Fetching from URL:', url);
+    console.log('📡 Sentry: Fetching from URL:', url);
     const response = await fetch(url);
     
-    console.log('Sentry: Response status:', response.status);
+    console.log('📡 Sentry: Response status:', response.status);
     
     if (response.ok) {
       const data = await response.json();
-      console.log('Sentry: Raw response data:', JSON.stringify(data));
+      console.log('📡 Sentry: Raw response data:', JSON.stringify(data, null, 2));
       if (data.settings) {
         // Merge fetched settings with defaults
         // Settings keys match what's saved from FamilyPage: nsfw, scams, custom
@@ -231,16 +242,24 @@ async function fetchBlockingSettings() {
             websites: data.settings.custom.websites || []
           };
         }
-        console.log('Sentry: Blocking settings loaded:', blockingSettings);
+        console.log('✅ Sentry: Blocking settings loaded successfully!');
+        console.log('✅ Sentry: NSFW Image Blocking =', blockingSettings.nsfw.blockImages);
+        console.log('✅ Sentry: NSFW Keyword Blocking =', blockingSettings.nsfw.blockKeywords);
+        console.log('✅ Sentry: NSFW Keywords =', blockingSettings.nsfw.keywords);
+        console.log('✅ Sentry: Scam Phishing Blocking =', blockingSettings.scams.blockPhishing);
+        console.log('✅ Sentry: Scam Keyword Blocking =', blockingSettings.scams.blockKeywords);
+        console.log('✅ Sentry: Scam Keywords =', blockingSettings.scams.keywords);
+        console.log('✅ Sentry: Custom Website Blocking =', blockingSettings.custom.enabled);
+        console.log('✅ Sentry: Custom Websites =', blockingSettings.custom.websites);
         
         // Check if current page should be blocked
         checkCustomWebsiteBlocking();
       }
     } else {
-      console.warn('Sentry: Could not fetch blocking settings:', response.status);
+      console.warn('🚨 Sentry: Could not fetch blocking settings:', response.status);
     }
   } catch (error) {
-    console.warn('Sentry: Error fetching blocking settings:', error);
+    console.warn('🚨 Sentry: Error fetching blocking settings:', error);
   }
 }
 
@@ -926,6 +945,47 @@ function instantLocalBlock(element, contentText) {
   // Skip if too short
   if (content.length < 5) return null;
   
+  // 0. CUSTOM NSFW KEYWORDS CHECK (from Firebase settings) - HIGHEST PRIORITY
+  if (blockingSettings.nsfw.blockKeywords && blockingSettings.nsfw.keywords && blockingSettings.nsfw.keywords.length > 0) {
+    const customKeywords = blockingSettings.nsfw.keywords;
+    // Create regex from custom keywords (case-insensitive, word boundaries)
+    const escapedKeywords = customKeywords.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const customKeywordRegex = new RegExp('\\b(' + escapedKeywords.join('|') + ')\\b', 'i');
+    
+    if (customKeywordRegex.test(content)) {
+      console.log("⚡ Sentry: INSTANT BLOCK - Custom NSFW keyword detected:", customKeywords.filter(kw => content.includes(kw.toLowerCase())));
+      return {
+        safe: false,
+        title: "Blocked Content Detected",
+        reason: "This content matches your custom blocked keywords.",
+        what_to_do: "Click to learn more about why this was blocked.",
+        category: "custom_keyword",
+        confidence: 100,
+        originalContent: contentText.substring(0, 500)
+      };
+    }
+  }
+  
+  // 0b. CUSTOM SCAM KEYWORDS CHECK (from Firebase settings)
+  if (blockingSettings.scams.blockKeywords && blockingSettings.scams.keywords && blockingSettings.scams.keywords.length > 0) {
+    const customScamKeywords = blockingSettings.scams.keywords;
+    const escapedScamKeywords = customScamKeywords.map(kw => kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const customScamRegex = new RegExp('\\b(' + escapedScamKeywords.join('|') + ')\\b', 'i');
+    
+    if (customScamRegex.test(content)) {
+      console.log("⚡ Sentry: INSTANT BLOCK - Custom scam keyword detected:", customScamKeywords.filter(kw => content.includes(kw.toLowerCase())));
+      return {
+        safe: false,
+        title: "Suspicious Content Detected",
+        reason: "This content matches your custom blocked scam keywords.",
+        what_to_do: "Be careful and do not share personal information.",
+        category: "custom_scam",
+        confidence: 100,
+        originalContent: contentText.substring(0, 500)
+      };
+    }
+  }
+  
   // 1. PROFANITY CHECK - English, Filipino, and Cebuano
   // English profanity
   const englishProfanity = /\b(fuck|fucking|fucker|fucked|motherfucker|mother fucker|shit|bitch|ass|asshole|bastard|damn|hell|cunt|whore|slut|dick|pussy|cock|cum|orgasm)\b/i;
@@ -1203,17 +1263,29 @@ async function scanPageContent() {
         : [];
       const profanityKeywords = [...baseProfanityKeywords, ...customNsfwKeywords];
       
+      // 🔍 DEBUG: Log what keywords we're actually checking
+      console.log('🔍 Sentry: Profanity check enabled');
+      console.log('🔍 Sentry: Base keywords:', baseProfanityKeywords.length);
+      console.log('🔍 Sentry: Custom NSFW keywords from settings:', customNsfwKeywords);
+      console.log('🔍 Sentry: Total keywords to check:', profanityKeywords.length);
+      console.log('🔍 Sentry: blockingSettings.nsfw.blockKeywords =', blockingSettings.nsfw.blockKeywords);
+      console.log('🔍 Sentry: blockingSettings.nsfw.keywords =', blockingSettings.nsfw.keywords);
+      
       const wrappedTextNodes = findAndWrapTextNodes(profanityKeywords);
       
       // Block wrapped text nodes immediately
       wrappedTextNodes.forEach(wrapper => {
+        // Get the actual text content for Gemini AI analysis
+        const textContent = wrapper.textContent || wrapper.innerText || '';
+        
         const profanityResponse = {
           safe: false,
           title: "Inappropriate Language Detected",
           reason: "This message contains offensive language or profanity that may be hurtful or inappropriate.",
           what_to_do: "Consider the impact of such language. Click to view if you choose to proceed.",
           category: "profanity",
-          confidence: 95
+          confidence: 95,
+          originalContent: textContent.substring(0, 500) // 🔥 Store for Gemini AI analysis on-demand
         };
         blockSpecificElement(wrapper, profanityResponse);
         instantBlockCount++;
@@ -1408,7 +1480,7 @@ async function scanPageContent() {
       
       // Check for alcohol/scam - these go through instant block now
       // (Keeping just for scam container targeting logic)
-      if (scamKeywords.test(contentToScan)) {
+      if (scamKeywordsPattern.test(contentToScan)) {
         let targetElement = element;
         if (element.tagName === 'A') {
           const messageContainer = element.closest('.message, .chat-message, .post, [role="article"], div[class*="message"], p');
@@ -1421,7 +1493,8 @@ async function scanPageContent() {
           reason: "This message shows signs of being a scam or phishing attempt.",
           what_to_do: "Do not click any links or share personal information.",
           category: "scam",
-          confidence: 90
+          confidence: 90,
+          originalContent: contentToScan.substring(0, 500) // 🔥 Store for Gemini AI analysis on-demand
         };
         
         instantBlockCount++;

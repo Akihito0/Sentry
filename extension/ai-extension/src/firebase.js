@@ -7,7 +7,8 @@ import {
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithCredential
+  signInWithCredential,
+  signInWithPopup
 } from "firebase/auth";
 import {
   getFirestore,
@@ -45,6 +46,7 @@ export {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithCredential,
+  signInWithPopup,
   doc,
   getDoc,
   setDoc,

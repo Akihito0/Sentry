@@ -7,7 +7,12 @@ import {
   signOut,
   onAuthStateChanged,
   doc,
-  setDoc
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc
 } from './firebase';
 
 /*global chrome*/

@@ -10,7 +10,9 @@ export default defineConfig({
     copy({
       targets: [
         { src: 'public/contentscript_new.js', dest: 'dist', rename: 'contentscript_new.js' },
-        { src: 'public/*.js', dest: 'dist' },
+        { src: 'public/background.js', dest: 'dist' },
+        { src: 'public/chatbotUI.js', dest: 'dist' },
+        { src: 'public/popup.html', dest: 'dist' },
         { src: 'public/manifest.json', dest: 'dist' },
         { src: 'public/css/*', dest: 'dist/css' },
         { src: 'public/images', dest: 'dist' }
@@ -24,15 +26,16 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve( 'index.html'),
-        background: resolve( 'public/background.js'),
-        contentscript_new: resolve( 'public/contentscript_new.js'),
-        chatbotUI: resolve( 'public/chatbotUI.js'),
+        popup: resolve( 'public/popup.html'),
+        popupScript: resolve( 'public/popup.js'),
+        firebase: resolve( 'src/firebase.js'),
       },
       output: {
         entryFileNames: '[name].js', // Keep original names
         chunkFileNames: 'assets/[name].js',
         assetFileNames: 'assets/[name].[ext]',
       },
+      external: []
     },
   },
 });
