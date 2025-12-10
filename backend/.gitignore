@@ -4,4 +4,11 @@ __pycache__/
 .env
 logs/
 *.log
-.flagged_events.json"backend/sentry-project-8f412-firebase-adminsdk-fbsvc-7189c0346d.json" 
+flagged_events.json
+
+# Firebase service account keys (KEEP PRIVATE - contains sensitive credentials)
+*.json
+!package.json
+!package-lock.json
+sentry-project-*.json
+*-firebase-adminsdk-*.json 
