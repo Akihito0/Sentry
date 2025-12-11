@@ -358,12 +358,13 @@ html, body {
 }
 
 .section-title {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     margin-bottom: 50px;
-    color: var(--color-yellow-accent);
+    color: var(--color-text-light);
     white-space: normal;
     text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
     position: relative;
+    font-weight: 700;
 }
 
 .section-title::after {

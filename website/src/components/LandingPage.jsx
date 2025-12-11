@@ -77,7 +77,7 @@ const LandingPage = () => {
             <div className="feature-card-scroll" onClick={() => openModal({
               title: 'Blocking Visual Images',
               description: 'Automatically detects and blurs inappropriate images to keep browsing safe for all family members.',
-              details: 'Our advanced AI technology scans images in real-time as they load on web pages. Using sophisticated machine learning algorithms, Sentry identifies potentially inappropriate content and automatically applies a blur effect. Family members can click to reveal images if needed, and all actions are logged for parental review.'
+              details: ' AI technology scans images in real-time as they load on web pages. Using sophisticated machine learning algorithms, Sentry identifies potentially inappropriate content and automatically applies a blur effect. Family members can click to reveal images if needed, and all actions are logged for parental review.'
             })}>
               <div className="card-gif-container">
                 <img src={BlurImageGif} alt="Visual Blocking Demo" className="card-gif" />
@@ -117,20 +117,6 @@ const LandingPage = () => {
             </div>
 
             <div className="feature-card-scroll" onClick={() => openModal({
-              title: 'Blocking Potential Phishing Texts',
-              description: 'Detects and prevents phishing attempts to protect sensitive information and personal data.',
-              details: 'Sentry guards against phishing attacks by analyzing URLs, email patterns, and suspicious requests for personal information. The system identifies fake login pages, spoofed websites, and social engineering attempts, alerting users before they can compromise their security.'
-            })}>
-              <div className="card-gif-container">
-                <img src={PhishingGif} alt="Phishing Protection Demo" className="card-gif" />
-              </div>
-              <h3>Blocking Potential Phishing Texts</h3>
-              <p className="card-text">
-                Detects and prevents phishing attempts to protect sensitive information and personal data.
-              </p>
-            </div>
-
-            <div className="feature-card-scroll" onClick={() => openModal({
               title: 'AI Overview',
               description: 'Gemini AI continuously analyzes browsing patterns to provide intelligent threat detection and real-time protection.',
               details: 'Powered by Google\'s advanced Gemini AI, Sentry provides state-of-the-art protection with continuous learning capabilities. The AI analyzes patterns, adapts to new threats, and provides personalized protection based on your family\'s browsing habits while maintaining privacy and security.'
@@ -146,8 +132,8 @@ const LandingPage = () => {
 
             <div className="feature-card-scroll" onClick={() => openModal({
               title: 'Parental Guidance',
-              description: 'Parents receive real-time notifications about blocked content and can monitor family browsing activity through a comprehensive dashboard.',
-              details: 'The parental dashboard provides complete visibility into your family\'s online activity. Receive instant notifications when content is blocked, view detailed activity reports, customize protection levels for each family member, and access insights about browsing patterns—all from one centralized, easy-to-use interface.'
+              description: 'Parents receive blocked content and can monitor family browsing activity through a comprehensive dashboard.',
+              details: 'The parental dashboard provides complete visibility into your family\'s online activity. Receive instant notification when content is blocked, view detailed activity reports, customize protection levels for each family member, and access insights about browsing patterns—all from one centralized, easy-to-use interface.'
             })}>
               <div className="card-gif-container">
                 <img src={ProtectGif} alt="Parental Guidance Demo" className="card-gif" />
@@ -162,7 +148,7 @@ const LandingPage = () => {
             <div className="feature-card-scroll" onClick={() => openModal({
               title: 'Blocking Explicit Visual Images',
               description: 'Automatically detects and blurs inappropriate images to keep browsing safe for all family members.',
-              details: 'Our advanced AI technology scans images in real-time as they load on web pages. Using sophisticated machine learning algorithms, Sentry identifies potentially inappropriate content and automatically applies a blur effect. Family members can click to reveal images if needed, and all actions are logged for parental review.'
+              details: 'Our advanced AI technology scans images in real-time as they load on web pages. Using  machine learning algorithms, Sentry identifies potentially inappropriate content and automatically applies a blur effect. Family members can click to reveal images if needed, and all actions are logged for parental review.'
             })}>
               <div className="card-gif-container">
                 <img src={BlurImageGif} alt="Visual Blocking Demo" className="card-gif" />

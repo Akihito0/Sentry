@@ -173,48 +173,48 @@ const SignupPage = ({ toggleMode }) => {
           <form className="auth-form" onSubmit={handleFormSubmit}>
             {/* NEW: Name Input Group */}
             <div className="input-group">
-              <label htmlFor="signup-name">Parent/Guardian Name</label>
+              <label htmlFor="signup-name">Parent/Guardian Name:</label>
               <input
                 type="text"
                 id="signup-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Noah Claudio"
+                placeholder="Parent or Guardian Name"
                 required
               />
             </div>
             {/* End NEW Name Input Group */}
 
             <div className="input-group">
-              <label htmlFor="signup-email">Email Address</label>
+              <label htmlFor="signup-email">Email Address:</label>
               <input
                 type="email"
                 id="signup-email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@gmail.com"
+                placeholder="Enter email address"
                 required
               />
             </div>
             <div className="input-group">
-              <label htmlFor="signup-password">Password</label>
+              <label htmlFor="signup-password">Password:</label>
               <input
                 type="password"
                 id="signup-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Enter password"
                 required
               />
             </div>
             <div className="input-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+              <label htmlFor="confirmPassword">Confirm Password:</label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Confirm password"
                 required
               />
             </div>
